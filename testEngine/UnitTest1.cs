@@ -119,6 +119,12 @@ namespace testEngine
             insertToExpected("adam;05-14;amit;yonatan;78;aug;jan;50");
             Assert.AreEqual(true, checkEqulas());
         }
+
+        [TestMethod]
+        public void testGitHub()
+        {
+
+        }
         private void insertToExpected(string doc)
         {
             string[] docArray = doc.Split(';');
