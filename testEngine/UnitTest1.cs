@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using searchEngine;
 using System.Collections.Generic;
+using System.IO;
 
 namespace testEngine
 {
@@ -65,7 +66,7 @@ namespace testEngine
         {
             doc = "In may 1994 adam was nash-nash. May was pretty. jan 28, 2005 july 7 june 8000 october fest";
             terms = parse.parseDocument(doc);
-            insertToExpected("In;1994-05;adam;was;nash-nash;May;was;pretty;2005-01-28;07-07;8000-06;october;fest");
+            insertToExpected("in;1994-05;adam;was;nash-nash;may;was;pretty;2005-01-28;07-07;8000-06;october;fest");
             Assert.AreEqual(true, checkEqulas());
         }
         [TestMethod]
@@ -151,6 +152,122 @@ namespace testEngine
             terms = parse.parseDocument(doc);
             insertToExpected("100M Dollars");
             Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberFirstDate10()
+        {
+            doc = "3/4 llion";
+            terms = parse.parseDocument(doc);
+            insertToExpected("3/4;llion");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberUnderMillion1()
+        {
+            doc = "1204; 35.66 35 3/4 ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("1204;35.66;35 3/4");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testPercent()
+        {
+            doc = "104 percent 10.6 percentage 96% ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("104%;10.6%;96%");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testPrices1()
+        {
+            doc = "1.7320 Dollars 22 3/4 Dollars $450000 ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("1.732 Dollars;22 3/4 Dollars;450000 Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testPrices2()
+        {
+            doc = "1000000 Dollars $450000000 $100 million 20.6m Dollars $100 billion 150bn Dollars ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("1M Dollars;450M Dollars;100M Dollars;20.6M Dollars;100000M Dollars;150000M Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testPrices3()
+        {
+            doc = "100 billion U.S dollars 320 million U.S dollars 1 trillion U.S dollars ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("100000M Dollars;320M Dollars;1000000M Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberFirstDate11()
+        {
+            doc = "1,000,000 1,234,567 7 Million 7 Billion 7 Trillion";
+            terms = parse.parseDocument(doc);
+            insertToExpected("1M;1.234567M;7M;7000M;7000000M");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberFirstDate12()
+        {
+            doc = "between 5 and 6 shalom moshe";
+            terms = parse.parseDocument(doc);
+            insertToExpected("5-6;shalom;moshe");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNewRule1()
+        {
+            doc = " shalom 0940 GMT moshe";
+            terms = parse.parseDocument(doc);
+            insertToExpected("shalom;09:40;moshe");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNewRule2()
+        {
+            doc = " shalom 0940 GMT moshe United States 77";
+            terms = parse.parseDocument(doc);
+            insertToExpected("shalom;09:40;moshe;u.s;77");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNewRule3()
+        {
+            doc = " shalom 0940 GMT moshe United States";
+            terms = parse.parseDocument(doc);
+            insertToExpected("shalom;09:40;moshe;u.s");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNewRule4()
+        {
+            doc = " U.S. 0940 GMT moshe ";
+            terms = parse.parseDocument(doc);
+            insertToExpected("u.s;09:40;moshe");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNewRule5()
+        {
+            doc = "Geneva, March 21 (CNA) -- The Convention on";
+            terms = parse.parseDocument(doc);
+        }
+        [TestMethod]
+        public void testNewRule6()
+        {
+            StreamReader streamReader = new StreamReader("C:\\Users\\adamz\\Desktop\\check1.txt");
+            doc = streamReader.ReadToEnd();
+            terms = parse.parseDocument(doc);
+            streamReader.Close();
+        }
+        [TestMethod]
+        public void testNewRule7()
+        {
+            doc = "Geneva, March 21 (CNA) -- The Convention on United States, ";
+            terms = parse.parseDocument(doc);
         }
         private void insertToExpected(string doc)
         {

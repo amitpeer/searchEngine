@@ -14,38 +14,19 @@ namespace searchEngine
         {
             dates = new Dictionary<string, string>()
             {
-                {"JANUARY","01" },
-                 {"JAN","01" },
-                 {"FEBUARY","02" },
-                {"FEB","02" },
-                {"MARCH","03" },
-                {"APRIL","04" },
-                {"APR","04" },
-                {"MAY","05" },
-                {"JUNE","06" },
-                {"JUN","06" },
-                {"JULY","07" },
-                {"JUL","07" },
-                {"AUGUST","08" },
-                {"AUG","08" },
-                {"SEPTEMBER","09" },
-                {"SEP","09" },
-                {"OCTOBER","10" },
-                {"OCT","10" },
-                {"NOVEMBER","11" },
-                {"NOV","11" },
-                {"DECEMBER","12" },
-                {"DEC","12" },
+                {"JANUARY","01" },{"JAN","01" },{"FEBUARY","02" },{"FEB","02" },{"MARCH","03" },{"APRIL","04" },{"APR","04" },{"MAY","05" },{"JUNE","06" },{"JUN","06" },
+                {"JULY","07" },{"JUL","07" },{"AUGUST","08" },{"AUG","08" },{"SEPTEMBER","09" },{"SEP","09" },
+                {"OCTOBER","10" },{"OCT","10" },{"NOVEMBER","11" },{"NOV","11" },{"DECEMBER","12" },{"DEC","12" },
             };
-
             }
         public Dictionary<string,int> parseDocument(string doc)
         {
            bool shouldContinue = false;
-            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
-           string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            Dictionary<string, int> terms = new Dictionary<string, int>();
-            for(int i = 0; i < initialArrayOfDoc.Length; i++)
+           char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*' };
+   string[] delimitersString = { " ", "\n", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
+            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
+           Dictionary<string, int> terms = new Dictionary<string, int>();
+           for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
                 string currentTerm = initialArrayOfDoc[i];
                 //doesnt contain a digit then
@@ -53,7 +34,28 @@ namespace searchEngine
                 {
                     if (currentTerm.ToUpper() == "BETWEEN")
                     {
-
+                        if (i < initialArrayOfDoc.Length - 3)
+                        {
+                            string part1OfString = initialArrayOfDoc[i + 1];
+                            string andPart = initialArrayOfDoc[i + 2];
+                            string part2OfString = initialArrayOfDoc[i + 3];
+                            double part1v, part2v;
+                            if (andPart.ToLower() == "and" && Double.TryParse(part1OfString, out part1v) && Double.TryParse(part2OfString, out part2v))
+                            {
+                                insertToDic(terms, part1OfString + "-" + part2OfString);
+                                i = i + 3;
+                                continue;
+                            }
+                        }
+                    }
+                    if (currentTerm=="United"&& i < initialArrayOfDoc.Length - 1)
+                    {
+                        if (initialArrayOfDoc[i + 1].TrimEnd(',', '.', '-',';', ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*') == "States")
+                        {
+                            insertToDic(terms,"u.s");
+                            i = i + 1;
+                            continue;
+                        }
                     }
                     else
                     {
@@ -104,8 +106,8 @@ namespace searchEngine
                                             string month = currentTerm;
                                             currentTerm = "";
                                             currentTerm = valueOfYear + "-" + dates[month.ToUpper()];
-                                        insertToDic(terms, currentTerm);
-                                         i = i + 1;
+                                            insertToDic(terms, currentTerm);
+                                            i = i + 1;
                                          continue;
                                         }
                                     }
@@ -113,7 +115,6 @@ namespace searchEngine
                             }
                     }
                 }
-
                 else
                 {
                     shouldContinue = startWithNumber(terms, initialArrayOfDoc, currentTerm,ref i);
@@ -121,13 +122,14 @@ namespace searchEngine
                         continue;
                 }
                 if(currentTerm!="")
-                    insertToDic(terms, currentTerm.Trim(',','.','-'));
+                    insertToDic(terms, currentTerm.Trim(',','.','-').ToLower());
             }
             return terms;
         }
         //check what to do 
         private bool startWithNumber(Dictionary<string, int> terms, string[] initialArrayOfDoc, string currentTerm, ref int i)
         {
+            double value;
             bool shouldContinue = false;
             bool foundNext = false;
             if (currentTerm.Length > 2)
@@ -141,14 +143,26 @@ namespace searchEngine
                     if (shouldContinue)
                         return true;
                 }
+                //check if has ending "bn"- billion
+                if (currentTerm.Substring(currentTerm.Length - 2) == "bn")
+                {
+                    //double value;
+                    double.TryParse(currentTerm.Substring(0, currentTerm.Length - 2), out value);
+                    //should check the rest of doc
+                    if (i >= initialArrayOfDoc.Length - 1)
+                    {
+                        insertToDic(terms, value * 1000.0 + "M");
+                        return false;
+                    }
+                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "bn");
+                    insertToDic(terms, toInsert);
+                    return foundNext;
+                }
             }
-            else
-            {
-                double value;
                 //check if clean number
-                //bool foundNext=false;
                 if (double.TryParse(currentTerm, out value))
                 {
+                    //check if part of a date
                     if (value >= 1 && value <= 31)
                     {
                         shouldContinue = checkIfNextIsDate(terms, value.ToString(), initialArrayOfDoc, ref i);
@@ -158,26 +172,26 @@ namespace searchEngine
                     //real number clean
                      foundNext = false;
                     if (i >= initialArrayOfDoc.Length - 1)
-                        return false;
-                        string next = checkNextTerms(initialArrayOfDoc, terms, ref i, value,ref foundNext, "");
+                         {
+                          if (value >= 1000000)
+                            {
+                             insertToDic(terms, value/1000000.0+"M");
+                             return false;
+                            }
+                          else
+                          return false;
+                         }                       
+                    string next = checkNextTerms(initialArrayOfDoc, terms, ref i, value,ref foundNext, "");
                     if (foundNext)
-                    {
                         insertToDic(terms, next);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return foundNext;
                 }
-            }
             //term that contains digits...
             //check if dollar
-
             if (currentTerm[0] == '$')
             {
                 string flag = "$";
-                double value;
+                //double value;
                 if (Double.TryParse(currentTerm.Substring(1), out value))
                 {
                     if (i >= initialArrayOfDoc.Length - 1)
@@ -191,67 +205,50 @@ namespace searchEngine
                 }
                 return false;
             }
-            //check if has ending m for million.
-            if (currentTerm[currentTerm.Length - 1] == 'm')
+            //check if has percentage
+            if (currentTerm[currentTerm.Length - 1] == '%')
             {
-                double value;
-                if (Double.TryParse(currentTerm.TrimEnd('m'), out value))
+                if (Double.TryParse(currentTerm.Substring(0, currentTerm.Length - 1), out value))
                 {
                     if (i >= initialArrayOfDoc.Length - 1)
                     {
-                        insertToDic(terms, value + "M");
-                        return false;
+                        insertToDic(terms, currentTerm);
+                        return true;
                     }
-                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "m");
-                    insertToDic(terms, toInsert);
-                    return foundNext;
                 }
             }
-            //check if has ending "bn"- billion
-            if (currentTerm.Length > 2)
-            {
-                if (currentTerm.Substring(currentTerm.Length - 2) == "bn")
-                {
-                    double value;
-                    double.TryParse(currentTerm.Substring(0, currentTerm.Length - 2), out value);
-                    //should check the rest of doc
-                    if (i >= initialArrayOfDoc.Length - 1)
+                //check if has ending m for million.
+                if (currentTerm[currentTerm.Length - 1] == 'm')
                     {
-                        insertToDic(terms, value*1000.0+"M");
-                        return false;
-                    }                        
-                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "bn");
-                    insertToDic(terms, toInsert);
-                    return foundNext;
-                }
-            }
+                        //double value;
+                        if (Double.TryParse(currentTerm.TrimEnd('m'), out value))
+                        {
+                            if (i >= initialArrayOfDoc.Length - 1)
+                                 {
+                                 insertToDic(terms, value + "M");
+                                 return true;
+                                 }
+                        string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "m");
+                        insertToDic(terms, toInsert);
+                        return foundNext;
+                        }
+                    }         
             return false;
         }
         private string checkNextTerms(string[] initialArrayOfDoc, Dictionary<string, int> terms, ref int currentIndex, double number, ref bool foundNext, string flag)
         {
             int index = currentIndex + 1;
             string ans = "";
-            switch (flag)
+            if (flag == "m" || flag == "bn")
             {
-                case "bn":
-                    if (initialArrayOfDoc[index].ToLower() == "dollars")
-                    {
-                        foundNext = true;
-                        currentIndex = currentIndex + 1;
-                        ans = number * 1000 + "" + " M Dollars";
-                        return ans;
-                    }
-                    break;
-                case "m":
-                    if (initialArrayOfDoc[index].ToLower() == "dollars")
-                    {
-                        foundNext = true;
-                        currentIndex = currentIndex + 1;
-                        ans = number + "" + " M Dollars";
-                        return ans;
-                    }
-                    break;
-
+                if (initialArrayOfDoc[index].ToLower() == "dollars")
+                {
+                    foundNext = true;
+                    currentIndex = currentIndex + 1;
+                    number = (flag == "m") ? number : number * 1000.0;
+                    ans = number + "" + "M Dollars";
+                    return ans;
+                }
             }
             string nextTerm = initialArrayOfDoc[index].ToLower();
             //check if there is a fraction after number
@@ -261,13 +258,17 @@ namespace searchEngine
                 string[] fraction = nextTerm.Split('/');
                 if (Double.TryParse(fraction[0], out numerator) && Double.TryParse(fraction[1], out denominator))
                 {
-                    ans = number + "" + nextTerm;
+                    ans = number + " " + nextTerm;
+                    foundNext = true;
+                    currentIndex = currentIndex + 1;
                     if (index < initialArrayOfDoc.Length - 1)
                     {
-                        foundNext = true;
                         index = index + 1;
-                        currentIndex = currentIndex + 1;
                         nextTerm = initialArrayOfDoc[index].ToLower();
+                    }
+                    else
+                    {
+                        return ans;
                     }
                 }
             }
@@ -288,6 +289,15 @@ namespace searchEngine
                             ans = number.ToString();
                     }
                     return ans + " Dollars";
+                    break;
+                case "gmt":
+                    if(initialArrayOfDoc[currentIndex].Length==4&&initialArrayOfDoc[currentIndex+1]=="GMT"&&number%100<=60&&number/100<=24)
+                    {
+                        foundNext = true;
+                        ans = initialArrayOfDoc[currentIndex].Substring(0, 2) + ":" + initialArrayOfDoc[currentIndex].Substring(2);
+                        currentIndex = currentIndex + 1;
+                        return ans;
+                    }
                     break;
                 case "percent":
                     foundNext = true;
@@ -343,7 +353,8 @@ namespace searchEngine
                 {
                     if (number >= 1000000)
                     {
-                        return number + "M Dollars";
+                        foundNext = true;
+                        return number/1000000.0 + "M Dollars";
                     }
                     else
                     {
@@ -355,17 +366,15 @@ namespace searchEngine
             {
                 index = (currentIndex);
                 if (ans == "")
-                {
+                     {
                     ans = number * howMuchToMultiply + "M";
-                }
-
+                     }
                 else
-                {
+                    {
                     double fraction = numerator / denominator;
                     number = number + fraction;
                     ans = number * howMuchToMultiply + "M";
-                }
-
+                    }
                 if (index < initialArrayOfDoc.Length - 1)
                 {
                     if (initialArrayOfDoc[index].ToLower() == "dollars")
@@ -373,15 +382,20 @@ namespace searchEngine
                         currentIndex = currentIndex + 1;
                         return ans + " Dollars";
                     }
-                    if (index < initialArrayOfDoc.Length - 1 && initialArrayOfDoc[index].ToUpper() == "U.S" && initialArrayOfDoc[index + 1].ToLower() == "dollars")
+                    if (initialArrayOfDoc[currentIndex+1].ToUpper() == "U.S" && initialArrayOfDoc[currentIndex + 2].ToLower() == "dollars")
                     {
                         currentIndex = currentIndex + 2;
                         return ans + " Dollars";
-
                     }
                 }
             }
-            return ans;
+                if ((number >= 1000000))
+                {
+                foundNext = true;
+                number = number / 1000000.0;
+                    ans = number + "M";
+                }
+                return ans;
         }
         private bool checkIfNextIsDate(Dictionary<string, int> terms, string day, string[] initialArrayOfDoc, ref int i)
         {
@@ -422,12 +436,10 @@ namespace searchEngine
                         i = i + 1;
                          return true;
                       }
-                }
-              
+                }         
             }
             return false;
         }
-
         private void insertToDic(Dictionary<string,int> terms ,string term)
         {
             if (terms.ContainsKey(term))
@@ -437,4 +449,3 @@ namespace searchEngine
         }
         }
     }
-
