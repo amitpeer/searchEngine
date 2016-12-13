@@ -119,11 +119,38 @@ namespace testEngine
             insertToExpected("adam;05-14;amit;yonatan;78;aug;jan;50");
             Assert.AreEqual(true, checkEqulas());
         }
+        [TestMethod]
+        public void testNumberFirstDate6()
+        {
+            doc = "$100";
+            terms = parse.parseDocument(doc);
+            insertToExpected("100 Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
 
         [TestMethod]
-        public void testGitHub()
+        public void testNumberFirstDate7()
         {
-
+            doc = "$450,000";
+            terms = parse.parseDocument(doc);
+            insertToExpected("450000 Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberFirstDate8()
+        {
+            doc = "$100.8";
+            terms = parse.parseDocument(doc);
+            insertToExpected("100.8 Dollars");
+            Assert.AreEqual(true, checkEqulas());
+        }
+        [TestMethod]
+        public void testNumberFirstDate9()
+        {
+            doc = "$100 million";
+            terms = parse.parseDocument(doc);
+            insertToExpected("100M Dollars");
+            Assert.AreEqual(true, checkEqulas());
         }
         private void insertToExpected(string doc)
         {
