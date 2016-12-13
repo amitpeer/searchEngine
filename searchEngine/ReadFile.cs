@@ -11,6 +11,7 @@ namespace searchEngine
     {
         private readonly string path;
         private string[] filePaths;
+        private HashSet<string> stopWords = new HashSet<string>();
 
         public ReadFile(string directoryPath)
         {
