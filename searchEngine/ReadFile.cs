@@ -27,7 +27,14 @@ namespace searchEngine
             List<string> docList = new List<string>();
             for (int i=startIndex; i<endIndex; i++)
             {
-                docList.AddRange(getFile(i));
+                if (!Path.GetFileName(filePaths[i - 1]).Equals("stop_words.txt"))
+                {
+                    docList.AddRange(getFile(i));
+                }
+            }
+            if (docList.Count == 0)
+            {
+                return null;
             }
             return docList;
         }
@@ -38,8 +45,15 @@ namespace searchEngine
         {
             List<string> docList = new List<string>();
             foreach (int i in indexList)
+            {           
+                if (!Path.GetFileName(filePaths[i - 1]).Equals("stop_words.txt"))
+                {
+                    docList.AddRange(getFile(i));
+                }        
+            }
+            if (docList.Count == 0)
             {
-                docList.AddRange(getFile(i));
+                return null;
             }
             return docList;
         }
@@ -48,6 +62,10 @@ namespace searchEngine
         // takes the documents from file number fileIndex.
         public List <string> getFile(int fileIndex)
         {
+            if  (Path.GetFileName(filePaths[fileIndex - 1]).Equals("stop_words.txt"))
+            {
+                return null;
+            }      
             List<string> docList = new List<string>();
             try
             {   // Open the text file using a stream reader.
@@ -59,7 +77,7 @@ namespace searchEngine
                     string[] splittedFile = file.Split(delimeters , StringSplitOptions.RemoveEmptyEntries);
                     foreach(string s in splittedFile)
                     {
-                        docList.Add(s.Trim());
+                         docList.Add(s.Trim());
                     }
                 }
             }
@@ -69,6 +87,35 @@ namespace searchEngine
                 Console.WriteLine(e.Message);
             }
             return docList;
+        }
+
+        public void ExtractStopWordsFile()
+        {
+            // considerting the stop words are in a file named "stop_words.txt"
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(path + "\\stop_words.txt"))
+                {
+                    // Read the stream to a string, and write the string
+                    string file = sr.ReadToEnd();
+                    char[] delimeters = { '\n', '\r' };
+                    string[] splittedFile = file.Split(delimeters, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string s in splittedFile)
+                    {
+                        stopWords.Add(s.Trim());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Stop words file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public HashSet<string> getStopWords()
+        {
+            return stopWords;
         }
     }
 }

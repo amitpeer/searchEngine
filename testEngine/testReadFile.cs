@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using testEngine;
 using searchEngine;
 using System.Linq;
+using System.IO;
 
 namespace testEngine
 {
@@ -74,6 +75,34 @@ namespace testEngine
         public void testBig()
         {
             docs = readFile.getFile(5);
+        }
+
+        [TestMethod]
+        public void dontReadStopWords()
+        {
+            docs = readFile.getFile(6);
+            Assert.IsNull(docs);
+        }
+
+        [TestMethod]
+        public void dontReadStopWords2()
+        {
+            docs = readFile.getFiles( 6, 6 );
+            Assert.IsNull(docs);
+        }
+
+        [TestMethod]
+        public void dontReadStopWords3()
+        {
+            docs = readFile.getFiles(new List<int> { 6 });
+            Assert.IsNull(docs);
+        }
+
+        [TestMethod]
+        public void readStopWords()
+        {
+            readFile.ExtractStopWordsFile();
+            HashSet<string> stopWords = readFile.getStopWords();       
         }
 
         private bool checkEquals()
