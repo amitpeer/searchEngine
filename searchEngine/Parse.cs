@@ -18,13 +18,24 @@ namespace searchEngine
                 {"JULY","07" },{"JUL","07" },{"AUGUST","08" },{"AUG","08" },{"SEPTEMBER","09" },{"SEP","09" },
                 {"OCTOBER","10" },{"OCT","10" },{"NOVEMBER","11" },{"NOV","11" },{"DECEMBER","12" },{"DEC","12" },
             };
-            }
-        public Dictionary<string,int> parseDocument(string doc)
+        }
+
+        public Dictionary<string, int> parseDocument(string doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Document parseHeader(ref string doc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<string,int> parseContent(string doc)
         {
            bool shouldContinue = false;
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*' };
-   string[] delimitersString = { " ", "\n", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
-            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
+           string[] delimitersString = { " ", "\n", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
+           string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
            Dictionary<string, int> terms = new Dictionary<string, int>();
            for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
