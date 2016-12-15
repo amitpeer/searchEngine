@@ -9,6 +9,7 @@ namespace searchEngine
 {
     public class ReadFile
     {
+        private static readonly string stopWordsFileName = "stop_words.txt";
         private readonly string path;
         private string[] filePaths;
         private HashSet<string> stopWords = new HashSet<string>();
@@ -27,7 +28,7 @@ namespace searchEngine
             List<string> docList = new List<string>();
             for (int i=startIndex; i<endIndex; i++)
             {
-                if (!Path.GetFileName(filePaths[i - 1]).Equals("stop_words.txt"))
+                if (!Path.GetFileName(filePaths[i - 1]).Equals(stopWordsFileName))
                 {
                     docList.AddRange(getFile(i));
                 }
@@ -46,7 +47,7 @@ namespace searchEngine
             List<string> docList = new List<string>();
             foreach (int i in indexList)
             {           
-                if (!Path.GetFileName(filePaths[i - 1]).Equals("stop_words.txt"))
+                if (!Path.GetFileName(filePaths[i - 1]).Equals(stopWordsFileName))
                 {
                     docList.AddRange(getFile(i));
                 }        
@@ -62,7 +63,7 @@ namespace searchEngine
         // takes the documents from file number fileIndex.
         public List <string> getFile(int fileIndex)
         {
-            if  (Path.GetFileName(filePaths[fileIndex - 1]).Equals("stop_words.txt"))
+            if  (Path.GetFileName(filePaths[fileIndex - 1]).Equals(stopWordsFileName))
             {
                 return null;
             }      
@@ -94,7 +95,7 @@ namespace searchEngine
             // considerting the stop words are in a file named "stop_words.txt"
             try
             {   // Open the text file using a stream reader.
-                using (StreamReader sr = new StreamReader(path + "\\stop_words.txt"))
+                using (StreamReader sr = new StreamReader(path + "\\" + stopWordsFileName))
                 {
                     // Read the stream to a string, and write the string
                     string file = sr.ReadToEnd();
