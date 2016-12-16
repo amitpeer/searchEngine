@@ -8,31 +8,16 @@ namespace searchEngine
 {
     class Term
     {
-        private int df;
-        private int tf;
-        private string docName;
-        private bool isTitle;
+        private Dictionary<string, TermInfoInDoc> termInDocument;
 
-        public int Df
+        public Term (Dictionary<string, TermInfoInDoc> newTermInDocument)
         {
-            get { return df; }
-            set { df = value; }
+            termInDocument = newTermInDocument;
         }
-        public int Tf
+        public Dictionary<string, TermInfoInDoc> TermInDocument
         {
-            get { return tf; }
-            set { tf = value; }
-        }
-        public string DocName
-        {
-            get { return docName; }
-            set { docName = value; }
-        }
-        public bool IsTitle
-        {
-            get { return isTitle; }
-            set { isTitle = value; }
+            get { return termInDocument; }
+            set { termInDocument = value; }
         }
     }
-
 }

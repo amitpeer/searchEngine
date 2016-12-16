@@ -63,6 +63,7 @@
     <Compile Include="Indexer.cs" />
     <Compile Include="ReadFile.cs" />
     <Compile Include="Term.cs" />
+    <Compile Include="TermInfoInDoc.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
