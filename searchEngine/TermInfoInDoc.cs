@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace searchEngine
 {
-    class TermInfoInDoc
+    public class TermInfoInDoc
     {
         private bool isTitle;
         private int tf;
