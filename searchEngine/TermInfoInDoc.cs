@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace searchEngine
 {
-    class TermInfoInDoc
+    public class TermInfoInDoc
     {
-        private bool isTitle;
         private int tf;
         private string docName;
+        private bool isTitle;
+
+        public TermInfoInDoc() { }
+        public TermInfoInDoc(int _tf, string _docName, bool _isTitle)
+        {
+            tf = _tf;
+            docName = _docName;
+            isTitle = _isTitle;
+        }
 
         public int Tf
         {
@@ -21,6 +29,11 @@ namespace searchEngine
         {
             get { return isTitle; }
             set { isTitle = value; }
+        }
+        public string DocName
+        {
+            get { return docName; }
+            set { docName = value; }
         }
     }
 
