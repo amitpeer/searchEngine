@@ -31,17 +31,18 @@ namespace searchEngine
                 List<string> terms = parserResult.Keys.ToList();
                 foreach (string term in terms)
                 {
+                    int isTitle = parserResult[term].IsTitle == true ? 1 : 0;
                     if (miniPostingFile.ContainsKey(term))
                     {
-                        miniPostingFile[term].TermInDocument.Add(parserResult[term].DocName, parserResult[term]);
+                        miniPostingFile[term].tid.Add(parserResult[term].DocName, new int[2] { parserResult[term].Tf, isTitle });
                         counterPosting++;
                     }
                     else
                     {
-                        Dictionary<string,TermInfoInDoc> m_term = new Dictionary<string, TermInfoInDoc>();
-                        m_term.Add(parserResult[term].DocName, parserResult[term]);
+                        Dictionary<string, int[]> m_term = new Dictionary<string, int[]>();
+                        m_term.Add(parserResult[term].DocName, new int[2] { parserResult[term].Tf, isTitle });
                         Term termToInsert = new Term(m_term);
-                        miniPostingFile.Add(term, termToInsert);
+                        miniPostingFile.Add(term, termToInsert);                                                                
                     }
                  }
             }
@@ -51,7 +52,7 @@ namespace searchEngine
             foreach (string s in sortedTerms)
                 {
                     KeyValuePair<string, Term> toInsert = new KeyValuePair<string, Term>(s, miniPostingFile[s]);
-                    string json = JsonConvert.SerializeObject(toInsert, Formatting.Indented);
+                    string json = JsonConvert.SerializeObject(toInsert);
                     writer.Write(json);
                 }
             writer.Flush();           

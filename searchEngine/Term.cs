@@ -8,14 +8,14 @@ namespace searchEngine
 {
     public class Term
     {
-        private Dictionary<string, TermInfoInDoc> termInDocument;
-        public Term (Dictionary<string, TermInfoInDoc> newTermInDocument)
+        private Dictionary<string, int[]> TID;
+        public Term (Dictionary<string, int[]> newTermInDocument)
         {
-            termInDocument = newTermInDocument;
+            TID = newTermInDocument;
         }
-        public Dictionary<string, TermInfoInDoc> TermInDocument
+        public Dictionary<string, int[]> tid
         {
-            get { return termInDocument; }
+            get { return TID; }
         }
     }
 }

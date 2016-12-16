@@ -524,7 +524,7 @@ namespace searchEngine
             if (value.Contains(startTag) && value.Contains(endTag))
             {
                 int index = value.IndexOf(startTag) + startTag.Length;
-                return value.Substring(index, value.IndexOf(endTag) - index);
+                return value.Substring(index, value.LastIndexOf(endTag) - index);
             }
             else
                 return null;
