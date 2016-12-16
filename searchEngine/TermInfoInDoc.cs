@@ -35,6 +35,11 @@ namespace searchEngine
             get { return docName; }
             set { docName = value; }
         }
+
+        public bool equals(TermInfoInDoc other)
+        {
+            return other.docName == docName && other.isTitle == isTitle && other.tf == tf;
+        }
     }
 
 }
