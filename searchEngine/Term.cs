@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace searchEngine
 {
-    class Term
+    public class Term
     {
         private Dictionary<string, TermInfoInDoc> termInDocument;
-
         public Term (Dictionary<string, TermInfoInDoc> newTermInDocument)
         {
             termInDocument = newTermInDocument;
