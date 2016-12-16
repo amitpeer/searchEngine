@@ -8,8 +8,8 @@ namespace testEngine
 {
     [TestClass]
     public class UnitTest1
-    {
-        Parse parse = new Parse();
+    {   
+        Parse parse = new Parse(new HashSet<string> { { "a" } }, false);
         Dictionary<string, TermInfoInDoc> terms;
         Dictionary<String, TermInfoInDoc> expectedTerms = new Dictionary<string, TermInfoInDoc>();
         string doc;

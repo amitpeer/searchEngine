@@ -99,7 +99,7 @@ namespace searchEngine
                             double part1v, part2v;
                             if (andPart.ToLower() == "and" && Double.TryParse(part1OfString, out part1v) && Double.TryParse(part2OfString, out part2v))
                             {
-                                insertToDic(terms, part1OfString + "-" + part2OfString, isHeader, shouldStem, docName);
+                                insertToDic(terms, part1OfString + "-" + part2OfString, isHeader, docName);
                                 i = i + 3;
                                 continue;
                             }
@@ -109,7 +109,7 @@ namespace searchEngine
                     {
                         if (initialArrayOfDoc[i + 1].TrimEnd(',', '.', '-',';', ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*') == "States")
                         {
-                            insertToDic(terms,"u.s", isHeader, shouldStem, docName);
+                            insertToDic(terms,"u.s", isHeader, docName);
                             i = i + 1;
                             continue;
                         }
@@ -149,7 +149,7 @@ namespace searchEngine
                                         else
                                         {
                                         //insert MM-DD
-                                            insertToDic(terms, currentTerm, isHeader, shouldStem, docName);
+                                            insertToDic(terms, currentTerm, isHeader, docName);
                                             i = i + 1;
                                             continue;
                                         }
@@ -163,7 +163,7 @@ namespace searchEngine
                                             string month = currentTerm;
                                             currentTerm = "";
                                             currentTerm = valueOfYear + "-" + dates[month.ToUpper()];
-                                            insertToDic(terms, currentTerm, isHeader, shouldStem, docName);
+                                            insertToDic(terms, currentTerm, isHeader, docName);
                                             i = i + 1;
                                          continue;
                                         }
@@ -179,7 +179,7 @@ namespace searchEngine
                         continue;
                 }
                 if(currentTerm!="")
-                    insertToDic(terms, currentTerm.Trim(',','.','-').ToLower(), isHeader, shouldStem, docName);
+                    insertToDic(terms, currentTerm.Trim(',','.','-').ToLower(), isHeader, docName);
             }
             return terms;
         }
@@ -208,11 +208,11 @@ namespace searchEngine
                     //should check the rest of doc
                     if (i >= initialArrayOfDoc.Length - 1)
                     {
-                        insertToDic(terms, value * 1000.0 + "M", isHeader, shouldStem, docName);
+                        insertToDic(terms, value * 1000.0 + "M", isHeader, docName);
                         return false;
                     }
                     string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "bn", isHeader, shouldStem, docName);
-                    insertToDic(terms, toInsert, isHeader, shouldStem, docName);
+                    insertToDic(terms, toInsert, isHeader, docName);
                     return foundNext;
                 }
             }
@@ -232,7 +232,7 @@ namespace searchEngine
                          {
                           if (value >= 1000000)
                             {
-                             insertToDic(terms, value/1000000.0+"M", isHeader, shouldStem, docName);
+                             insertToDic(terms, value/1000000.0+"M", isHeader, docName);
                              return false;
                             }
                           else
@@ -240,7 +240,7 @@ namespace searchEngine
                          }                       
                     string next = checkNextTerms(initialArrayOfDoc, terms, ref i, value,ref foundNext, "", isHeader, shouldStem, docName);
                     if (foundNext)
-                        insertToDic(terms, next, isHeader, shouldStem, docName);
+                        insertToDic(terms, next, isHeader, docName);
                     return foundNext;
                 }
             //term that contains digits...
@@ -253,11 +253,11 @@ namespace searchEngine
                 {
                     if (i >= initialArrayOfDoc.Length - 1)
                     {
-                        insertToDic(terms, value + " Dollars", isHeader, shouldStem, docName);
+                        insertToDic(terms, value + " Dollars", isHeader, docName);
                         return true;
                     }                      
                     string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, flag, isHeader, shouldStem, docName);
-                    insertToDic(terms, toInsert, isHeader, shouldStem, docName);
+                    insertToDic(terms, toInsert, isHeader, docName);
                     return foundNext;
                 }
                 return false;
@@ -269,7 +269,7 @@ namespace searchEngine
                 {
                     if (i >= initialArrayOfDoc.Length - 1)
                     {
-                        insertToDic(terms, currentTerm, isHeader, shouldStem, docName);
+                        insertToDic(terms, currentTerm, isHeader, docName);
                         return true;
                     }
                 }
@@ -282,11 +282,11 @@ namespace searchEngine
                         {
                             if (i >= initialArrayOfDoc.Length - 1)
                                  {
-                                 insertToDic(terms, value + "M", isHeader, shouldStem, docName);
+                                 insertToDic(terms, value + "M", isHeader, docName);
                                  return true;
                                  }
                         string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "m", isHeader, shouldStem, docName);
-                        insertToDic(terms, toInsert, isHeader, shouldStem, docName);
+                        insertToDic(terms, toInsert, isHeader, docName);
                         return foundNext;
                         }
                     }         
@@ -471,7 +471,7 @@ namespace searchEngine
                             string yearPrefix;
                             yearPrefix = (valueOfYear >= 0 && valueOfYear <= 20) ? "20" :  "19";
                             string termToAdd = yearPrefix + "" + valueOfYear + "-" + dates[initialArrayOfDoc[i + 1].ToUpper()] + "-" + day;
-                            insertToDic(terms, termToAdd, isHeader, shouldStem, docName);
+                            insertToDic(terms, termToAdd, isHeader, docName);
                             i = i + 2;
                             return true;                    
                         }
@@ -481,7 +481,7 @@ namespace searchEngine
                             if (valueOfYear>=1000&&valueOfYear<=9999)
                             {
                                 string termToAdd = valueOfYear + "-" + dates[initialArrayOfDoc[i + 1].ToUpper()] + "-" + day;
-                                insertToDic(terms, termToAdd, isHeader, shouldStem, docName);
+                                insertToDic(terms, termToAdd, isHeader, docName);
                                 i = i + 2;
                                 return true;
                             }
@@ -491,7 +491,7 @@ namespace searchEngine
                          //case of DD month
                      {
                         string termToAdd =dates[initialArrayOfDoc[i + 1].ToUpper()] + "-" + day;
-                        insertToDic(terms, termToAdd, isHeader, shouldStem, docName);
+                        insertToDic(terms, termToAdd, isHeader, docName);
                         i = i + 1;
                          return true;
                       }
@@ -500,9 +500,9 @@ namespace searchEngine
             return false;
         }
 
-        private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, bool shouldStem, string docName)
+        private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, string docName)
         {
-            if (!stopWords.Contains(term))
+            if (!stopWords.Contains(term) && term!="")
             {
                 if (terms.ContainsKey(term))
                 {
