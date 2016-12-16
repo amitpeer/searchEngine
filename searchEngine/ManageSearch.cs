@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace searchEngine
     {
         public static void main()
         {
+            Stopwatch m_stopwatch = new Stopwatch();
+            m_stopwatch.Start();
             string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\test1";
             string pathToSave = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\results";
             bool shouldStem = false;
@@ -31,9 +34,6 @@ namespace searchEngine
                 indexer.indexBatch(documentsAfterParse);   
                 j = j + 5;
             }
-
-
-
         }
     }
 }

@@ -16,7 +16,6 @@ namespace searchEngine
         public Dictionary<string, TermInfoInDoc> TermInDocument
         {
             get { return termInDocument; }
-            set { termInDocument = value; }
         }
     }
 }

@@ -20,12 +20,12 @@ namespace searchEngine
         {
             m_termsDictionary = new Dictionary<string, int[]>();
             path = pathToSave;
-
         }
         public void indexBatch(List<Dictionary<string, TermInfoInDoc>> documentsAfterParse)
         {
             Dictionary<string, Term> miniPostingFile = new Dictionary<string, Term>();
             counterFiles++;
+            int counterPosting = 0;
             foreach (Dictionary<string, TermInfoInDoc> parserResult in documentsAfterParse)
             {
                 List<string> terms = parserResult.Keys.ToList();
@@ -34,6 +34,7 @@ namespace searchEngine
                     if (miniPostingFile.ContainsKey(term))
                     {
                         miniPostingFile[term].TermInDocument.Add(parserResult[term].DocName, parserResult[term]);
+                        counterPosting++;
                     }
                     else
                     {
@@ -46,16 +47,14 @@ namespace searchEngine
             }
                 List<string> sortedTerms = miniPostingFile.Keys.ToList<string>();
                 sortedTerms.Sort();
-                foreach (string s in sortedTerms)
+            BinaryWriter writer = new BinaryWriter(File.Open(path + "\\miniPosting" + counterFiles + ".bin", FileMode.Append));
+            foreach (string s in sortedTerms)
                 {
                     KeyValuePair<string, Term> toInsert = new KeyValuePair<string, Term>(s, miniPostingFile[s]);
                     string json = JsonConvert.SerializeObject(toInsert, Formatting.Indented);
-                    if (File.Exists(path + "\\miniPosting" + counterFiles + ".json")){
-                        File.AppendAllText(path + "\\miniPosting" + counterFiles + ".json", json);
-                        }
-                    else
-                        System.IO.File.WriteAllText(path + "\\miniPosting" + counterFiles + ".json", json);
+                    writer.Write(json);
                 }
+            writer.Flush();           
             }
         }
     }
