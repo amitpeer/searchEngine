@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Document.cs" />
     <Compile Include="ReadFile.cs" />
+    <Compile Include="Term.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

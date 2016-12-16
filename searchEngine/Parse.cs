@@ -22,21 +22,39 @@ namespace searchEngine
 
         public Dictionary<string, int> parseDocument(string doc)
         {
-            throw new NotImplementedException();
+            Dictionary<string, int> terms = new Dictionary<string, int>();
+            string title;
+            Document document = parseHeader(ref doc, out title); // after parseHeader, doc will have only what's between <TEXT> </TEXT>
+            // if the document has a title, send it first to be parsed and inserted to the dictionary
+            if (title != null)
+            {
+                parseContent(terms, title, true);
+            }
+            parseContent(terms, doc, false);
+            return terms;
         }
 
-        private Document parseHeader(ref string doc)
+        private Document parseHeader(ref string doc, out string title)
         {
-            throw new NotImplementedException();
+            Document document = new Document();
+            string docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
+            title = getStrBetweenTags(doc, "<TI>", "<TI>");
+            string date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
+            // if there is no <TEXT> tag, it's a test and we leave doc the same:
+            doc = getStrBetweenTags(doc, "<TEXT>", "</TEXT>") != null ? getStrBetweenTags(doc, "<TEXT>", "</TEXT>") : doc;
+            string language = getStrBetweenTags(doc, "<F P=105>", "</F>");
+            document.Date = date;
+            document.DocName = docName;
+            document.Language = language;
+            return document;
         }
 
-        public Dictionary<string,int> parseContent(string doc)
+        public Dictionary<string,int> parseContent(Dictionary <string, int> terms, string doc, bool isHeader)
         {
            bool shouldContinue = false;
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*' };
            string[] delimitersString = { " ", "\n", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
-           Dictionary<string, int> terms = new Dictionary<string, int>();
            for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
                 string currentTerm = initialArrayOfDoc[i];
@@ -458,5 +476,15 @@ namespace searchEngine
             else
                 terms.Add(term, 1);
         }
+        private string getStrBetweenTags(string value, string startTag, string endTag)
+        {
+            if (value.Contains(startTag) && value.Contains(endTag))
+            {
+                int index = value.IndexOf(startTag) + startTag.Length;
+                return value.Substring(index, value.IndexOf(endTag) - index);
+            }
+            else
+                return null;
         }
+    }
     }
