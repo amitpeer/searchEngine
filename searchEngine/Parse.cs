@@ -9,6 +9,7 @@ namespace searchEngine
     public class Parse
     {
         Dictionary<string, string> dates;
+        Dictionary<string, Document> documents;
 
         public Parse()
         {
@@ -20,7 +21,7 @@ namespace searchEngine
             };
         }
 
-        public Dictionary<string, int> parseDocument(string doc)
+        public Dictionary<string, int> parseDocument(string doc, bool shouldStem)
         {
             Dictionary<string, int> terms = new Dictionary<string, int>();
             string title;
@@ -31,18 +32,26 @@ namespace searchEngine
                 parseContent(terms, title, true);
             }
             parseContent(terms, doc, false);
+            if (!documents.ContainsKey(document.DocName))
+                documents.Add(document.DocName, document);
             return terms;
         }
 
         private Document parseHeader(ref string doc, out string title)
         {
             Document document = new Document();
-            string docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
+            string docName;
+            string date;
+            string language;
+            docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
+            date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
+            language = getStrBetweenTags(doc, "<F P=105>", "</F>");
             title = getStrBetweenTags(doc, "<TI>", "<TI>");
-            string date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
             // if there is no <TEXT> tag, it's a test and we leave doc the same:
             doc = getStrBetweenTags(doc, "<TEXT>", "</TEXT>") != null ? getStrBetweenTags(doc, "<TEXT>", "</TEXT>") : doc;
-            string language = getStrBetweenTags(doc, "<F P=105>", "</F>");
+            // if there is a language, we need to cut it from doc
+            doc = language != null ? doc.Substring(doc.IndexOf("</F>")) : doc;
+            //Insert values to Document
             document.Date = date;
             document.DocName = docName;
             document.Language = language;
@@ -472,9 +481,13 @@ namespace searchEngine
         private void insertToDic(Dictionary<string,int> terms ,string term)
         {
             if (terms.ContainsKey(term))
+            {           
                 terms[term]++;
+            }
             else
+            { 
                 terms.Add(term, 1);
+            }
         }
         private string getStrBetweenTags(string value, string startTag, string endTag)
         {
