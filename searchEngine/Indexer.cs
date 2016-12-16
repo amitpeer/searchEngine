@@ -25,6 +25,7 @@ namespace searchEngine
         public void indexBatch(List<Dictionary<string, TermInfoInDoc>> documentsAfterParse)
         {
             Dictionary<string, Term> miniPostingFile = new Dictionary<string, Term>();
+            counterFiles++;
             foreach (Dictionary<string, TermInfoInDoc> parserResult in documentsAfterParse)
             {
                 List<string> terms = parserResult.Keys.ToList();
@@ -57,13 +58,12 @@ namespace searchEngine
                 foreach (string s in sortedTerms)
                 {
                     KeyValuePair<string, Term> toInsert = new KeyValuePair<string, Term>(s, miniPostingFile[s]);
-
                     string json = JsonConvert.SerializeObject(toInsert, Formatting.Indented);
-                    if (File.Exists(path + "miniPosting" + counterFiles + ".json")){
-                        File.AppendAllText(path + "miniPosting" + counterFiles + ".json", json);
+                    if (File.Exists(path + "\\miniPosting" + counterFiles + ".json")){
+                        File.AppendAllText(path + "\\miniPosting" + counterFiles + ".json", json);
                         }
                     else
-                        System.IO.File.WriteAllText(path + "miniPosting" + counterFiles + ".json", json);
+                        System.IO.File.WriteAllText(path + "\\miniPosting" + counterFiles + ".json", json);
                 }
             }
         }
