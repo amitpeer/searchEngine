@@ -10,15 +10,19 @@ namespace searchEngine
     {
         Dictionary<string, string> dates;
         Dictionary<string, Document> documents = new Dictionary<string, Document>();
+        HashSet<string> stopWords;
+        private bool shouldStem;
 
-        public Parse()
+        public Parse(HashSet<string> _stopWords, bool _shouldStem)
         {
+            stopWords = _stopWords;
+            shouldStem = _shouldStem;
             dates = new Dictionary<string, string>()
             {
                 {"JANUARY","01" },{"JAN","01" },{"FEBUARY","02" },{"FEB","02" },{"MARCH","03" },{"APRIL","04" },{"APR","04" },{"MAY","05" },{"JUNE","06" },{"JUN","06" },
                 {"JULY","07" },{"JUL","07" },{"AUGUST","08" },{"AUG","08" },{"SEPTEMBER","09" },{"SEP","09" },
                 {"OCTOBER","10" },{"OCT","10" },{"NOVEMBER","11" },{"NOV","11" },{"DECEMBER","12" },{"DEC","12" },
-            };
+            };       
         }
 
         public Dictionary<string, Document> getDocuments()
@@ -38,7 +42,11 @@ namespace searchEngine
             }
             parseContent(terms, doc, false, shouldStem, document.DocName);
             if (document.DocName != null && !documents.ContainsKey(document.DocName))
+            {
+                document.Max_tf = findMaxTf(terms);
+                document.NumOfUniqueTerms = findNumOfUniqueTerms(terms);               
                 documents.Add(document.DocName, document);
+            }
             return terms;
         }
 
@@ -284,6 +292,7 @@ namespace searchEngine
                     }         
             return false;
         }
+
         private string checkNextTerms(string[] initialArrayOfDoc, Dictionary<string, TermInfoInDoc> terms, ref int currentIndex, double number, ref bool foundNext, string flag, bool isHeader, bool shouldStem, string docName)
         {
             int index = currentIndex + 1;
@@ -446,6 +455,7 @@ namespace searchEngine
                 }
                 return ans;
         }
+
         private bool checkIfNextIsDate(Dictionary<string, TermInfoInDoc> terms, string day, string[] initialArrayOfDoc, ref int i, bool isHeader, bool shouldStem, string docName)
         {
             if (dates.ContainsKey(initialArrayOfDoc[i + 1].ToUpper())){
@@ -489,17 +499,22 @@ namespace searchEngine
             }
             return false;
         }
+
         private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, bool shouldStem, string docName)
         {
-            if (terms.ContainsKey(term))
+            if (!stopWords.Contains(term))
             {
-                terms[term].Tf++;
-            }
-            else
-            {
-                terms.Add(term, new TermInfoInDoc(1, docName != null? docName.Trim() : null, isHeader));
+                if (terms.ContainsKey(term))
+                {
+                    terms[term].Tf++;
+                }
+                else
+                {
+                    terms.Add(term, new TermInfoInDoc(1, docName != null ? docName.Trim() : null, isHeader));
+                }
             }
         }
+
         private string getStrBetweenTags(string value, string startTag, string endTag)
         {
             if (value.Contains(startTag) && value.Contains(endTag))
@@ -509,6 +524,16 @@ namespace searchEngine
             }
             else
                 return null;
+        }
+
+        private int findNumOfUniqueTerms(Dictionary<string, TermInfoInDoc> terms)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int findMaxTf(Dictionary<string, TermInfoInDoc> terms)
+        {
+            throw new NotImplementedException();
         }
     }
     }
