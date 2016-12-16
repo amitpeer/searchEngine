@@ -9,18 +9,18 @@ namespace searchEngine
 {
     class ManageSearch
     {
-        public void main()
+        public static void main()
         {
-            string path = "C:\\Users\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\test1";
-            string pathToSave = "C:\\Users\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\results";
+            string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\test1";
+            string pathToSave = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\results";
             bool shouldStem = false;
             ReadFile readFile = new ReadFile(path);
-            Parse parser = new Parse();
-            Indexer indexer = new Indexer(pathToSave);
             readFile.ExtractStopWordsFile();
+            Parse parser = new Parse(readFile.getStopWords(),shouldStem);
+            Indexer indexer = new Indexer(pathToSave);
             int numOfFiles=Directory.GetFiles(path).Length-1;
-            int j = 5;
-            for (int i = 1; i < numOfFiles-1&&j<numOfFiles-1; i=i+5)
+            int j = 6;
+            for (int i = 1; i <= numOfFiles; i=i+5)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
                 List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>() ;

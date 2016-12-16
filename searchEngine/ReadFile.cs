@@ -28,10 +28,14 @@ namespace searchEngine
             List<string> docList = new List<string>();
             for (int i=startIndex; i<endIndex; i++)
             {
-                if (!Path.GetFileName(filePaths[i - 1]).Equals(stopWordsFileName))
+                if (!(i - 1 >= filePaths.Length))
                 {
-                    docList.AddRange(getFile(i));
-                }
+                         if (!Path.GetFileName(filePaths[i - 1]).Equals(stopWordsFileName))
+                            {
+                            docList.AddRange(getFile(i));
+                            }
+            }
+
             }
             if (docList.Count == 0)
             {
@@ -74,11 +78,11 @@ namespace searchEngine
                 {
                     // Read the stream to a string, and write the string
                     string file = sr.ReadToEnd();
-                    string[] delimeters = { "<DOC>", "</DOC>"};
+                    string[] delimeters = { "<DOC>"};
                     string[] splittedFile = file.Split(delimeters , StringSplitOptions.RemoveEmptyEntries);
                     foreach(string s in splittedFile)
                     {
-                         docList.Add(s.Trim());
+                        docList.Add(s.Trim());
                     }
                 }
             }

@@ -31,15 +31,6 @@ namespace searchEngine
                 List<string> terms = parserResult.Keys.ToList();
                 foreach (string term in terms)
                 {
-                    /*
-                    if (m_termsDictionary.ContainsKey(term))
-                    {
-                        m_termsDictionary[term][0] = (m_termsDictionary[term])[0]++;
-                    }
-                    else
-                    {
-                        m_termsDictionary.Add(term,new int[] {1,0});
-                    }
                     if (miniPostingFile.ContainsKey(term))
                     {
                         miniPostingFile[term].TermInDocument.Add(parserResult[term].DocName, parserResult[term]);
@@ -51,8 +42,8 @@ namespace searchEngine
                         Term termToInsert = new Term(m_term);
                         miniPostingFile.Add(term, termToInsert);
                     }
-                 }*/
-                }
+                 }
+            }
                 List<string> sortedTerms = miniPostingFile.Keys.ToList<string>();
                 sortedTerms.Sort();
                 foreach (string s in sortedTerms)
@@ -68,4 +59,3 @@ namespace searchEngine
             }
         }
     }
-}

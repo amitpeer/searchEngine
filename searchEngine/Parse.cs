@@ -43,8 +43,8 @@ namespace searchEngine
             parseContent(terms, doc, false, shouldStem, document.DocName);
             if (document.DocName != null && !documents.ContainsKey(document.DocName))
             {
-                document.Max_tf = findMaxTf(terms);
-                document.NumOfUniqueTerms = findNumOfUniqueTerms(terms);               
+                //document.Max_tf = findMaxTf(terms);
+                //document.NumOfUniqueTerms = findNumOfUniqueTerms(terms);               
                 documents.Add(document.DocName, document);
             }
             return terms;
@@ -458,6 +458,10 @@ namespace searchEngine
 
         private bool checkIfNextIsDate(Dictionary<string, TermInfoInDoc> terms, string day, string[] initialArrayOfDoc, ref int i, bool isHeader, bool shouldStem, string docName)
         {
+            if (i+1 >= initialArrayOfDoc.Length)
+            {
+                return false;
+            }
             if (dates.ContainsKey(initialArrayOfDoc[i + 1].ToUpper())){
                 if(i+1 < initialArrayOfDoc.Length - 1)
                 {
