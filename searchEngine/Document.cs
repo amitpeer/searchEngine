@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace searchEngine
 {
-    class Document
+    public class Document
     {
         private string docName;
         private int max_tf;
