@@ -12,7 +12,7 @@ namespace searchEngine
         Dictionary<string, Document> documents = new Dictionary<string, Document>();
         HashSet<string> stopWords;
         private bool shouldStem;
-
+        int counterDocs;
         public Parse(HashSet<string> _stopWords, bool _shouldStem)
         {
             stopWords = _stopWords;
@@ -32,6 +32,7 @@ namespace searchEngine
 
         public Dictionary<string, TermInfoInDoc> parseDocument(string doc, bool shouldStem)
         {
+            counterDocs++;
             Dictionary<string, TermInfoInDoc> terms = new Dictionary<string, TermInfoInDoc>();
             string title;
             Document document = parseHeader(ref doc, out title); // after parseHeader, doc will have only what's between <TEXT> </TEXT>

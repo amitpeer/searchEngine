@@ -24,9 +24,9 @@ namespace searchEngine
             Parse parser = new Parse(readFile.getStopWords(),shouldStem);
             Indexer indexer = new Indexer(pathToSave);
             int numOfFiles=Directory.GetFiles(path).Length-1;
-            int j = 6;
+            int j = 11;
             //create miniPostingFile
-            for (int i = 1; i <= numOfFiles; i=i+5)
+            for (int i = 1; i <= numOfFiles; i=i+10)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
                 List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>() ;
@@ -35,7 +35,7 @@ namespace searchEngine
                     documentsAfterParse.Add(parser.parseDocument(s, shouldStem));
                 }
                 indexer.indexBatch(documentsAfterParse);   
-                j = j + 5;
+                j = j +10;
             }
             indexer.MergeFiles();
 
