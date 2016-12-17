@@ -256,7 +256,7 @@ namespace testEngine
         [TestMethod]
         public void testNewRule6()
         {
-            StreamReader streamReader = new StreamReader("C:\\Users\\amitp\\Documents\\corpusTest\\FB396001");
+            StreamReader streamReader = new StreamReader("C:\\Users\\amitp\\Documents\\corpusTest\\FB396004");
             doc = streamReader.ReadToEnd();
             terms = parse.parseDocument(doc, false);
             streamReader.Close();

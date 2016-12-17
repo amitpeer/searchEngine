@@ -58,7 +58,7 @@ namespace searchEngine
             string language;
             docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
             date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
-            language = getStrBetweenTags(doc, "<F P=105>", "</F>");
+            language = getLanguage(doc, "<F P=105>", "</F>");
             title = getStrBetweenTags(doc, "<TI>", "</TI>");
             // if there is no <TEXT> tag, it's a test and we leave doc the same:
             doc = getStrBetweenTags(doc, "<TEXT>", "</TEXT>") != null ? getStrBetweenTags(doc, "<TEXT>", "</TEXT>") : doc;
@@ -81,7 +81,7 @@ namespace searchEngine
         {
            bool shouldContinue = false;
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
-           string[] delimitersString = { " ", "\n", "\r", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
+           string[] delimitersString = { " ", "\n", "\r", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---" };
            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
            for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
@@ -506,6 +506,8 @@ namespace searchEngine
 
         private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, string docName)
         {
+            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == null)
+                return;
             if (!stopWords.Contains(term) && term!="")
             {
                 if (terms.ContainsKey(term))
@@ -524,7 +526,19 @@ namespace searchEngine
             if (value.Contains(startTag) && value.Contains(endTag))
             {
                 int index = value.IndexOf(startTag) + startTag.Length;
-                return value.Substring(index, value.LastIndexOf(endTag) - index);
+                return value.Substring(index, value.IndexOf(endTag) - index);
+            }
+            else
+                return null;
+        }
+
+        private string getLanguage(string value, string startTag, string endTag)
+        {
+            if (value.Contains(startTag) && value.Contains(endTag))
+            {
+                int index = value.IndexOf(startTag) + startTag.Length;
+                string valueFromStartTag = value.Substring(index);
+                return valueFromStartTag.Substring(0, valueFromStartTag.IndexOf(endTag));
             }
             else
                 return null;
