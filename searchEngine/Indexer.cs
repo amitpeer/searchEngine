@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,10 +62,33 @@ namespace searchEngine
 
         public void MergeFiles()
         {
+            //    Comparer<Term> termComparer = new termComparer() ;
             int numOfFiles = Directory.GetFiles(m_pathToSave).Length;
+            SortedDictionary<string,Term> termsInComparisonForMerge = new SortedDictionary<string, Term>();
+            Dictionary<string, BinaryReader> BinaryReaders = new Dictionary<string, BinaryReader>();
 
+            BinaryReader[] files = new BinaryReader[numOfFiles];
+            int i = 0;
+            foreach(string file in Directory.GetFiles(m_pathToSave))
+            {
+                files[i]=(new BinaryReader(File.Open(file, FileMode.Open)));
+                i++;
+            }
+            foreach(BinaryReader br in files)
+            {
+                string line = br.ReadString();
+                Term currentTerm = JsonConvert.DeserializeObject<Term>(line);
+                if (termsInComparisonForMerge.ContainsKey(currentTerm.M_termName))
+                {
+                    termsInComparisonForMerge[currentTerm.M_termName].M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
+                }
+                else
+                {
+                    termsInComparisonForMerge.Add(currentTerm.M_termName, currentTerm);
+                }
+           }
 
-
+            
 
 
 

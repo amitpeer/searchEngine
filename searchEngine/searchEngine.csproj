@@ -64,6 +64,7 @@
     <Compile Include="ManageSearch.cs" />
     <Compile Include="ReadFile.cs" />
     <Compile Include="Term.cs" />
+    <Compile Include="termComparer.cs" />
     <Compile Include="TermInfoInDoc.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
