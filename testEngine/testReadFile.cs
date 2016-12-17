@@ -81,7 +81,7 @@ namespace testEngine
         [TestMethod]
         public void dontReadStopWords()
         {
-            docs = readFile.getFile(8);
+            docs = readFile.getFile(9);
             Assert.IsNull(docs);
         }
 
@@ -95,13 +95,15 @@ namespace testEngine
         [TestMethod]
         public void dontReadStopWords3()
         {
-            docs = readFile.getFiles(new List<int> { 8 });
+            docs = readFile.getFiles(new List<int> { 9 });
             Assert.IsNull(docs);
         }
 
         [TestMethod]
         public void readStopWords()
         {
+            string abc = "abc";
+            string bac = "bac";
             readFile.ExtractStopWordsFile();
             HashSet<string> stopWords = readFile.getStopWords();       
         }
