@@ -41,21 +41,26 @@ namespace searchEngine
                     {
                         Dictionary<string, int[]> m_term = new Dictionary<string, int[]>();
                         m_term.Add(parserResult[term].DocName, new int[2] { parserResult[term].Tf, isTitle });
-                        Term termToInsert = new Term(m_term);
+                        Term termToInsert = new Term(term,m_term);
                         miniPostingFile.Add(term, termToInsert);                                                                
                     }
                  }
             }
                 List<string> sortedTerms = miniPostingFile.Keys.ToList<string>();
                 sortedTerms.Sort();
+            
             BinaryWriter writer = new BinaryWriter(File.Open(path + "\\miniPosting" + counterFiles + ".bin", FileMode.Append));
             foreach (string s in sortedTerms)
                 {
-                    KeyValuePair<string, Term> toInsert = new KeyValuePair<string, Term>(s, miniPostingFile[s]);
-                    string json = JsonConvert.SerializeObject(toInsert);
-                    writer.Write(json);
+                Term toInsert = new Term(s, miniPostingFile[s].tid);
+                string json = JsonConvert.SerializeObject(toInsert);
+                //string json = JsonConvert.SerializeObject(s);
+                writer.Write(json);
                 }
             writer.Flush();           
+
+
+
             }
         }
     }
