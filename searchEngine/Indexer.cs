@@ -11,7 +11,7 @@ namespace searchEngine
     public class Indexer
     {
         Dictionary<string, int[]> m_termsDictionary;
-        private string path;
+        private string  m_pathToSave;
         private int counterFiles;
 
         //get a list of parser result for a few document
@@ -19,7 +19,7 @@ namespace searchEngine
         public Indexer(string pathToSave)
         {
             m_termsDictionary = new Dictionary<string, int[]>();
-            path = pathToSave;
+            m_pathToSave = pathToSave;
         }
         public void indexBatch(List<Dictionary<string, TermInfoInDoc>> documentsAfterParse)
         {
@@ -34,7 +34,7 @@ namespace searchEngine
                     int isTitle = parserResult[term].IsTitle == true ? 1 : 0;
                     if (miniPostingFile.ContainsKey(term))
                     {
-                        miniPostingFile[term].tid.Add(parserResult[term].DocName, new int[2] { parserResult[term].Tf, isTitle });
+                        miniPostingFile[term].M_tid.Add(parserResult[term].DocName, new int[2] { parserResult[term].Tf, isTitle });
                         counterPosting++;
                     }
                     else
@@ -47,20 +47,33 @@ namespace searchEngine
                  }
             }
                 List<string> sortedTerms = miniPostingFile.Keys.ToList<string>();
-                sortedTerms.Sort();
-            
-            BinaryWriter writer = new BinaryWriter(File.Open(path + "\\miniPosting" + counterFiles + ".bin", FileMode.Append));
+                sortedTerms.Sort();           
+            BinaryWriter writer = new BinaryWriter(File.Open( m_pathToSave + "\\miniPosting" + counterFiles + ".bin", FileMode.Append));
             foreach (string s in sortedTerms)
                 {
-                Term toInsert = new Term(s, miniPostingFile[s].tid);
+                Term toInsert = new Term(s, miniPostingFile[s].M_tid);
                 string json = JsonConvert.SerializeObject(toInsert);
-                //string json = JsonConvert.SerializeObject(s);
                 writer.Write(json);
+                //writer.Write("\n");
                 }
-            writer.Flush();           
-
-
-
-            }
+            writer.Flush();                    
         }
+
+        public void MergeFiles()
+        {
+            int numOfFiles = Directory.GetFiles(m_pathToSave).Length;
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+    }
     }
