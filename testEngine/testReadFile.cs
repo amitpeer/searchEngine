@@ -27,10 +27,10 @@ namespace testEngine
         public void test2DocsOneLineEach()
         {
             docs = readFile.getFile(2);
-            addToExpected("aaa;bbb");
+            addToExpected("<DOCNO> 1 </DOCNO>\r\n<TEXT>\r\naaa\r\nbbb\r\n</TEXT>\r\n</DOC>");
             Assert.AreEqual(true, checkEquals());
         }
-
+        /*
         [TestMethod]
         public void testOneDocsOneLine()
         {
@@ -70,7 +70,8 @@ namespace testEngine
             addToExpected("aaa;bbb;aaa;aaa\r\nbbb");
             Assert.AreEqual(true, checkEquals());
         }
-
+  
+    */
         [TestMethod]
         public void testBig()
         {
@@ -80,7 +81,7 @@ namespace testEngine
         [TestMethod]
         public void dontReadStopWords()
         {
-            docs = readFile.getFile(6);
+            docs = readFile.getFile(8);
             Assert.IsNull(docs);
         }
 
@@ -94,7 +95,7 @@ namespace testEngine
         [TestMethod]
         public void dontReadStopWords3()
         {
-            docs = readFile.getFiles(new List<int> { 6 });
+            docs = readFile.getFiles(new List<int> { 8 });
             Assert.IsNull(docs);
         }
 
@@ -117,6 +118,17 @@ namespace testEngine
             {
                 expectedDocs.Add(s);
             }
+        }
+
+        private string getStrBetweenTags(string value, string startTag, string endTag)
+        {
+            if (value.Contains(startTag) && value.Contains(endTag))
+            {
+                int index = value.IndexOf(startTag) + startTag.Length;
+                return value.Substring(index, value.LastIndexOf(endTag) - index);
+            }
+            else
+                return null;
         }
     }
 }
