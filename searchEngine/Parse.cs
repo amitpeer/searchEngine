@@ -43,8 +43,8 @@ namespace searchEngine
             parseContent(terms, doc, false, shouldStem, document.DocName);
             if (document.DocName != null && !documents.ContainsKey(document.DocName))
             {
-                //document.Max_tf = findMaxTf(terms);
-                //document.NumOfUniqueTerms = findNumOfUniqueTerms(terms);               
+                document.Max_tf = findMaxTf(terms);
+                document.NumOfUniqueTerms = terms.Count;          
                 documents.Add(document.DocName, document);
             }
             return terms;
@@ -80,8 +80,8 @@ namespace searchEngine
         public Dictionary<string,TermInfoInDoc> parseContent(Dictionary <string, TermInfoInDoc> terms, string doc, bool isHeader, bool shouldStem, string docName)
         {
            bool shouldContinue = false;
-           char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*' };
-           string[] delimitersString = { " ", "\n", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
+           char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
+           string[] delimitersString = { " ", "\n", "\r", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---"};
            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
            for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
@@ -530,14 +530,15 @@ namespace searchEngine
                 return null;
         }
 
-        private int findNumOfUniqueTerms(Dictionary<string, TermInfoInDoc> terms)
-        {
-            throw new NotImplementedException();
-        }
-
         private int findMaxTf(Dictionary<string, TermInfoInDoc> terms)
         {
-            throw new NotImplementedException();
+            int max_tf = 0;
+            foreach(KeyValuePair<string, TermInfoInDoc> entry in terms)
+            {
+                if (entry.Value.Tf > max_tf)
+                    max_tf = entry.Value.Tf;
+            }
+            return max_tf;    
         }
     }
-    }
+}
