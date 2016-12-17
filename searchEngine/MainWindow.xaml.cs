@@ -23,7 +23,8 @@ namespace searchEngine
         public MainWindow()
         {
             InitializeComponent();
-            ManageSearch.main();
+            //ManageSearch.main();
+            ManageSearch.testReader();
         }
     }
 }

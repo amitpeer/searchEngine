@@ -10,16 +10,32 @@ namespace searchEngine
     [Serializable]
     public class Term
     {
-        string m_termName;
-        private Dictionary<string, int[]> TID;
+        private string m_termName;
+        Dictionary<string, int[]> m_tid;
         public Term (string termName, Dictionary<string, int[]> newTermInDocument)
         {
             m_termName = termName;
-            TID = newTermInDocument;
+            m_tid = newTermInDocument;
         }
-        public Dictionary<string, int[]> tid
+        public Dictionary<string, int[]> M_tid
         {
-            get { return TID; }
+            get { return m_tid; }
+            set { m_tid = value; }
+        }
+        public string M_termName
+        {
+            get { return m_termName; }
+            set { m_termName = value; }
+        }
+        public override string ToString()
+        {
+            string ans;
+            ans = this.m_termName + "|";
+            foreach(KeyValuePair<string,int[]> var in this.m_tid)
+            {
+                ans = ans + var.Key + ":" + var.Value[0] + "," + var.Value[1] + ";";
+            }
+            return ans;
         }
     }
 }

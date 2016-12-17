@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +25,7 @@ namespace searchEngine
             Indexer indexer = new Indexer(pathToSave);
             int numOfFiles=Directory.GetFiles(path).Length-1;
             int j = 6;
+            //create miniPostingFile
             for (int i = 1; i <= numOfFiles; i=i+5)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
@@ -34,6 +37,36 @@ namespace searchEngine
                 indexer.indexBatch(documentsAfterParse);   
                 j = j + 5;
             }
+            indexer.MergeFiles();
+
+
+        }
+
+        public static void testReader()
+        {
+            string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\testReader\\miniPosting1.bin";
+            int counter = 0;
+            List<Term> ls = new List<Term>();
+            using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
+
+            {
+                while (5< 10)
+                {
+
+                    string line = reader.ReadString();
+                    Term ans = JsonConvert.DeserializeObject<Term>(line);
+                    ls.Add(ans);
+                    counter++;
+                }
+            }
+
+            /*
+            {
+               
+                //Console.WriteLine(ans.ToString());
+               // Console.ReadLine();
+
+            }*/
         }
     }
 }
