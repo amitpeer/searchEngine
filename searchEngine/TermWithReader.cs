@@ -10,7 +10,12 @@ namespace searchEngine
     {
         private Term term;
         private String br;
+        public TermWithReader(Term t, String b)
+        {
+            term = t;
+            br = b;
 
+        }
         public Term Term
         {
             get { return term; }
