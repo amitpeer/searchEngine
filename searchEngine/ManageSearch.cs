@@ -16,8 +16,8 @@ namespace searchEngine
         {
             Stopwatch m_stopwatch = new Stopwatch();
             m_stopwatch.Start();
-            string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\test1";
-            string pathToSave = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\results";
+            string path = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\corpus";
+            string pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
             bool shouldStem = false;
             ReadFile readFile = new ReadFile(path);
             readFile.ExtractStopWordsFile();

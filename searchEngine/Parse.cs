@@ -78,7 +78,7 @@ namespace searchEngine
             return document;
         }
 
-        public Dictionary<string,TermInfoInDoc> parseContent(Dictionary <string, TermInfoInDoc> terms, string doc, bool isHeader, bool shouldStem, string docName)
+        private Dictionary<string,TermInfoInDoc> parseContent(Dictionary <string, TermInfoInDoc> terms, string doc, bool isHeader, bool shouldStem, string docName)
         {
            bool shouldContinue = false;
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
@@ -507,8 +507,14 @@ namespace searchEngine
 
         private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, string docName)
         {
-            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == null)
+            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == null )
                 return;
+            if (term.All(c => c == '?' || c == '!'))
+                return;
+            if (term.Contains('?'))
+                term = term.Replace("?", "").Trim(); ;
+            if (term.Contains('!'))
+                term = term.Replace("!", "").Trim();
             if (!stopWords.Contains(term) && term!="")
             {
                 if (terms.ContainsKey(term))

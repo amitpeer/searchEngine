@@ -76,7 +76,7 @@ namespace searchEngine
             }
             //insert the first value for each reader
             foreach(KeyValuePair<string,BinaryReader> br in BinaryReaders)
-            {
+                {
                 BinaryReader b = br.Value;
                 string pathOfFileRead = br.Key;
                 tryagain:
