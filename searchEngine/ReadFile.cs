@@ -17,7 +17,7 @@ namespace searchEngine
         public ReadFile(string directoryPath)
         {
             path = directoryPath;
-            filePaths = Directory.GetFiles(path);
+            //filePaths = Directory.GetFiles(path);
         }
         // Return a list of string, each item in the list is a document.
         // takes the documents from file number startIndex (included),

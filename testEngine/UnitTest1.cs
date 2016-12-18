@@ -278,6 +278,15 @@ namespace testEngine
             Assert.AreEqual("Mandarin", parse.getDocuments()[terms["text"].DocName].Language);
         }
 
+        [TestMethod]
+        public void testQuestionMarks()
+        {
+            doc = "<TEXT> !!!, ???, hello?, hello!, ?bubu?, ?!?!???!!, a???!!?! </TEXT>";
+            terms = parse.parseDocument(doc, false);
+            insertToExpected("hello;bubu");
+            Assert.AreEqual(true, checkEqulas());
+        }
+
         private void insertToExpected(string doc)
         {
             insertToExpected(doc, false, null);
@@ -301,8 +310,21 @@ namespace testEngine
 
         private bool checkEqulas()
         {
-            bool equal = false;
-            if (expectedTerms.Count == terms.Count) // Require equal count.
+            bool equal = true;
+            List<string> termKeyList = new List<string>(this.terms.Keys);
+            List<string> expectedKeyList = new List<string>(this.expectedTerms.Keys);
+            int i = 0;
+            foreach(string key in termKeyList)
+            {
+                if (expectedKeyList[i] != key)
+                {
+                    equal = false;
+                    break;
+                }
+                i++;
+            }
+            return equal;
+           /* if (expectedTerms.Count == terms.Count) // Require equal count.
             {
                 equal = true;
                 foreach (var pair in terms)
@@ -311,7 +333,7 @@ namespace testEngine
                     if (expectedTerms.TryGetValue(pair.Key, out value))
                     {
                         // Require value be equal.
-                        if (!value.equals(pair.Value))
+                        if (!pair.Key.Equals(pair.Value.DocName))
                         {
                             equal = false;
                             break;
@@ -325,7 +347,7 @@ namespace testEngine
                     }
                 }
             }
-            return equal;
+            return equal;*/
         }
     }
 }

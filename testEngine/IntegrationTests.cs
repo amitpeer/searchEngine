@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using searchEngine;
+using System.Linq;
 
 namespace testEngine
 {
@@ -28,6 +29,16 @@ namespace testEngine
             documents = parse.getDocuments();
             Assert.AreEqual(3, documents["1"].Max_tf);
             Assert.AreEqual(4, documents["1"].NumOfUniqueTerms);
+        }
+
+        [TestMethod]
+        public void TestDicMerge()
+        {
+            Dictionary<string, string> GroupNames = new Dictionary<string, string>();          
+            Dictionary<string, string> AddedGroupNames = new Dictionary<string, string>();
+            GroupNames.Add("a", "b");
+            AddedGroupNames.Add("a2", "b2");
+            GroupNames = GroupNames.Concat(AddedGroupNames).ToDictionary(x => x.Key, x => x.Value);
         }
 
     }

@@ -111,7 +111,8 @@ namespace searchEngine
                     Term currentTerm = JsonConvert.DeserializeObject<Term>(line);
                     if (termsInComparisonForMerge.ContainsKey(currentTerm.M_termName))
                     {
-                        termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
+                        var m_tid = termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid;
+                        m_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
                         goto nextTerminBinaryReader;
                     }
                     else
