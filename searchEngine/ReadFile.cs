@@ -62,6 +62,14 @@ namespace searchEngine
             return docList;
         }
 
+        public List<string> getFilesByIteration(int i)
+        {
+            List<string> docList = new List<string>();
+
+
+            return docList;
+        }
+
         //Returns a list of string, each item in the list is a document.
         // takes the documents from file number fileIndex.
         public List <string> getFile(int fileIndex)
