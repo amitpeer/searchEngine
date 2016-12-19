@@ -306,6 +306,14 @@ namespace testEngine
             Assert.AreEqual(true, checkEqulas());
         }
 
+        [TestMethod]
+        public void testLanguage()
+        {
+            doc = "<F P=105> 1231 </F>";
+            terms = parse.parseDocument(doc);
+        }
+           
+
         private void insertToExpected(string doc)
         {
             insertToExpected(doc, false, null);
