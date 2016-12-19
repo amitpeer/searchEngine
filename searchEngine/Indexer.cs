@@ -158,7 +158,6 @@ namespace searchEngine
         {
             string json = JsonConvert.SerializeObject(t);
             writerToFile.Write(json);
-            writerToFile.Write("\n");
         }
         private Dictionary<string, int[]> safeMerge(Dictionary<string, int[]> first, Dictionary<string, int[]> second, string termName)
         {
