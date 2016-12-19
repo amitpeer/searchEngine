@@ -16,7 +16,7 @@ namespace searchEngine
         private ReadFile readFile;
         private bool shouldStem;
         private string stemOnFileName;
-        private string m_path;
+        private string m_pathToCorpus;
         private string m_pathToSave;
 
         public ManageSearch() { }
@@ -33,13 +33,13 @@ namespace searchEngine
             reset();
             shouldStem = _shouldStem;
             stemOnFileName = shouldStem ? "STEM" : "";
-            m_path = _path;
+            m_pathToCorpus = _path;
             m_pathToSave = _pathToSave;
-            readFile = new ReadFile(m_path);
+            readFile = new ReadFile(m_pathToCorpus);
             readFile.ExtractStopWordsFile();
             parser = new Parse(readFile.getStopWords(),shouldStem);
             Indexer indexer = new Indexer(m_pathToSave, shouldStem);
-            int numOfFiles=Directory.GetFiles(m_path).Length-1;
+            int numOfFiles=Directory.GetFiles(m_pathToCorpus).Length-1;
             int j = 11;
             //create miniPostingFile
             for (int i = 1; i <= numOfFiles; i=i+10)
@@ -67,6 +67,11 @@ namespace searchEngine
             m_pathToSave = path;
             unZipMainDic();
             unZipDocumentsDic();
+        }
+        public void setNewPaths(string pathToCorpus, string pathToSave)
+        {
+            m_pathToCorpus = pathToCorpus;
+            m_pathToSave = pathToSave;
         }
        
         //COMPRESSING (TO DISK) METHODS:

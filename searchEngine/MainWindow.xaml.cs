@@ -31,8 +31,8 @@ namespace searchEngine
         public MainWindow()
         {
             InitializeComponent();
-            ManageSearch manageSearch = new ManageSearch(m_shouldStem, m_pathToCorpus, m_pathToSave);
-            //ManageSearch.main();
+            ManageSearch manageSearch = new ManageSearch();
+            manageSearch.startIndexing(m_shouldStem, m_pathToCorpus, m_pathToPosting);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
