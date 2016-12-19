@@ -24,15 +24,15 @@ namespace searchEngine
     public partial class MainWindow : Window
     {
         private string m_pathToCorpus;
-        bool m_shouldStem;
         private string m_pathToPosting;
+        bool m_shouldStem;
         List<string> m_languages;
+        ManageSearch manageSearch;
 
         public MainWindow()
         {
             InitializeComponent();
-            ManageSearch manageSearch = new ManageSearch(m_shouldStem, m_pathToCorpus, m_pathToSave);
-            //ManageSearch.main();
+            ManageSearch manageSearch = new ManageSearch();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -74,7 +74,8 @@ namespace searchEngine
                 else
                 {
                     m_shouldStem = checkBox.IsChecked.Value;
-
+                    manageSearch.startIndexing(m_shouldStem, m_pathToCorpus, m_pathToPosting);
+                    comboBox1.Items.Add(manageSearch.getLanguagesInCorpus());
                 }
 
             }
@@ -82,11 +83,29 @@ namespace searchEngine
 
         private void reserButton_Click(object sender, RoutedEventArgs e)
         {
-            comboBox1.Items.Add("amit");
-            comboBox1.Items.Add("adam");
-           // Directory.Delete(m_pathToPosting + "\\SearchEngine", true);
+            Directory.Delete(m_pathToPosting);
+            comboBox1.Items.Clear();
+            manageSearch.reset();
             m_pathToPosting = "";
             m_pathToCorpus = "";
+        }
+
+        private void showDic_Click(object sender, RoutedEventArgs e)
+        {
+
+
+
+
+            Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
+            System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
+            int rowCounter = 0;
+            foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
+            {
+
+
+
+            }
+
         }
     }
 }
