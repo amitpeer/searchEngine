@@ -111,7 +111,7 @@ namespace searchEngine
                 dg.Rows.Add(termInfo.Key, termInfo.Value[0]);
             }*/
 
-            dg.Show();
+            //dg.Show();
         }
         public void finishedIndexing()
         {
@@ -130,7 +130,10 @@ namespace searchEngine
                 m_shouldStem = checkBox.IsChecked.Value;
                 manageSearch.load(m_pathToPosting, m_shouldStem);
                 m_languages = manageSearch.getLanguagesInCorpus();
-
+                foreach (string lang in m_languages)
+                {
+                    comboBox1.Items.Add(lang);
+                }
             }
        
         }

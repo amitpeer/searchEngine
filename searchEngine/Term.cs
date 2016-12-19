@@ -11,7 +11,7 @@ namespace searchEngine
     public class Term
     {
         private string m_termName;
-        Dictionary<string, int[]> m_tid;
+        Dictionary<string, int[]> m_tid; // <docName, [tf, isHeader]
         public Term (string termName, Dictionary<string, int[]> newTermInDocument)
         {
             m_termName = termName;

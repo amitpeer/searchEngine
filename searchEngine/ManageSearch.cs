@@ -129,7 +129,7 @@ namespace searchEngine
             foreach (KeyValuePair<string, Document> Doc in documentsDic)
             {
                 string currentLanguage = Doc.Value.Language;
-                if (!languages.Contains(currentLanguage))
+                if (!languages.Contains(currentLanguage) && currentLanguage!="")
                 {
                     languages.Add(currentLanguage);
                 }

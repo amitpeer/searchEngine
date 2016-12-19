@@ -16,6 +16,7 @@ namespace searchEngine
     {
         private Dictionary<string, int[]> mainDic;
         private List<string> mergeColission = new List<string>();
+        private Dictionary<string, int> TermsInDoc3366 = new Dictionary<string, int>();
         private string  m_pathToSave;
         private int counterFiles;
         private bool shouldStem;
@@ -125,7 +126,7 @@ namespace searchEngine
                 int totalAppearance = getTotalAppearanceOfTermInCorpus(twr.Term.M_tid);
                 mainDic.Add(twr.Term.M_termName, new int[] { totalAppearance, twr.Term.M_tid.Count, counterniqueTerms });
                 counterniqueTerms++;
-                WriteTermToFile(writer, twr.Term);
+                WriteTermToFile(writer, twr.Term);               
                 //if the reader is not in the end of the file
                 nextTerminBinaryReader:
                 if (BinaryReaders[twr.Br].BaseStream.Position != BinaryReaders[twr.Br].BaseStream.Length)
@@ -157,7 +158,7 @@ namespace searchEngine
         private void WriteTermToFile(BinaryWriter writerToFile, Term t)
         {
             string json = JsonConvert.SerializeObject(t);
-            writerToFile.Write(json);
+            writerToFile.Write(json);            
         }
         private Dictionary<string, int[]> safeMerge(Dictionary<string, int[]> first, Dictionary<string, int[]> second, string termName)
         {
