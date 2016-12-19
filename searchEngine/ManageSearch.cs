@@ -86,7 +86,7 @@ namespace searchEngine
         }
         public int getNumberOfUniqueTerms() { return mainDic != null ? mainDic.Count : 0; }
         public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
-        public int getTime() { return stopwatch != null ? stopwatch.Elapsed.Minutes : 0; }
+        public double getTime() { return stopwatch != null ? stopwatch.Elapsed.TotalMinutes : 0; }
         public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]

@@ -115,7 +115,15 @@ namespace searchEngine
 
         private void loadDic_Click(object sender, RoutedEventArgs e)
         {
-            manageSearch.load(m_pathToPosting, m_shouldStem);           
+            if (m_pathToPosting == "")
+            {
+                System.Windows.Forms.MessageBox.Show("You must type a path to the posting file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                manageSearch.load(m_pathToPosting, m_shouldStem);
+                m_languages = manageSearch.getLanguagesInCorpus();
+            }   
         }
     }
 }
