@@ -32,6 +32,8 @@ namespace searchEngine
         public MainWindow()
         {
            this.manageSearch = new ManageSearch(this);
+           m_pathToCorpus="";
+             m_pathToPosting="";
             InitializeComponent();
         }
 
@@ -88,9 +90,11 @@ namespace searchEngine
 
         private void reserButton_Click(object sender, RoutedEventArgs e)
         {
-            Directory.Delete(m_pathToPosting,true);
+            Array.ForEach(Directory.GetFiles(m_pathToPosting), File.Delete);
             comboBox1.Items.Clear();
             manageSearch.reset();
+            this.pathToLoadPosting.Text = "";
+            this.pathToLoadCorpus.Text = "";
             m_pathToPosting = "";
             m_pathToCorpus = "";
         }
@@ -99,12 +103,14 @@ namespace searchEngine
         {
 
             Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
+            /*
             System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
             dg.Columns.Add("Term", "Number of appearnces in corpus");
             foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
             {
                 dg.Rows.Add(termInfo.Key, termInfo.Value[0]);
-            }
+            }*/
+
             dg.Show();
         }
         public void finishedIndexing()
@@ -115,7 +121,18 @@ namespace searchEngine
 
         private void loadDic_Click(object sender, RoutedEventArgs e)
         {
-            manageSearch.load(m_pathToPosting, m_shouldStem);           
+            if (m_pathToPosting == "")
+            {
+                System.Windows.Forms.MessageBox.Show("You must type a path to the posting file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                m_shouldStem = checkBox.IsChecked.Value;
+                manageSearch.load(m_pathToPosting, m_shouldStem);
+                m_languages = manageSearch.getLanguagesInCorpus();
+
+            }
+       
         }
     }
 }
