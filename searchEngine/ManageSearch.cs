@@ -28,7 +28,6 @@ namespace searchEngine
             mainDic = new Dictionary<string, int[]>();
             documentsDic = new Dictionary<string, Document>();
         }
-
         public void startIndexing(bool _shouldStem, string _path, string _pathToSave)
         {
             reset();
@@ -62,7 +61,14 @@ namespace searchEngine
             //save documentsDic to disk 
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
         }
-
+        public void load(string path, bool shouldStem)
+        {
+            reset();
+            unZipMainDic();
+            unZipDocumentsDic();
+        }
+       
+        //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]
         private byte[] zipCompress(object obj)
         {
