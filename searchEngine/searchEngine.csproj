@@ -63,6 +63,7 @@
     <Compile Include="Indexer.cs" />
     <Compile Include="ManageSearch.cs" />
     <Compile Include="ReadFile.cs" />
+    <Compile Include="Stemmer.cs" />
     <Compile Include="Term.cs" />
     <Compile Include="termComparer.cs" />
     <Compile Include="TermInfoInDoc.cs" />
