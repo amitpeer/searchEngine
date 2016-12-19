@@ -101,17 +101,21 @@ namespace searchEngine
 
         private void showDic_Click(object sender, RoutedEventArgs e)
         {
-
             Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
             /*
-            System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
-            dg.Columns.Add("Term", "Number of appearnces in corpus");
+                        System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
+           dg .AutoGenerateColumns = true;
+            dg.Columns.Add("Term", "Term");
+            dg.Columns.Add("Number of appearnces in corpus", "Number of appearnces in corpus"); 
+
+            */
+            Dictionary<string, int> dicTermDis = new Dictionary<string, int>();
             foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
             {
-                dg.Rows.Add(termInfo.Key, termInfo.Value[0]);
-            }*/
-
-            dg.Show();
+                dicTermDis.Add(termInfo.Key, termInfo.Value[0]);
+            }
+            dataDisplay windowNew = new dataDisplay(dicTermDis);
+            windowNew.ShowDialog();
         }
         public void finishedIndexing()
         {

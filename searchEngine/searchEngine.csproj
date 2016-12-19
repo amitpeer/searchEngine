@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,6 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="dataDisplay.xaml.cs">
+      <DependentUpon>dataDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Document.cs" />
     <Compile Include="Indexer.cs" />
     <Compile Include="ManageSearch.cs" />
@@ -69,6 +73,10 @@
     <Compile Include="termComparer.cs" />
     <Compile Include="TermInfoInDoc.cs" />
     <Compile Include="TermWithReader.cs" />
+    <Page Include="dataDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

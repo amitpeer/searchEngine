@@ -1,0 +1,28 @@
+﻿<Window x:Class="searchEngine.dataDisplay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:searchEngine"
+        mc:Ignorable="d"
+        Title="dataDisplay" Height="300" Width="300">
+    <Grid>
+        <StackPanel Margin="0,0,-0.4,0.4">
+            <ListBox 
+            ItemsSource="{Binding Path=dicTerms}"
+            SelectedValuePath="Value"
+            SelectedValue="{Binding Path=SelectedTermIndex}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black" BorderThickness="2">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Path=Value}" />
+                                <TextBlock Text="{Binding Path=Key.Name}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</Window>
