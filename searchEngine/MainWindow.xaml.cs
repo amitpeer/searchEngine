@@ -100,16 +100,16 @@ namespace searchEngine
 
             Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
             System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
+            dg.Columns.Add("Term", "Number of appearnces in corpus");
             foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
             {
                 dg.Rows.Add(termInfo.Key, termInfo.Value[0]);
             }
             dg.Show();
-
         }
         public void finishedIndexing()
         {
-            System.Windows.Forms.MessageBox.Show("Number of documents indexed:+" + manageSearch.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+manageSearch.getNumberOfUniqueTerms()+"\n"+"Total time"+manageSearch.getStopwatch());
+            System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + manageSearch.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+manageSearch.getNumberOfUniqueTerms()+"\n"+"Total time"+manageSearch.getTime());
 
         }
 
