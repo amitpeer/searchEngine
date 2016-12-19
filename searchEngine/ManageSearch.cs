@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
@@ -16,8 +17,9 @@ namespace searchEngine
         private ReadFile readFile;
         private bool shouldStem;
         private string stemOnFileName;
-        private string m_path;
+        private string m_pathToCorpus;
         private string m_pathToSave;
+        private Stopwatch stopwatch = new Stopwatch();
 
         public ManageSearch() { }
 
@@ -28,25 +30,25 @@ namespace searchEngine
             mainDic = new Dictionary<string, int[]>();
             documentsDic = new Dictionary<string, Document>();
         }
-
         public void startIndexing(bool _shouldStem, string _path, string _pathToSave)
         {
+            stopwatch.Start();
             reset();
             shouldStem = _shouldStem;
             stemOnFileName = shouldStem ? "STEM" : "";
-            m_path = _path;
+            m_pathToCorpus = _path;
             m_pathToSave = _pathToSave;
-            readFile = new ReadFile(m_path);
+            readFile = new ReadFile(m_pathToCorpus);
             readFile.ExtractStopWordsFile();
             parser = new Parse(readFile.getStopWords(),shouldStem);
             Indexer indexer = new Indexer(m_pathToSave, shouldStem);
-            int numOfFiles=Directory.GetFiles(m_path).Length-1;
+            int numOfFiles=Directory.GetFiles(m_pathToCorpus).Length-1;
             int j = 11;
             //create miniPostingFile
             for (int i = 1; i <= numOfFiles; i=i+10)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
-                List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>() ;
+                List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>();
                 foreach (string s in batchOfDocs)
                 {
                     documentsAfterParse.Add(parser.parseDocument(s));
@@ -61,8 +63,26 @@ namespace searchEngine
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
             //save documentsDic to disk 
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
+            stopwatch.Stop();
         }
-
+        public void load(string path, bool shouldStem)
+        {
+            reset();
+            m_pathToSave = path;
+            unZipMainDic();
+            unZipDocumentsDic();
+        }
+        public void setNewPaths(string pathToCorpus, string pathToSave)
+        {
+            m_pathToCorpus = pathToCorpus;
+            m_pathToSave = pathToSave;
+        }
+        public int getNumberOfUniqueTerms() { return mainDic != null ? mainDic.Count : 0; }
+        public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
+        public int getTime() { return stopwatch != null ? stopwatch.Elapsed.Minutes : 0; }
+        public Stopwatch getStopwatch() { return stopwatch; }
+       
+        //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]
         private byte[] zipCompress(object obj)
         {
