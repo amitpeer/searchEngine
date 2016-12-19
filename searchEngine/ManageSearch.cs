@@ -94,6 +94,21 @@ namespace searchEngine
             }
             return bArray;
         }
+        public SortedSet<string> getLanguagesInCorpus()
+        {
+           SortedSet<string> languages = new SortedSet<string>();
+            foreach (KeyValuePair<string, Document> Doc in documentsDic)
+            {
+                string currentLanguage = Doc.Value.Language;
+                if (!languages.Contains(currentLanguage))
+                {
+                    languages.Add(currentLanguage);
+                }
+            }
+            return languages;
+
+
+        }
         private void unZipMainDic()
         {
             GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"), CompressionMode.Decompress);

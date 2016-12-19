@@ -23,10 +23,11 @@ namespace searchEngine
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static readonly string m_pathToCorpus = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
-        private static readonly string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
+        private string m_pathToCorpus;
         bool m_shouldStem;
-       
+        private string m_pathToPosting;
+        List<string> m_languages;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -72,14 +73,11 @@ namespace searchEngine
                 }
                 else
                 {
-                    m_stem = checkBox.IsChecked.Value;
+                    m_shouldStem = checkBox.IsChecked.Value;
 
                 }
 
             }
-
-
-
         }
 
         private void reserButton_Click(object sender, RoutedEventArgs e)
