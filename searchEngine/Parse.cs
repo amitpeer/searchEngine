@@ -46,7 +46,7 @@ namespace searchEngine
                 parseContent(terms, title, true, document.DocName);
             }
             parseContent(terms, doc, false, document.DocName);
-            if (document.DocName != null && !documents.ContainsKey(document.DocName))
+            if (document.DocName != "" && !documents.ContainsKey(document.DocName))
             {
                 document.Max_tf = findMaxTf(terms);
                 document.NumOfUniqueTerms = terms.Count;          
@@ -77,9 +77,9 @@ namespace searchEngine
                 }
             }
             //Insert values to Document
-            document.Date = date != null ? date.Trim() : null;
-            document.DocName = docName != null ? docName.Trim() : null;
-            document.Language = language != null ? language.Trim() : null;
+            document.Date = date != null ? date.Trim() : "";
+            document.DocName = docName != null ? docName.Trim() : "";
+            document.Language = language != null ? language.Trim() : "";
             return document;
         }
 
@@ -576,13 +576,16 @@ namespace searchEngine
         private string fixLanguge(string language)
         {
             string ans = language;
-            if (ans.Contains(" "))
-                ans = language.Substring(0, language.IndexOf(" "));
-            if (ans.Contains(","))
-                ans = language.Substring(0, language.IndexOf(","));
-            if (ans.Any(char.IsDigit))
+            if (ans != null)
             {
-                ans = null;
+                if (ans.Contains(" "))
+                    ans = language.Substring(0, language.IndexOf(" "));
+                if (ans.Contains(","))
+                    ans = language.Substring(0, language.IndexOf(","));
+                if (ans.Any(char.IsDigit))
+                {
+                    ans = null;
+                }
             }
             return ans;
         }
