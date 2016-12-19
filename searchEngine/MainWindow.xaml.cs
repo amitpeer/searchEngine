@@ -31,7 +31,7 @@ namespace searchEngine
 
         public MainWindow()
         {
-           this.manageSearch = new ManageSearch();
+           this.manageSearch = new ManageSearch(this);
             InitializeComponent();
         }
 
@@ -80,6 +80,7 @@ namespace searchEngine
                     {
                         comboBox1.Items.Add(lang);
                     }
+                    finishedIndexing();
                 }
 
             }
@@ -99,13 +100,16 @@ namespace searchEngine
 
             Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
             System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
-            int rowCounter = 0;
             foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
             {
-
-
-
+                dg.Rows.Add(termInfo.Key, termInfo.Value[0]);
             }
+            dg.Show();
+
+        }
+        public void finishedIndexing()
+        {
+            System.Windows.Forms.MessageBox.Show("Number of documents indexed:+" + manageSearch.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+manageSearch.getNumberOfUniqueTerms()+"\n"+"Total time"+manageSearch.getStopwatch());
 
         }
     }

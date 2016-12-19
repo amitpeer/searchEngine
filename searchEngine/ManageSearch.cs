@@ -20,8 +20,14 @@ namespace searchEngine
         private string m_pathToCorpus;
         private string m_pathToSave;
         private Stopwatch stopwatch = new Stopwatch();
+        private MainWindow mainWindow;
 
         public ManageSearch() { }
+
+        public ManageSearch(MainWindow mainWindow)
+        {
+            this.mainWindow = mainWindow;
+        }
 
         public Dictionary<string, int[]> getMainDic() { return mainDic; }
         public Dictionary<string, Document> getDocumentsDic() { return documentsDic; }
@@ -64,6 +70,7 @@ namespace searchEngine
             //save documentsDic to disk 
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
             stopwatch.Stop();
+
         }
         public void load(string path, bool shouldStem)
         {
@@ -80,8 +87,7 @@ namespace searchEngine
         public int getNumberOfUniqueTerms() { return mainDic != null ? mainDic.Count : 0; }
         public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
         public int getTime() { return stopwatch != null ? stopwatch.Elapsed.Minutes : 0; }
-        public Stopwatch getStopwatch() { return stopwatch; }
-       
+        public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]
         private byte[] zipCompress(object obj)
