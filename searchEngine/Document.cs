@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace searchEngine
 {
+    [Serializable]
     public class Document
     {
         private string docName;
