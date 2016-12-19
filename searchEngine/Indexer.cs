@@ -122,7 +122,8 @@ namespace searchEngine
             {
                 TermWithReader twr = termsInComparisonForMerge.First().Value;
                 termsInComparisonForMerge.Remove(termsInComparisonForMerge.First().Key);
-                mainDic.Add(twr.Term.M_termName, new int[] { twr.Term.M_tid.Count, counterniqueTerms });
+                int totalAppearance = getTotalAppearanceOfTermInCorpus(twr.Term.M_tid);
+                mainDic.Add(twr.Term.M_termName, new int[] { totalAppearance, twr.Term.M_tid.Count, counterniqueTerms });
                 counterniqueTerms++;
                 WriteTermToFile(writer, twr.Term);
                 //if the reader is not in the end of the file
@@ -152,13 +153,13 @@ namespace searchEngine
             }
             writer.Close();
         }
+
         private void WriteTermToFile(BinaryWriter writerToFile, Term t)
         {
             string json = JsonConvert.SerializeObject(t);
             writerToFile.Write(json);
             writerToFile.Write("\n");
         }
-
         private Dictionary<string, int[]> safeMerge(Dictionary<string, int[]> first, Dictionary<string, int[]> second, string termName)
         {
             Dictionary<string, int[]> ans = new Dictionary<string, int[]>(first);
@@ -175,7 +176,15 @@ namespace searchEngine
             }
             return ans;
         }
-
+        private int getTotalAppearanceOfTermInCorpus(Dictionary<string, int[]> m_tid)
+        {
+            int sum = 0;
+            foreach(KeyValuePair<string, int[]> keyValue in m_tid)
+            {
+                sum += keyValue.Value[0];
+            }
+            return sum;
+        }
     }
 
 }
