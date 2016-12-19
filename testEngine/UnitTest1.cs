@@ -281,9 +281,18 @@ namespace testEngine
         [TestMethod]
         public void testQuestionMarks()
         {
-            doc = "<TEXT> !!!, ???, hello?, hello!, ?bubu?, ?!?!???!!, a???!!?! </TEXT>";
+            doc = "<TEXT> !!!, ???, hello?, hello!, ?bubu?, ?!?!???!!, a???!!?!,  </TEXT>";
             terms = parse.parseDocument(doc, false);
             insertToExpected("hello;bubu");
+            Assert.AreEqual(true, checkEqulas());
+        }
+
+        [TestMethod]
+        public void testGereshMarks()
+        {
+            doc = "<TEXT>'</TEXT>";
+            terms = parse.parseDocument(doc, false);
+            insertToExpected("");
             Assert.AreEqual(true, checkEqulas());
         }
 

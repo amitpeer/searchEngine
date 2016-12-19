@@ -507,7 +507,7 @@ namespace searchEngine
 
         private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, string docName)
         {
-            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == null )
+            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == "|" || term == null )
                 return;
             if (term.All(c => c == '?' || c == '!'))
                 return;

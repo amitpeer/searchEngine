@@ -55,7 +55,6 @@ namespace searchEngine
                 Term toInsert = new Term(s, miniPostingFile[s].M_tid);
                 string json = JsonConvert.SerializeObject(toInsert);
                 writer.Write(json);
-                //writer.Write("\n");
                 }
             writer.Flush();
             writer.Close();                
@@ -64,7 +63,6 @@ namespace searchEngine
         public void MergeFiles()
         {
             int counterniqueTerms = 0;
-            //    Comparer<Term> termComparer = new termComparer() ;
             int numOfFiles = Directory.GetFiles(m_pathToSave).Length;
             SortedDictionary<string,TermWithReader> termsInComparisonForMerge = new SortedDictionary<string, TermWithReader>();
             Dictionary<string, BinaryReader> BinaryReaders = new Dictionary<string, BinaryReader>();
@@ -86,7 +84,8 @@ namespace searchEngine
                     Term currentTerm = JsonConvert.DeserializeObject<Term>(line);
                     if (termsInComparisonForMerge.ContainsKey(currentTerm.M_termName))
                     {
-                        termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid = termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
+                        termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid = safeMerge(termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid, currentTerm.M_tid);
+                        //termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid = termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
                         goto tryagain;
                     }
                     else
@@ -118,7 +117,8 @@ namespace searchEngine
                     Term currentTerm = JsonConvert.DeserializeObject<Term>(line);
                     if (termsInComparisonForMerge.ContainsKey(currentTerm.M_termName))
                     {
-                        termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid=termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
+                        termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid = safeMerge(termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid, currentTerm.M_tid);
+                       // termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid=termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
                         goto nextTerminBinaryReader;
                     }
                     else
@@ -137,9 +137,20 @@ namespace searchEngine
         }
         private void WriteTermToFile(BinaryWriter writerToFile, Term t)
         {
-
             string json = JsonConvert.SerializeObject(t);
             writerToFile.Write(json);
+            writerToFile.Write("\n");
+        }
+
+        private Dictionary<string, int[]> safeMerge(Dictionary<string, int[]> first, Dictionary<string, int[]> second)
+        {
+            Dictionary<string, int[]> ans = new Dictionary<string, int[]>(first);
+            foreach(KeyValuePair<string, int[]> secondKeyValue in second)
+            {
+                if (!ans.ContainsKey(secondKeyValue.Key))
+                    ans.Add(secondKeyValue.Key, secondKeyValue.Value);
+            }
+            return ans;
         }
     }
 
