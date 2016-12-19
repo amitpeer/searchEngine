@@ -23,15 +23,15 @@ namespace searchEngine
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static readonly string m_pathToCorpus = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
-        private static readonly string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
+        private string m_pathToCorpus = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
+        private string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
         bool m_shouldStem;
        
         public MainWindow()
         {
             InitializeComponent();
-            ManageSearch manageSearch = new ManageSearch(m_shouldStem, m_pathToCorpus, m_pathToSave);
-            //ManageSearch.main();
+            ManageSearch manageSearch = new ManageSearch();
+            manageSearch.startIndexing(m_shouldStem, m_pathToCorpus, m_pathToSave);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -54,7 +54,7 @@ namespace searchEngine
         }
         private void pathToLoadPosting_TextChanged(object sender, TextChangedEventArgs e)
         {
-            m_pathToPosting = this.pathToLoadPosting.Text;
+            m_pathToSave = this.pathToLoadPosting.Text;
         }
 
         private void startIndexing_Click(object sender, RoutedEventArgs e)
@@ -66,13 +66,13 @@ namespace searchEngine
             }
             else
             {
-                if (m_pathToPosting == "")
+                if (m_pathToSave == "")
                 {
                     System.Windows.Forms.MessageBox.Show("You must type a path to the posting file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    m_stem = checkBox.IsChecked.Value;
+                    m_shouldStem = checkBox.IsChecked.Value;
 
                 }
 
@@ -87,7 +87,7 @@ namespace searchEngine
             comboBox1.Items.Add("amit");
             comboBox1.Items.Add("adam");
            // Directory.Delete(m_pathToPosting + "\\SearchEngine", true);
-            m_pathToPosting = "";
+            m_pathToSave = "";
             m_pathToCorpus = "";
         }
     }

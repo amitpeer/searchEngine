@@ -19,13 +19,7 @@ namespace searchEngine
         private string m_path;
         private string m_pathToSave;
 
-        public ManageSearch(bool _shouldStem, string path, string pathToSave)
-        {
-            shouldStem = _shouldStem;
-            stemOnFileName = shouldStem ? "STEM" : "";
-            m_path = path;
-            m_pathToSave = pathToSave;
-        }
+        public ManageSearch() { }
 
         public Dictionary<string, int[]> getMainDic() { return mainDic; }
         public Dictionary<string, Document> getDocumentsDic() { return documentsDic; }
@@ -35,8 +29,13 @@ namespace searchEngine
             documentsDic = new Dictionary<string, Document>();
         }
 
-        public void main()
+        public void startIndexing(bool _shouldStem, string _path, string _pathToSave)
         {
+            reset();
+            shouldStem = _shouldStem;
+            stemOnFileName = shouldStem ? "STEM" : "";
+            m_path = _path;
+            m_pathToSave = _pathToSave;
             readFile = new ReadFile(m_path);
             readFile.ExtractStopWordsFile();
             parser = new Parse(readFile.getStopWords(),shouldStem);
