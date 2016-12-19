@@ -1,84 +1,126 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace searchEngine
 {
     class ManageSearch
     {
-        public static void main()
+        private Dictionary <string, Document> documentsDic;
+        private Dictionary <string, int[]> mainDic;
+        private Parse parser;
+        private ReadFile readFile;
+        private string m_path = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
+        private string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
+        private bool shouldStem;
+        private string stemOnFileName;
+
+        public ManageSearch(bool _shouldStem)
         {
-            Stopwatch m_stopwatch = new Stopwatch();
-            m_stopwatch.Start();
-            string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\test1";
-            string pathToSave = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\results";
-            bool shouldStem = false;
-            ReadFile readFile = new ReadFile(path);
+            shouldStem = _shouldStem;
+            stemOnFileName = shouldStem ? "STEM" : "";
+        }
+
+        public Dictionary<string, int[]> getMainDic() { return mainDic; }
+        public Dictionary<string, Document> getDocumentsDic() { return documentsDic; }
+        public void reset()
+        {
+            mainDic = new Dictionary<string, int[]>();
+            documentsDic = new Dictionary<string, Document>();
+        }
+
+        public void main()
+        {
+            readFile = new ReadFile(m_path);
             readFile.ExtractStopWordsFile();
-            Parse parser = new Parse(readFile.getStopWords(),shouldStem);
-            Indexer indexer = new Indexer(pathToSave);
-            int numOfFiles=Directory.GetFiles(path).Length-1;
+            parser = new Parse(readFile.getStopWords(),shouldStem);
+            Indexer indexer = new Indexer(m_pathToSave, shouldStem);
+            int numOfFiles=Directory.GetFiles(m_path).Length-1;
             int j = 11;
             //create miniPostingFile
-            /*
             for (int i = 1; i <= numOfFiles; i=i+10)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
                 List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>() ;
                 foreach (string s in batchOfDocs)
                 {
-                    documentsAfterParse.Add(parser.parseDocument(s, shouldStem));
+                    documentsAfterParse.Add(parser.parseDocument(s));
                 }
                 indexer.indexBatch(documentsAfterParse);   
                 j = j +10;
             }
-            */
-            for (int i = 1; i <= numOfFiles; i++)
-            {
-                List<string> batchOfDocs = readFile.getFile(i);
-                List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>();
-                foreach (string s in batchOfDocs)
-                {
-                    documentsAfterParse.Add(parser.parseDocument(s, shouldStem));
-                }
-                indexer.indexBatch(documentsAfterParse);
-            }
-                indexer.MergeFiles();
-
-
+            indexer.MergeFiles();
+            mainDic = indexer.getMainDic();
+            documentsDic = parser.getDocuments();
+            //save mainDic to disk
+            File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
+            //save documentsDic to disk 
+            File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
         }
 
-        public static void testReader()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private byte[] zipCompress(object obj)
         {
-            string path = "C:\\Users\\adamz\\Documents\\Visual Studio 2015\\Projects\\folder\\testReader\\miniPosting1.bin";
-            int counter = 0;
-            List<Term> ls = new List<Term>();
-            using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open)))
-
+            byte[] bArray;
+            MemoryStream memoryStream = new MemoryStream();
+            try
             {
-                while (5< 10)
+                GZipStream gzStream = new GZipStream(memoryStream, CompressionMode.Compress);
+                try
                 {
-
-                    string line = reader.ReadString();
-                    Term ans = JsonConvert.DeserializeObject<Term>(line);
-                    ls.Add(ans);
-                    counter++;
+                    (new BinaryFormatter()).Serialize(gzStream, obj);
+                }
+                finally
+                {
+                    if (gzStream != null)
+                    {
+                        ((IDisposable)gzStream).Dispose();
+                    }
+                }
+                bArray = memoryStream.ToArray();
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    ((IDisposable)memoryStream).Dispose();
                 }
             }
-
-            /*
+            return bArray;
+        }
+        private void unZipMainDic()
+        {
+            GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"), CompressionMode.Decompress);
+            try
             {
-               
-                //Console.WriteLine(ans.ToString());
-               // Console.ReadLine();
-
-            }*/
+                mainDic = (Dictionary<string, int[]>)(new BinaryFormatter()).Deserialize(gZipStream);
+            }
+            finally
+            {
+                if (gZipStream != null)
+                {
+                    ((IDisposable)gZipStream).Dispose();
+                }
+            }
+        }
+        private void unZipDocumentsDic()
+        {
+            GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"), CompressionMode.Decompress);
+            try
+            {
+                documentsDic = (Dictionary<string, Document>)(new BinaryFormatter()).Deserialize(gZipStream);
+            }
+            finally
+            {
+                if (gZipStream != null)
+                {
+                    ((IDisposable)gZipStream).Dispose();
+                }
+            }
         }
     }
 }

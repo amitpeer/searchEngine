@@ -72,7 +72,7 @@ namespace testEngine
         }
   
     */
-        [TestMethod]
+  /*      [TestMethod]
         public void testBig()
         {
             docs = readFile.getFile(5);
@@ -106,7 +106,7 @@ namespace testEngine
             string bac = "bac";
             readFile.ExtractStopWordsFile();
             HashSet<string> stopWords = readFile.getStopWords();       
-        }
+        }*/
 
         private bool checkEquals()
         {

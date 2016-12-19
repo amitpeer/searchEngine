@@ -24,21 +24,11 @@ namespace testEngine
             docs = readFile.getFiles(5, 6);
             foreach(string s in docs)
             {
-                terms.Add(parse.parseDocument(s, false));               
+                terms.Add(parse.parseDocument(s));               
             }
             documents = parse.getDocuments();
             Assert.AreEqual(3, documents["1"].Max_tf);
             Assert.AreEqual(4, documents["1"].NumOfUniqueTerms);
-        }
-
-        [TestMethod]
-        public void TestDicMerge()
-        {
-            Dictionary<string, string> GroupNames = new Dictionary<string, string>();          
-            Dictionary<string, string> AddedGroupNames = new Dictionary<string, string>();
-            GroupNames.Add("a", "b");
-            AddedGroupNames.Add("a2", "b2");
-            GroupNames = GroupNames.Concat(AddedGroupNames).ToDictionary(x => x.Key, x => x.Value);
         }
 
     }

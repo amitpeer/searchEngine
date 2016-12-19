@@ -3,7 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,18 +14,26 @@ namespace searchEngine
 {
     public class Indexer
     {
-        Dictionary<string, int[]> m_termsDictionary;
+        private Dictionary<string, int[]> mainDic;
+        private List<string> mergeColission = new List<string>();
         private string  m_pathToSave;
         private int counterFiles;
-        List <string> mergeColission = new List<string>();
+        private bool shouldStem;
 
         //get a list of parser result for a few document
         //the string represents the 
-        public Indexer(string pathToSave)
+        public Indexer(string pathToSave, bool _shouldStem)
         {
-            m_termsDictionary = new Dictionary<string, int[]>();
+            mainDic = new Dictionary<string, int[]>();
             m_pathToSave = pathToSave;
+            shouldStem = _shouldStem;
         }
+
+        public Dictionary<string, int[]> getMainDic()
+        {
+            return mainDic;
+        }
+
         public void indexBatch(List<Dictionary<string, TermInfoInDoc>> documentsAfterParse)
         {
             Dictionary<string, Term> miniPostingFile = new Dictionary<string, Term>();
@@ -58,7 +69,7 @@ namespace searchEngine
                 writer.Write(json);
                 }
             writer.Flush();
-            writer.Close();                
+            writer.Close();
         }
 
         public void MergeFiles()
@@ -70,8 +81,12 @@ namespace searchEngine
             //open a binary reader for each file
             foreach (string file in Directory.GetFiles(m_pathToSave))
             {
-                BinaryReader br = new BinaryReader(File.Open(file, FileMode.Open));
-                BinaryReaders.Add(file, br);
+                string fileName = file.Substring(file.LastIndexOf('\\') + 1);
+                if (fileName.Contains("miniPosting"))
+                {
+                    BinaryReader br = new BinaryReader(File.Open(file, FileMode.Open));
+                    BinaryReaders.Add(file, br);
+                }
             }
             //insert the first value for each reader
             foreach(KeyValuePair<string,BinaryReader> br in BinaryReaders)
@@ -101,12 +116,13 @@ namespace searchEngine
                     File.Delete(pathOfFileRead);
                 }
             }
-
-            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\MainPosting.bin", FileMode.Append));
+            string stemOnFileName = shouldStem ? "STEM" : "";
+            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainPosting.bin", FileMode.Append));
             while (BinaryReaders.Count > 0)
             {
                 TermWithReader twr = termsInComparisonForMerge.First().Value;
                 termsInComparisonForMerge.Remove(termsInComparisonForMerge.First().Key);
+                mainDic.Add(twr.Term.M_termName, new int[] { twr.Term.M_tid.Count, counterniqueTerms });
                 counterniqueTerms++;
                 WriteTermToFile(writer, twr.Term);
                 //if the reader is not in the end of the file
@@ -159,6 +175,7 @@ namespace searchEngine
             }
             return ans;
         }
+
     }
 
 }

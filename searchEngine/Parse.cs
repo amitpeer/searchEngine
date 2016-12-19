@@ -34,7 +34,7 @@ namespace searchEngine
             return documents;
         }
 
-        public Dictionary<string, TermInfoInDoc> parseDocument(string doc, bool shouldStem)
+        public Dictionary<string, TermInfoInDoc> parseDocument(string doc)
         {
             counterDocs++;
             Dictionary<string, TermInfoInDoc> terms = new Dictionary<string, TermInfoInDoc>();
@@ -43,9 +43,9 @@ namespace searchEngine
             // if the document has a title, send it first to be parsed and inserted to the dictionary
             if (title != null)
             {
-                parseContent(terms, title, true, shouldStem, document.DocName);
+                parseContent(terms, title, true, document.DocName);
             }
-            parseContent(terms, doc, false, shouldStem, document.DocName);
+            parseContent(terms, doc, false, document.DocName);
             if (document.DocName != null && !documents.ContainsKey(document.DocName))
             {
                 document.Max_tf = findMaxTf(terms);
@@ -82,7 +82,7 @@ namespace searchEngine
             return document;
         }
 
-        private Dictionary<string,TermInfoInDoc> parseContent(Dictionary <string, TermInfoInDoc> terms, string doc, bool isHeader, bool shouldStem, string docName)
+        private Dictionary<string,TermInfoInDoc> parseContent(Dictionary <string, TermInfoInDoc> terms, string doc, bool isHeader, string docName)
         {
            bool shouldContinue = false;
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
@@ -179,7 +179,7 @@ namespace searchEngine
                 }
                 else
                 {
-                    shouldContinue = startWithNumber(terms, initialArrayOfDoc, currentTerm,ref i, isHeader, shouldStem, docName);
+                    shouldContinue = startWithNumber(terms, initialArrayOfDoc, currentTerm,ref i, isHeader, docName);
                     if (shouldContinue)
                         continue;
                 }
@@ -189,7 +189,7 @@ namespace searchEngine
             return terms;
         }
         //check what to do 
-        private bool startWithNumber(Dictionary<string, TermInfoInDoc> terms, string[] initialArrayOfDoc, string currentTerm, ref int i, bool isHeader, bool shouldStem, string docName)
+        private bool startWithNumber(Dictionary<string, TermInfoInDoc> terms, string[] initialArrayOfDoc, string currentTerm, ref int i, bool isHeader, string docName)
         {
             double value;
             bool shouldContinue = false;
@@ -201,7 +201,7 @@ namespace searchEngine
                 if (i < initialArrayOfDoc.Length - 1 && currentTerm.Substring(currentTerm.Length - 2) == "th" && int.TryParse(currentTerm.Substring(0, currentTerm.Length - 2), out valueOfDay) && valueOfDay >= 1 && valueOfDay <= 31)
                 {
                     string day = valueOfDay < 10 ? "0" + valueOfDay.ToString() : valueOfDay.ToString();
-                    shouldContinue = checkIfNextIsDate(terms, day, initialArrayOfDoc, ref i, isHeader, shouldStem, docName);
+                    shouldContinue = checkIfNextIsDate(terms, day, initialArrayOfDoc, ref i, isHeader, docName);
                     if (shouldContinue)
                         return true;
                 }
@@ -216,7 +216,7 @@ namespace searchEngine
                         insertToDic(terms, value * 1000.0 + "M", isHeader, docName);
                         return false;
                     }
-                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "bn", isHeader, shouldStem, docName);
+                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "bn", isHeader, docName);
                     insertToDic(terms, toInsert, isHeader, docName);
                     return foundNext;
                 }
@@ -227,7 +227,7 @@ namespace searchEngine
                     //check if part of a date
                     if (value >= 1 && value <= 31)
                     {
-                        shouldContinue = checkIfNextIsDate(terms, value.ToString(), initialArrayOfDoc, ref i, isHeader, shouldStem, docName);
+                        shouldContinue = checkIfNextIsDate(terms, value.ToString(), initialArrayOfDoc, ref i, isHeader, docName);
                         if (shouldContinue)
                             return true;
                     }
@@ -243,7 +243,7 @@ namespace searchEngine
                           else
                           return false;
                          }                       
-                    string next = checkNextTerms(initialArrayOfDoc, terms, ref i, value,ref foundNext, "", isHeader, shouldStem, docName);
+                    string next = checkNextTerms(initialArrayOfDoc, terms, ref i, value,ref foundNext, "", isHeader, docName);
                     if (foundNext)
                         insertToDic(terms, next, isHeader, docName);
                     return foundNext;
@@ -261,7 +261,7 @@ namespace searchEngine
                         insertToDic(terms, value + " Dollars", isHeader, docName);
                         return true;
                     }                      
-                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, flag, isHeader, shouldStem, docName);
+                    string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, flag, isHeader, docName);
                     insertToDic(terms, toInsert, isHeader, docName);
                     return foundNext;
                 }
@@ -290,7 +290,7 @@ namespace searchEngine
                                  insertToDic(terms, value + "M", isHeader, docName);
                                  return true;
                                  }
-                        string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "m", isHeader, shouldStem, docName);
+                        string toInsert = checkNextTerms(initialArrayOfDoc, terms, ref i, value, ref foundNext, "m", isHeader, docName);
                         insertToDic(terms, toInsert, isHeader, docName);
                         return foundNext;
                         }
@@ -298,7 +298,7 @@ namespace searchEngine
             return false;
         }
 
-        private string checkNextTerms(string[] initialArrayOfDoc, Dictionary<string, TermInfoInDoc> terms, ref int currentIndex, double number, ref bool foundNext, string flag, bool isHeader, bool shouldStem, string docName)
+        private string checkNextTerms(string[] initialArrayOfDoc, Dictionary<string, TermInfoInDoc> terms, ref int currentIndex, double number, ref bool foundNext, string flag, bool isHeader, string docName)
         {
             int index = currentIndex + 1;
             string ans = "";
@@ -461,7 +461,7 @@ namespace searchEngine
                 return ans;
         }
 
-        private bool checkIfNextIsDate(Dictionary<string, TermInfoInDoc> terms, string day, string[] initialArrayOfDoc, ref int i, bool isHeader, bool shouldStem, string docName)
+        private bool checkIfNextIsDate(Dictionary<string, TermInfoInDoc> terms, string day, string[] initialArrayOfDoc, ref int i, bool isHeader, string docName)
         {
             if (i+1 >= initialArrayOfDoc.Length)
             {
