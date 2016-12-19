@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Button x:Name="folderPathToCorpus" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="418,46,0,0" VerticalAlignment="Top" Width="70" Click="button_Click"/>
+        <TextBox x:Name="pathToLoadCorpus" HorizontalAlignment="Left" Height="30" Margin="117,46,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadCorpus_TextChanged" />
+        <TextBlock x:Name="textBlockPathToCorpus" HorizontalAlignment="Left" Height="30" Margin="10,46,0,0" TextWrapping="Wrap" Text="Path to Corpus " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
+        <Button x:Name="folderPathToPosting" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="418,94,0,0" VerticalAlignment="Top" Width="70" Click="folderPathToPosting_Click"/>
+        <TextBox x:Name="pathToLoadPosting" HorizontalAlignment="Left" Height="30" Margin="117,94,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadPosting_TextChanged" />
+        <TextBlock x:Name="textBlockPathToPosting" HorizontalAlignment="Left" Height="30" Margin="10,94,0,0" TextWrapping="Wrap" Text="Path to Posting " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
+        <Button x:Name="startIndexing" Content="Go!" HorizontalAlignment="Left" Height="29" Margin="354,198,0,0" VerticalAlignment="Top" Width="117" Click="startIndexing_Click"/>
+        <CheckBox x:Name="checkBox" Content="With stemming"  HorizontalAlignment="Left" Height="18" Margin="10,149,0,0" VerticalAlignment="Top" Width="105"/>
+        <Button x:Name="reserButton" Content="Reset" HorizontalAlignment="Left" Height="26" Margin="10,275,0,0" VerticalAlignment="Top" Width="188" Click="reserButton_Click"/>
+        <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="10,196,0,0" VerticalAlignment="Top" Width="130"/>
+        <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="168,196,0,0" VerticalAlignment="Top" Width="126"/>
+        <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Height="26" Margin="168,146,0,0" VerticalAlignment="Top" Text="Language"  Width="126" IsEditable="True" IsReadOnly="True"/>
+
     </Grid>
 </Window>
