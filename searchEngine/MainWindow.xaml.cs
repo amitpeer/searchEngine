@@ -112,5 +112,10 @@ namespace searchEngine
             System.Windows.Forms.MessageBox.Show("Number of documents indexed:+" + manageSearch.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+manageSearch.getNumberOfUniqueTerms()+"\n"+"Total time"+manageSearch.getStopwatch());
 
         }
+
+        private void loadDic_Click(object sender, RoutedEventArgs e)
+        {
+            manageSearch.load(m_pathToPosting, m_shouldStem);           
+        }
     }
 }
