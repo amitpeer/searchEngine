@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SearchEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,13 @@ namespace searchEngine
         HashSet<string> stopWords;
         private bool shouldStem;
         int counterDocs;
+        Stemmer stemmer;
+
         public Parse(HashSet<string> _stopWords, bool _shouldStem)
         {
             stopWords = _stopWords;
             shouldStem = _shouldStem;
+            stemmer = new Stemmer();
             dates = new Dictionary<string, string>()
             {
                 {"JANUARY","01" },{"JAN","01" },{"FEBUARY","02" },{"FEB","02" },{"MARCH","03" },{"APRIL","04" },{"APR","04" },{"MAY","05" },{"JUNE","06" },{"JUN","06" },
@@ -507,14 +511,20 @@ namespace searchEngine
 
         private void insertToDic(Dictionary<string,TermInfoInDoc> terms ,string term, bool isHeader, string docName)
         {
-            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == null )
+            if (term == "<f>" || term == "</f>" || term == "<f" || term =="p=106>"  || term == "'" || term == "" || term == " " || term == "|" || term == null || term == "$")
                 return;
-            if (term.All(c => c == '?' || c == '!'))
+            if (term.All(c => c == '?' || c == '!' || c == '$' || c == '#'))
                 return;
             if (term.Contains('?'))
                 term = term.Replace("?", "").Trim(); ;
             if (term.Contains('!'))
                 term = term.Replace("!", "").Trim();
+            term = term.Trim('|', '|', '`', '/', '-', '\'', '_');
+            if (shouldStem)
+            {
+                term = stemmer.stemTerm(term);
+            }
+            term = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(term));         
             if (!stopWords.Contains(term) && term!="")
             {
                 if (terms.ContainsKey(term))
