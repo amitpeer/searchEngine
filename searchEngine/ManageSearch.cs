@@ -87,7 +87,10 @@ namespace searchEngine
         }
         public int getNumberOfUniqueTerms() { return mainDic != null ? mainDic.Count : 0; }
         public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
-        public double getTime() { return stopwatch != null ? stopwatch.Elapsed.TotalMinutes : 0; }
+        public string getTime()
+        {
+            return "Time taken: " + stopwatch.Elapsed.TotalMinutes.ToString();
+        }
         public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -126,7 +129,7 @@ namespace searchEngine
             foreach (KeyValuePair<string, Document> Doc in documentsDic)
             {
                 string currentLanguage = Doc.Value.Language;
-                if (!languages.Contains(currentLanguage))
+                if (!languages.Contains(currentLanguage) && currentLanguage!="")
                 {
                     languages.Add(currentLanguage);
                 }
