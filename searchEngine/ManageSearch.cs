@@ -14,15 +14,17 @@ namespace searchEngine
         private Dictionary <string, int[]> mainDic;
         private Parse parser;
         private ReadFile readFile;
-        private string m_path = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
-        private string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
         private bool shouldStem;
         private string stemOnFileName;
+        private string m_path;
+        private string m_pathToSave;
 
-        public ManageSearch(bool _shouldStem)
+        public ManageSearch(bool _shouldStem, string path, string pathToSave)
         {
             shouldStem = _shouldStem;
             stemOnFileName = shouldStem ? "STEM" : "";
+            m_path = path;
+            m_pathToSave = pathToSave;
         }
 
         public Dictionary<string, int[]> getMainDic() { return mainDic; }

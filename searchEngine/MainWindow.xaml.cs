@@ -23,15 +23,14 @@ namespace searchEngine
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string m_pathToCorpus;
-        private string m_pathToPosting;
-        bool m_stem;
+        private static readonly string m_pathToCorpus = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\small corpus";
+        private static readonly string m_pathToSave = "C:\\Users\\amitp\\Documents\\לימודים\\סמסטר ה\\אחזור\\מנוע\\corpus\\results";
+        bool m_shouldStem;
        
         public MainWindow()
         {
             InitializeComponent();
-            m_pathToCorpus = "";
-            m_pathToPosting = "";
+            ManageSearch manageSearch = new ManageSearch(m_shouldStem, m_pathToCorpus, m_pathToSave);
             //ManageSearch.main();
         }
 
