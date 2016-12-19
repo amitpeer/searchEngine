@@ -64,6 +64,7 @@ namespace searchEngine
             docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
             date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
             language = getLanguage(doc, "<F P=105>", "</F>");
+            language = language.Substring(0, language.IndexOf(" "));
             title = getStrBetweenTags(doc, "<TI>", "</TI>");
             // if there is no <TEXT> tag, it's a test and we leave doc the same:
             doc = getStrBetweenTags(doc, "<TEXT>", "</TEXT>") != null ? getStrBetweenTags(doc, "<TEXT>", "</TEXT>") : doc;
