@@ -64,6 +64,7 @@ namespace searchEngine
         public void load(string path, bool shouldStem)
         {
             reset();
+            m_pathToSave = path;
             unZipMainDic();
             unZipDocumentsDic();
         }
