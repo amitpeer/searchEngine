@@ -32,7 +32,7 @@ namespace searchEngine
         public MainWindow()
         {
             InitializeComponent();
-            ManageSearch manageSearch = new ManageSearch();
+            manageSearch = new ManageSearch();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
