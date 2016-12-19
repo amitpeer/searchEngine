@@ -134,7 +134,10 @@ namespace searchEngine
                 m_shouldStem = checkBox.IsChecked.Value;
                 manageSearch.load(m_pathToPosting, m_shouldStem);
                 m_languages = manageSearch.getLanguagesInCorpus();
-
+                foreach (string lang in m_languages)
+                {
+                    comboBox1.Items.Add(lang);
+                }
             }
        
         }
