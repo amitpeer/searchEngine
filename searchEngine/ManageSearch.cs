@@ -76,6 +76,7 @@ namespace searchEngine
         {
             reset();
             m_pathToSave = path;
+            stemOnFileName = shouldStem ? "STEM" : "";
             unZipMainDic();
             unZipDocumentsDic();
         }
