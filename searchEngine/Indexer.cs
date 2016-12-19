@@ -136,7 +136,7 @@ namespace searchEngine
                     if (termsInComparisonForMerge.ContainsKey(currentTerm.M_termName))
                     {
                         termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid = safeMerge(termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid, currentTerm.M_tid, currentTerm.M_termName);
-                       // termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid=termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
+                        //termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid=termsInComparisonForMerge[currentTerm.M_termName].Term.M_tid.Concat(currentTerm.M_tid).ToDictionary(x => x.Key, x => x.Value);
                         goto nextTerminBinaryReader;
                     }
                     else

@@ -64,6 +64,7 @@ namespace searchEngine
             docName = getStrBetweenTags(doc, "<DOCNO>", "</DOCNO>");
             date = getStrBetweenTags(doc, "<DATE1>", "</DATE1>");
             language = getLanguage(doc, "<F P=105>", "</F>");
+            language = fixLanguge(language);
             title = getStrBetweenTags(doc, "<TI>", "</TI>");
             // if there is no <TEXT> tag, it's a test and we leave doc the same:
             doc = getStrBetweenTags(doc, "<TEXT>", "</TEXT>") != null ? getStrBetweenTags(doc, "<TEXT>", "</TEXT>") : doc;
@@ -555,7 +556,7 @@ namespace searchEngine
             {
                 int index = value.IndexOf(startTag) + startTag.Length;
                 string valueFromStartTag = value.Substring(index);
-                return valueFromStartTag.Substring(0, valueFromStartTag.IndexOf(endTag));
+                return valueFromStartTag.Substring(0, valueFromStartTag.IndexOf(endTag)).Trim();
             }
             else
                 return null;
@@ -570,6 +571,20 @@ namespace searchEngine
                     max_tf = entry.Value.Tf;
             }
             return max_tf;    
+        }
+
+        private string fixLanguge(string language)
+        {
+            string ans = language;
+            if (ans.Contains(" "))
+                ans = language.Substring(0, language.IndexOf(" "));
+            if (ans.Contains(","))
+                ans = language.Substring(0, language.IndexOf(","));
+            if (ans.Any(char.IsDigit))
+            {
+                ans = null;
+            }
+            return ans;
         }
     }
 }
