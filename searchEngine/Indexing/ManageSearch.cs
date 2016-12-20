@@ -72,13 +72,17 @@ namespace searchEngine
             stopwatch.Stop();
 
         }
-        public void load(string path, bool shouldStem)
+        public bool load(string path, bool shouldStem)
         {
             reset();
             m_pathToSave = path;
             stemOnFileName = shouldStem ? "STEM" : "";
-            unZipMainDic();
-            unZipDocumentsDic();
+            if (!unZipMainDic() || !unZipDocumentsDic())
+            {
+                reset();
+                return false;
+            }
+            return true;
         }
         public void setNewPaths(string pathToCorpus, string pathToSave)
         {
@@ -89,7 +93,8 @@ namespace searchEngine
         public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
         public string getTime()
         {
-            return "Time taken: Minutes" + stopwatch.Elapsed.TotalMinutes.ToString()+" Seconds"+ stopwatch.Elapsed.TotalSeconds.ToString();
+            double min = stopwatch.Elapsed.TotalMinutes;
+            return "Time taken: Minutes " + (int)min+"\n Seconds "+ (stopwatch.Elapsed.TotalSeconds/60).ToString();
         }
         public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
@@ -138,35 +143,49 @@ namespace searchEngine
 
 
         }
-        private void unZipMainDic()
+        private bool unZipMainDic()
         {
-            GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"), CompressionMode.Decompress);
-            try
+            if (File.Exists(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"))
             {
-                mainDic = (Dictionary<string, int[]>)(new BinaryFormatter()).Deserialize(gZipStream);
-            }
-            finally
-            {
-                if (gZipStream != null)
+                GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"), CompressionMode.Decompress);
+                try
                 {
-                    ((IDisposable)gZipStream).Dispose();
+                    mainDic = (Dictionary<string, int[]>)(new BinaryFormatter()).Deserialize(gZipStream);
                 }
+                finally
+                {
+                    if (gZipStream != null)
+                    {
+                        ((IDisposable)gZipStream).Dispose();
+                    }
+                }
+                return true;
             }
+            else
+                return false;
+
         }
-        private void unZipDocumentsDic()
+        private bool unZipDocumentsDic()
         {
-            GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"), CompressionMode.Decompress);
-            try
+            if (File.Exists(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"))
             {
-                documentsDic = (Dictionary<string, Document>)(new BinaryFormatter()).Deserialize(gZipStream);
-            }
-            finally
-            {
-                if (gZipStream != null)
+                GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"), CompressionMode.Decompress);
+                try
                 {
-                    ((IDisposable)gZipStream).Dispose();
+                    documentsDic = (Dictionary<string, Document>)(new BinaryFormatter()).Deserialize(gZipStream);
                 }
+                finally
+                {
+                    if (gZipStream != null)
+                    {
+                        ((IDisposable)gZipStream).Dispose();
+                    }
+                }
+                return true;
             }
+            else
+                return false;
+
         }
     }
 }

@@ -7,21 +7,8 @@
         mc:Ignorable="d"
         Title="dataDisplay" Height="300" Width="300">
     <Grid>
-        
+
         <ListView ItemsSource="{DynamicResource Terms}" >
-            <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListViewItem">
-                                <Border Name="Border" BorderBrush="Black" BorderThickness="1">
-                                </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ListViewItem.HorizontalContentAlignment" Value="Stretch"/>
-            </Style>
-                </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView >
                     <GridViewColumn Header="Term" DisplayMemberBinding="{Binding Key}" />

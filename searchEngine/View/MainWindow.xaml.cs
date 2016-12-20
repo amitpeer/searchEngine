@@ -125,11 +125,18 @@ namespace searchEngine
             else
             {
                 m_shouldStem = checkBox.IsChecked.Value;
-                manageSearch.load(m_pathToPosting, m_shouldStem);
-                m_languages = manageSearch.getLanguagesInCorpus();
-                foreach (string lang in m_languages)
+                if(!manageSearch.load(m_pathToPosting, m_shouldStem))
                 {
-                    comboBox1.Items.Add(lang);
+                    System.Windows.Forms.MessageBox.Show("You must type a path to a correct folder:with stem/without", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    m_languages = manageSearch.getLanguagesInCorpus();
+                    foreach (string lang in m_languages)
+                    {
+                        comboBox1.Items.Add(lang);
+                    }
+                    System.Windows.Forms.MessageBox.Show("Files loaded successfully");
                 }
             }
        

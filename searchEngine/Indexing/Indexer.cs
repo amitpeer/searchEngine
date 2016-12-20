@@ -19,6 +19,7 @@ namespace searchEngine
         private Dictionary<string, int> TermsInDoc3366 = new Dictionary<string, int>();
         private string  m_pathToSave;
         private int counterFiles;
+        private int countNum;
         private bool shouldStem;
 
         //get a list of parser result for a few document
@@ -157,6 +158,11 @@ namespace searchEngine
 
         private void WriteTermToFile(BinaryWriter writerToFile, Term t)
         {
+            double g;
+            if(Double.TryParse(t.M_termName,out g))
+            {
+                countNum++;
+            }
             string json = JsonConvert.SerializeObject(t);
             writerToFile.Write(json);            
         }

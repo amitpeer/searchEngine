@@ -57,36 +57,35 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="View\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="dataDisplay.xaml.cs">
+    <Compile Include="View\dataDisplay.xaml.cs">
       <DependentUpon>dataDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Document.cs" />
-    <Compile Include="Indexer.cs" />
-    <Compile Include="ManageSearch.cs" />
-    <Compile Include="ReadFile.cs" />
-    <Compile Include="Stemmer.cs" />
-    <Compile Include="Term.cs" />
-    <Compile Include="termComparer.cs" />
-    <Compile Include="TermInfoInDoc.cs" />
-    <Compile Include="TermWithReader.cs" />
-    <Page Include="dataDisplay.xaml">
+    <Compile Include="Indexing\Document.cs" />
+    <Compile Include="Indexing\Indexer.cs" />
+    <Compile Include="Indexing\ManageSearch.cs" />
+    <Compile Include="Indexing\ReadFile.cs" />
+    <Compile Include="Indexing\Stemmer.cs" />
+    <Compile Include="Indexing\Term.cs" />
+    <Compile Include="Indexing\TermInfoInDoc.cs" />
+    <Compile Include="Indexing\TermWithReader.cs" />
+    <Page Include="View\dataDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="View\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Parse.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Indexing\Parse.cs" />
+    <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -117,7 +116,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="View\App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Background_Globe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
