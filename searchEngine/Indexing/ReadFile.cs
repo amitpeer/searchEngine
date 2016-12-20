@@ -43,25 +43,6 @@ namespace searchEngine
             return docList;
         }
 
-        // Return a list of string, each item in the list is a document.
-        // takes the documents from the file numbers specified in indexList
-        public List<string> getFiles(List<int> indexList)
-        {
-            List<string> docList = new List<string>();
-            foreach (int i in indexList)
-            {           
-                if (!Path.GetFileName(filePaths[i - 1]).Equals(stopWordsFileName))
-                {
-                    docList.AddRange(getFile(i));
-                }        
-            }
-            if (docList.Count == 0)
-            {
-                return null;
-            }
-            return docList;
-        }
-
         //Returns a list of string, each item in the list is a document.
         // takes the documents from file number fileIndex.
         public List <string> getFile(int fileIndex)

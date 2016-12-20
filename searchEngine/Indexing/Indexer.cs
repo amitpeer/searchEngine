@@ -16,7 +16,6 @@ namespace searchEngine
     {
         private Dictionary<string, int[]> mainDic;
         private List<string> mergeColission = new List<string>();
-        private Dictionary<string, int> TermsInDoc3366 = new Dictionary<string, int>();
         private string  m_pathToSave;
         private int counterFiles;
         private int countNum;
