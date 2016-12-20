@@ -102,13 +102,6 @@ namespace searchEngine
         private void showDic_Click(object sender, RoutedEventArgs e)
         {
             Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
-            /*
-                        System.Windows.Forms.DataGridView dg = new System.Windows.Forms.DataGridView();
-           dg .AutoGenerateColumns = true;
-            dg.Columns.Add("Term", "Term");
-            dg.Columns.Add("Number of appearnces in corpus", "Number of appearnces in corpus"); 
-
-            */
             Dictionary<string, int> dicTermDis = new Dictionary<string, int>();
             foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
             {

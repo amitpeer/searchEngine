@@ -17,18 +17,13 @@ namespace searchEngine
     /// <summary>
     /// Interaction logic for dataDisplay.xaml
     /// </summary>
-    public partial class dataDisplay  : Window
+    public partial class dataDisplay : Window
     {
-            public dataDisplay(Dictionary<string,int> dic)
-            {
-                InitializeComponent();
-                dicTerms = dic;
-                DataContext = this;
-            }
-
-            public Dictionary<string, int> dicTerms { get; set; }
-
-            private int _selectedBookIndex;
-            }
+        public dataDisplay(Dictionary<string, int> dictionaryOfTerms)
+        {
+            InitializeComponent();
+            Resources["Terms"] = dictionaryOfTerms;
         }
+    }
+}
 

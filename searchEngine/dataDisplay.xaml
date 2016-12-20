@@ -7,22 +7,27 @@
         mc:Ignorable="d"
         Title="dataDisplay" Height="300" Width="300">
     <Grid>
-        <StackPanel Margin="0,0,-0.4,0.4">
-            <ListBox 
-            ItemsSource="{Binding Path=dicTerms}"
-            SelectedValuePath="Value"
-            SelectedValue="{Binding Path=SelectedTermIndex}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="2">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Path=Value}" />
-                                <TextBlock Text="{Binding Path=Key.Name}" />
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
+        
+        <ListView ItemsSource="{DynamicResource Terms}" >
+            <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                                <Border Name="Border" BorderBrush="Black" BorderThickness="1">
+                                </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ListViewItem.HorizontalContentAlignment" Value="Stretch"/>
+            </Style>
+                </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView >
+                    <GridViewColumn Header="Term" DisplayMemberBinding="{Binding Key}" />
+                    <GridViewColumn Header="Total appearances in corpus" DisplayMemberBinding="{Binding Value.}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

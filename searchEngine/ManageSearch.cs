@@ -89,7 +89,7 @@ namespace searchEngine
         public int getNumberOfParsedDocs() { return documentsDic != null ? documentsDic.Count : 0; }
         public string getTime()
         {
-            return "Time taken: " + stopwatch.Elapsed.TotalMinutes.ToString();
+            return "Time taken: Minutes" + stopwatch.Elapsed.TotalMinutes.ToString()+" Seconds"+ stopwatch.Elapsed.TotalSeconds.ToString();
         }
         public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
