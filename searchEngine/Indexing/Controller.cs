@@ -21,7 +21,7 @@ namespace searchEngine
         private string m_pathToSave;
         private Stopwatch stopwatch = new Stopwatch();
         private MainWindow mainWindow;
-        private double averageDocumentLength;
+        public double averageDocumentLength;
 
         public Controller() { }
 
@@ -106,6 +106,27 @@ namespace searchEngine
         public Stopwatch getStopwatch() { return stopwatch; }   
         //COMPRESSING (TO DISK) METHODS:
         [MethodImpl(MethodImplOptions.Synchronized)]
+
+        public SortedSet<string> getLanguagesInCorpus()
+        {
+           SortedSet<string> languages = new SortedSet<string>();
+            foreach (KeyValuePair<string, Document> Doc in documentsDic)
+            {
+                string currentLanguage = Doc.Value.Language;
+                if (!languages.Contains(currentLanguage) && currentLanguage!="")
+                {
+                    languages.Add(currentLanguage);
+                }
+            }
+            return languages;
+
+
+        }
+        public Dictionary<string, Term> getTermsFromQuery(string[] query)
+        {
+            throw new NotImplementedException();
+        }
+
         private byte[] zipCompress(object obj)
         {
             byte[] bArray;
@@ -134,21 +155,6 @@ namespace searchEngine
                 }
             }
             return bArray;
-        }
-        public SortedSet<string> getLanguagesInCorpus()
-        {
-           SortedSet<string> languages = new SortedSet<string>();
-            foreach (KeyValuePair<string, Document> Doc in documentsDic)
-            {
-                string currentLanguage = Doc.Value.Language;
-                if (!languages.Contains(currentLanguage) && currentLanguage!="")
-                {
-                    languages.Add(currentLanguage);
-                }
-            }
-            return languages;
-
-
         }
         private bool unZipMainDic()
         {
@@ -195,7 +201,6 @@ namespace searchEngine
                 return false;
 
         }
-
         private double calculateAvaregeDocumentLength()
         {
             double average = 0;

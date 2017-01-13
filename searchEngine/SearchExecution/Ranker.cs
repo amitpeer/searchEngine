@@ -20,6 +20,11 @@ namespace searchEngine.SearchExecution
         //Output: list of documents relevent to the query, the first document is the most relevent
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
+            calculateTermsFreqInQuery(query);
+
+
+
+
             throw new NotImplementedException();
         }
 
@@ -29,7 +34,7 @@ namespace searchEngine.SearchExecution
             {
                 if (!termsFreqInQuery.ContainsKey(s))
                 {
-                    termsFreqInQuery.Add(s, 0);
+                    termsFreqInQuery.Add(s, 1);
                 }
                 else
                 {
