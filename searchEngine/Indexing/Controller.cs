@@ -103,8 +103,58 @@ namespace searchEngine
             double min = stopwatch.Elapsed.TotalMinutes;
             return "Time taken: Minutes " + (int)min+"\n Seconds "+ (stopwatch.Elapsed.TotalSeconds/60).ToString();
         }
-        public Stopwatch getStopwatch() { return stopwatch; }   
-        //COMPRESSING (TO DISK) METHODS:
+        public Stopwatch getStopwatch() { return stopwatch; }
+
+        public SortedSet<string> getLanguagesInCorpus()
+        {
+           SortedSet<string> languages = new SortedSet<string>();
+            foreach (KeyValuePair<string, Document> Doc in documentsDic)
+            {
+                string currentLanguage = Doc.Value.Language;
+                if (!languages.Contains(currentLanguage) && currentLanguage!="")
+                {
+                    languages.Add(currentLanguage);
+                }
+            }
+            return languages;
+
+
+        }
+
+        //Input: Array of string, each item in the array is a term in the query
+        //Output: Dictionary: Keys = term, Values = Term object
+        public Dictionary<string, Term> getTermsFromQuery(string[] query)
+        {
+            string lineInFile = "";
+            BinaryReader br = new BinaryReader(File.Open(m_pathToSave, FileMode.Open));
+            Dictionary<string, Term> terms = new Dictionary<string, Term>();
+            foreach(string termInQuery in query)
+            {
+                //intialize the binary reader and line for the new term
+                br = new BinaryReader(File.Open(m_pathToSave, FileMode.Open));
+                lineInFile = "";
+
+                //Get the pointer of the term for it's location in the Posting
+                int pointer = mainDic[termInQuery][2];
+                
+                //read untill you get to the term
+                for (int i=0; i<=pointer; i++)
+                {
+                    lineInFile = br.ReadString();
+                }
+                
+                //Get the required Term according to lineInFile
+                Term term = JsonConvert.DeserializeObject<Term>(lineInFile);
+
+                //Add the Term to the Dictionary
+                terms.Add(term.M_termName, term);
+
+                //Close the binary Reader
+                br.Close();
+            }
+            return terms;
+        }
+
         [MethodImpl(MethodImplOptions.Synchronized)]
         private byte[] zipCompress(object obj)
         {
@@ -134,21 +184,6 @@ namespace searchEngine
                 }
             }
             return bArray;
-        }
-        public SortedSet<string> getLanguagesInCorpus()
-        {
-           SortedSet<string> languages = new SortedSet<string>();
-            foreach (KeyValuePair<string, Document> Doc in documentsDic)
-            {
-                string currentLanguage = Doc.Value.Language;
-                if (!languages.Contains(currentLanguage) && currentLanguage!="")
-                {
-                    languages.Add(currentLanguage);
-                }
-            }
-            return languages;
-
-
         }
         private bool unZipMainDic()
         {
@@ -195,7 +230,6 @@ namespace searchEngine
                 return false;
 
         }
-
         private double calculateAvaregeDocumentLength()
         {
             double average = 0;
