@@ -15,7 +15,7 @@ namespace searchEngine.SearchExecution
         public Searcher(Controller controller)
         {
             this.controller = controller;
-            ranker = new Ranker();
+            ranker = new Ranker(controller);
         }
 
         //Input: query (each word seperated by a space), and the languages(null = all, can be more than one language) for the doucments
@@ -33,7 +33,7 @@ namespace searchEngine.SearchExecution
             }
 
             // parse the query and send to ranker
-            return ranker.rank(controller.getParser().parseDocument(query).Keys.ToArray(), documentsToRank);
+            return ranker.rank(query.Split(' '), documentsToRank);
         }
 
         // Input: languages to filter by 

@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Forms;
+using searchEngine.SearchExecution;
 
 namespace searchEngine
 {
@@ -154,6 +155,13 @@ namespace searchEngine
                 }
             }
        
+        }
+
+        private void button_Click_1(object sender, RoutedEventArgs e)
+        {
+            string query = "sex organization";
+            Searcher sr = new Searcher(controller);
+            sr.search(query, null);
         }
     }
 }

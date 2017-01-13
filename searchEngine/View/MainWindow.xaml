@@ -22,6 +22,7 @@
         <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="388,293,0,0" VerticalAlignment="Top" Width="130" Click="showDic_Click"/>
         <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="388,219,0,0" VerticalAlignment="Top" Width="126" Click="loadDic_Click"/>
         <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Height="26" Margin="547,79,0,0" VerticalAlignment="Top" Text="Language"  Width="126" IsEditable="True" IsReadOnly="True"/>
+        <Button x:Name="button" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="211,191,0,0" VerticalAlignment="Top" Width="86" Click="button_Click_1"/>
 
     </Grid>
 </Window>

@@ -101,7 +101,7 @@ namespace searchEngine
         public string getTime()
         {
             double min = stopwatch.Elapsed.TotalMinutes;
-            return "Time taken: Minutes " + (int)min+"\n Seconds "+ (stopwatch.Elapsed.TotalSeconds/60).ToString();
+            return "Time taken: Minutes " + (int)min+"\n Seconds "+ (stopwatch.Elapsed.TotalSeconds).ToString();
         }
         public Stopwatch getStopwatch() { return stopwatch; }
 
@@ -126,12 +126,12 @@ namespace searchEngine
         public Dictionary<string, Term> getTermsFromQuery(string[] query)
         {
             string lineInFile = "";
-            BinaryReader br = new BinaryReader(File.Open(m_pathToSave, FileMode.Open));
+            BinaryReader br;
             Dictionary<string, Term> terms = new Dictionary<string, Term>();
             foreach(string termInQuery in query)
             {
                 //intialize the binary reader and line for the new term
-                br = new BinaryReader(File.Open(m_pathToSave, FileMode.Open));
+                br = new BinaryReader(File.Open(m_pathToSave+"\\MainPosting.bin", FileMode.Open));
                 lineInFile = "";
 
                 //Get the pointer of the term for it's location in the Posting
