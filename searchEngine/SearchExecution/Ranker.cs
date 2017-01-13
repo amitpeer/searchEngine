@@ -25,7 +25,17 @@ namespace searchEngine.SearchExecution
 
         private void calculateTermsFreqInQuery(string[] query)
         {
-
+            foreach(string s in query)
+            {
+                if (!termsFreqInQuery.ContainsKey(s))
+                {
+                    termsFreqInQuery.Add(s, 0);
+                }
+                else
+                {
+                    termsFreqInQuery[s]++;
+                }
+            }
         }
     }
 }
