@@ -130,6 +130,8 @@ namespace searchEngine
             Dictionary<string, Term> terms = new Dictionary<string, Term>();
             foreach(string termInQuery in query)
             {
+                if (!mainDic.ContainsKey(termInQuery))
+                    continue;
                 //intialize the binary reader and line for the new term
                 br = new BinaryReader(File.Open(m_pathToSave, FileMode.Open));
                 lineInFile = "";
