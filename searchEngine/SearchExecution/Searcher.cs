@@ -44,7 +44,7 @@ namespace searchEngine.SearchExecution
             foreach (string language in languages)
             {
                 filteredDocuments.AddRange(controller.getDocumentsDic().Values
-                                                     .Where(d => d.Language == language)
+                                                     .Where(d => d.Language.Equals(language))
                                                      .Select(d => d.getDocumentName())
                                                      .ToList());
             }

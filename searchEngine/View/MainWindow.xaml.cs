@@ -34,8 +34,8 @@ namespace searchEngine
         {
            this.controller = new Controller(this);
            m_pathToCorpus="";
-             m_pathToPosting="";
-            InitializeComponent();
+           m_pathToPosting="";
+           InitializeComponent();
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -103,7 +103,7 @@ namespace searchEngine
             }
             catch (Exception exception)
             {
-                System.Windows.Forms.MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Nothing to Delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

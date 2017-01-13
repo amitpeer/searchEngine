@@ -8,6 +8,12 @@ namespace searchEngine.SearchExecution
 {
     class Ranker
     {
+        private Dictionary<string, int> termsFreqInQuery;
+
+        public Ranker()
+        {
+            termsFreqInQuery = new Dictionary<string, int>();
+        }
 
         //Input: string array for the query, each item in the array is a (parsed) term in the query
         //       documents list to rank (after language filter)
@@ -15,6 +21,11 @@ namespace searchEngine.SearchExecution
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
             throw new NotImplementedException();
+        }
+
+        private void calculateTermsFreqInQuery(string[] query)
+        {
+
         }
     }
 }

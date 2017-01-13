@@ -13,11 +13,11 @@ namespace searchEngine
         private bool isTitle;
 
         public TermInfoInDoc() { }
-        public TermInfoInDoc(int _tf, string _docName, bool _isTitle)
+        public TermInfoInDoc(int _tf, string docName, bool isTitle)
         {
             tf = _tf;
-            docName = _docName;
-            isTitle = _isTitle;
+            this.docName = docName;
+            this.isTitle = isTitle;
         }
 
         public int Tf
