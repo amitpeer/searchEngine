@@ -7,7 +7,7 @@ using System.IO;
 namespace testEngine
 {
     [TestClass]
-    public class UnitTest1
+    public class testParser
     {   
         Parse parse = new Parse(new HashSet<string> { { "a" } }, false);
         Dictionary<string, TermInfoInDoc> terms;
@@ -253,14 +253,14 @@ namespace testEngine
             doc = "Geneva, March 21 (CNA) -- The Convention on";
             terms = parse.parseDocument(doc);
         }
-        [TestMethod]
-        public void testNewRule6()
-        {
-            StreamReader streamReader = new StreamReader("C:\\Users\\amitp\\Documents\\corpusTest\\FB396004");
-            doc = streamReader.ReadToEnd();
-            terms = parse.parseDocument(doc);
-            streamReader.Close();
-        }
+        //[TestMethod]
+        //public void testNewRule6()
+        //{
+        //    StreamReader streamReader = new StreamReader("C:\\Users\\amitp\\Documents\\corpusTest\\FB396004");
+        //    doc = streamReader.ReadToEnd();
+        //    terms = parse.parseDocument(doc);
+        //    streamReader.Close();
+        //}
         [TestMethod]
         public void testNewRule7()
         {
@@ -312,7 +312,38 @@ namespace testEngine
             doc = "<F P=105> 1231 </F>";
             terms = parse.parseDocument(doc);
         }
-           
+
+        [TestMethod]
+        public void testDocLengthEmptyDoc()
+        {
+            doc = "<DOCNO> a </DOCNO> <TEXT> </TEXT>";
+            terms = parse.parseDocument(doc);
+            Assert.AreEqual(0, parse.getDocuments()["a"].DocumentLength);
+        }
+
+        [TestMethod]
+        public void testDocLengthOneWord()
+        {
+            doc = "<DOCNO> a </DOCNO> <TEXT> 1 </TEXT>";
+            terms = parse.parseDocument(doc);
+            Assert.AreEqual(1, parse.getDocuments()["a"].DocumentLength);
+        }
+
+        [TestMethod]
+        public void testDocLengthManyWord()
+        {
+            doc = "<DOCNO> a </DOCNO> <TEXT> hello, I am nash nash </TEXT>";
+            terms = parse.parseDocument(doc);
+            Assert.AreEqual(5, parse.getDocuments()["a"].DocumentLength);
+        }
+
+        [TestMethod]
+        public void testDocLengthanyWord2()
+        {
+            doc = "<DOCNO> a </DOCNO> <TEXT> hello, who are you? I am- not me-- </TEXT>";
+            terms = parse.parseDocument(doc);
+            Assert.AreEqual(8, parse.getDocuments()["a"].DocumentLength);
+        }
 
         private void insertToExpected(string doc)
         {

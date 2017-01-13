@@ -18,7 +18,7 @@ namespace testEngine
         private ReadFile readFile = new ReadFile("C:\\Users\\amitp\\Documents\\corpusTest");
         List<string> docs = new List<string>();
 
-        [TestMethod]
+/*        [TestMethod]
         public void TestMethod1()
         {
             docs = readFile.getFiles(5, 6);
@@ -29,7 +29,7 @@ namespace testEngine
             documents = parse.getDocuments();
             Assert.AreEqual(3, documents["1"].Max_tf);
             Assert.AreEqual(4, documents["1"].NumOfUniqueTerms);
-        }
+        }*/
 
     }
 }

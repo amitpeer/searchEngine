@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="testReadFile.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="testParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

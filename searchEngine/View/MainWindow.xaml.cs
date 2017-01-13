@@ -25,13 +25,14 @@ namespace searchEngine
     {
         private string m_pathToCorpus;
         private string m_pathToPosting;
-        bool m_shouldStem;
-        SortedSet<string> m_languages;
-        ManageSearch manageSearch;
+        private bool m_shouldStem;
+        private SortedSet<string> m_languages;
+        private Controller controller;
+        private string errorMessage = "Problem occured. Please follow the instructions.";
 
         public MainWindow()
         {
-           this.manageSearch = new ManageSearch(this);
+           this.controller = new Controller(this);
            m_pathToCorpus="";
              m_pathToPosting="";
             InitializeComponent();
@@ -76,8 +77,8 @@ namespace searchEngine
                 else
                 {
                     m_shouldStem = checkBox.IsChecked.Value;
-                    manageSearch.startIndexing(m_shouldStem, m_pathToCorpus, m_pathToPosting);
-                    m_languages = manageSearch.getLanguagesInCorpus();
+                    controller.startIndexing(m_shouldStem, m_pathToCorpus, m_pathToPosting);
+                    m_languages = controller.getLanguagesInCorpus();
                     foreach(string lang in m_languages)
                     {
                         comboBox1.Items.Add(lang);
@@ -90,30 +91,43 @@ namespace searchEngine
 
         private void reserButton_Click(object sender, RoutedEventArgs e)
         {
-            Array.ForEach(Directory.GetFiles(m_pathToPosting), File.Delete);
-            comboBox1.Items.Clear();
-            manageSearch.reset();
-            this.pathToLoadPosting.Text = "";
-            this.pathToLoadCorpus.Text = "";
-            m_pathToPosting = "";
-            m_pathToCorpus = "";
+            try
+            {
+                Array.ForEach(Directory.GetFiles(m_pathToPosting), File.Delete);
+                comboBox1.Items.Clear();
+                controller.reset();
+                this.pathToLoadPosting.Text = "";
+                this.pathToLoadCorpus.Text = "";
+                m_pathToPosting = "";
+                m_pathToCorpus = "";
+            }
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void showDic_Click(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, int[]> dicToDisplay = manageSearch.getMainDic();
-            Dictionary<string, int> dicTermDis = new Dictionary<string, int>();
-            foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
+            try
             {
-                dicTermDis.Add(termInfo.Key, termInfo.Value[0]);
+                Dictionary<string, int[]> dicToDisplay = controller.getMainDic();
+                Dictionary<string, int> dicTermDis = new Dictionary<string, int>();
+                foreach (KeyValuePair<string, int[]> termInfo in dicToDisplay)
+                {
+                    dicTermDis.Add(termInfo.Key, termInfo.Value[0]);
+                }
+                dataDisplay windowNew = new dataDisplay(dicTermDis);
+                windowNew.ShowDialog();
             }
-            dataDisplay windowNew = new dataDisplay(dicTermDis);
-            windowNew.ShowDialog();
+            catch (Exception exception)
+            {
+                System.Windows.Forms.MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         public void finishedIndexing()
         {
-            System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + manageSearch.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+manageSearch.getNumberOfUniqueTerms()+"\n"+"Total time"+manageSearch.getTime());
-
+            System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + controller.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+controller.getNumberOfUniqueTerms()+"\n"+"Total time"+controller.getTime());
         }
 
         private void loadDic_Click(object sender, RoutedEventArgs e)
@@ -125,13 +139,13 @@ namespace searchEngine
             else
             {
                 m_shouldStem = checkBox.IsChecked.Value;
-                if(!manageSearch.load(m_pathToPosting, m_shouldStem))
+                if(!controller.load(m_pathToPosting, m_shouldStem))
                 {
                     System.Windows.Forms.MessageBox.Show("You must type a path to a correct folder:with stem/without", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    m_languages = manageSearch.getLanguagesInCorpus();
+                    m_languages = controller.getLanguagesInCorpus();
                     foreach (string lang in m_languages)
                     {
                         comboBox1.Items.Add(lang);

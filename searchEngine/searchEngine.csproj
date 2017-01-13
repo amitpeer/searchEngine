@@ -61,12 +61,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SearchExecution\Ranker.cs" />
+    <Compile Include="SearchExecution\Searcher.cs" />
     <Compile Include="View\dataDisplay.xaml.cs">
       <DependentUpon>dataDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Indexing\Document.cs" />
     <Compile Include="Indexing\Indexer.cs" />
-    <Compile Include="Indexing\ManageSearch.cs" />
+    <Compile Include="Indexing\Controller.cs" />
     <Compile Include="Indexing\ReadFile.cs" />
     <Compile Include="Indexing\Stemmer.cs" />
     <Compile Include="Indexing\Term.cs" />

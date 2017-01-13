@@ -16,7 +16,7 @@ namespace testEngine
         List<string> docs = new List<string>();
         List<string> expectedDocs = new List<string>();
 
-        [TestMethod]
+    /*    [TestMethod]
         public void testEmptyFile()
         {
             docs = readFile.getFile(1);
@@ -30,7 +30,7 @@ namespace testEngine
             addToExpected("<DOCNO> 1 </DOCNO>\r\n<TEXT>\r\naaa\r\nbbb\r\n</TEXT>\r\n</DOC>");
             Assert.AreEqual(true, checkEquals());
         }
-        /*
+        
         [TestMethod]
         public void testOneDocsOneLine()
         {

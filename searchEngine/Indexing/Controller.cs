@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace searchEngine
 {
-    class ManageSearch
+    class Controller
     {
         private Dictionary <string, Document> documentsDic;
         private Dictionary <string, int[]> mainDic;
@@ -21,10 +21,13 @@ namespace searchEngine
         private string m_pathToSave;
         private Stopwatch stopwatch = new Stopwatch();
         private MainWindow mainWindow;
+        private double averageDocumentLength;
 
-        public ManageSearch() { }
+        public Controller() { }
 
-        public ManageSearch(MainWindow mainWindow)
+        public Parse getParser() { return parser; }
+
+        public Controller(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
         }
@@ -65,13 +68,17 @@ namespace searchEngine
             indexer.MergeFiles();
             mainDic = indexer.getMainDic();
             documentsDic = parser.getDocuments();
+            averageDocumentLength = calculateAvaregeDocumentLength();
+
             //save mainDic to disk
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
             //save documentsDic to disk 
             File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
+
             stopwatch.Stop();
 
         }
+
         public bool load(string path, bool shouldStem)
         {
             reset();
@@ -173,6 +180,7 @@ namespace searchEngine
                 try
                 {
                     documentsDic = (Dictionary<string, Document>)(new BinaryFormatter()).Deserialize(gZipStream);
+                    averageDocumentLength = calculateAvaregeDocumentLength();
                 }
                 finally
                 {
@@ -186,6 +194,16 @@ namespace searchEngine
             else
                 return false;
 
+        }
+
+        private double calculateAvaregeDocumentLength()
+        {
+            double average = 0;
+            foreach (Document d in documentsDic.Values)
+            {
+                average += d.DocumentLength;
+            }
+            return average / documentsDic.Count;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace searchEngine
         private int numOfUniqueTerms;
         private string language;
         private string date;
+        private int documentLength;
 
         public string DocName
         {
@@ -39,6 +40,16 @@ namespace searchEngine
         {
             get { return date; }
             set { date = value; }
+        }
+        public int DocumentLength
+        {
+            get { return documentLength; }
+            set { documentLength = value; }
+        }
+
+        public string getDocumentName()
+        {
+            return docName;
         }
     }
 }

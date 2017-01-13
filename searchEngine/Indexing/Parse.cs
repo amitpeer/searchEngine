@@ -15,6 +15,7 @@ namespace searchEngine
         private bool shouldStem;
         int counterDocs;
         Stemmer stemmer;
+        private int documentLength;
 
         public Parse(HashSet<string> _stopWords, bool _shouldStem)
         {
@@ -36,6 +37,7 @@ namespace searchEngine
 
         public Dictionary<string, TermInfoInDoc> parseDocument(string doc)
         {
+            documentLength = 0;
             counterDocs++;
             Dictionary<string, TermInfoInDoc> terms = new Dictionary<string, TermInfoInDoc>();
             string title;
@@ -51,6 +53,7 @@ namespace searchEngine
                 document.Max_tf = findMaxTf(terms);
                 document.NumOfUniqueTerms = terms.Count;          
                 documents.Add(document.DocName, document);
+                documents[document.DocName].DocumentLength = documentLength;
             }
             return terms;
         }
@@ -89,6 +92,7 @@ namespace searchEngine
            char[] delimiters = { ' ', '\n', ';', ':', '"', '(', ')', '[', ']', '{', '}', '*', '\r' };
            string[] delimitersString = { " ", "\n", "\r", ";", ":", "\"", "(", ")", "[", "]", "{", "}", "*" ,"--","---" };
            string[] initialArrayOfDoc= doc.Trim(delimiters).Split(delimitersString, StringSplitOptions.RemoveEmptyEntries);
+           documentLength = initialArrayOfDoc.Length; //insert the length of the doucment to the documents dictionary
            for(int i = 0; i < initialArrayOfDoc.Length; i++)
             {
                 string currentTerm = initialArrayOfDoc[i];
