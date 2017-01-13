@@ -21,7 +21,7 @@ namespace searchEngine
         private string m_pathToSave;
         private Stopwatch stopwatch = new Stopwatch();
         private MainWindow mainWindow;
-        private double averageDocumentLength;
+        public double averageDocumentLength;
 
         public Controller() { }
 
