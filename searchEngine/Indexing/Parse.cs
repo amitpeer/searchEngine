@@ -538,20 +538,24 @@ namespace searchEngine
                 term = stemmer.stemTerm(term);
             }
             term = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(term));
-            if (stopWords != null)
+            
+            // case there are stop words to check 
+            if (stopWords != null && stopWords.Contains(term))
             {
-                if (!stopWords.Contains(term) && term != "")
-                {
-                    if (terms.ContainsKey(term))
-                    {
-                        terms[term].Tf++;
-                    }
-                    else
-                    {
-                        terms.Add(term, new TermInfoInDoc(1, docName != null ? docName.Trim() : null, isHeader));
-                    }
-                }
+                return;
             }
+            // case there are NOT stop words
+            else if (term != "")
+            {
+                if (terms.ContainsKey(term))
+                {
+                    terms[term].Tf++;
+                }
+                else
+                {
+                    terms.Add(term, new TermInfoInDoc(1, docName != null ? docName.Trim() : null, isHeader));
+                }
+             }
         }
 
         private string getStrBetweenTags(string value, string startTag, string endTag)
