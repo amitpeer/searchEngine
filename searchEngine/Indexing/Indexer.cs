@@ -122,10 +122,6 @@ namespace searchEngine
             while (BinaryReaders.Count > 0)
             {
                 TermWithReader twr = termsInComparisonForMerge.First().Value;
-                if (twr.Term.M_termName == "sex")
-                {
-                    counterniqueTerms= counterniqueTerms;
-                }
                 termsInComparisonForMerge.Remove(termsInComparisonForMerge.First().Key);
                 int totalAppearance = getTotalAppearanceOfTermInCorpus(twr.Term.M_tid);
                 mainDic.Add(twr.Term.M_termName, new int[] { totalAppearance, twr.Term.M_tid.Count, counterniqueTerms });

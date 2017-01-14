@@ -61,6 +61,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Indexing\DocumentDicToSave.cs" />
+    <Compile Include="Indexing\MainDicToSave.cs" />
     <Compile Include="SearchExecution\Ranker.cs" />
     <Compile Include="SearchExecution\Searcher.cs" />
     <Compile Include="View\dataDisplay.xaml.cs">

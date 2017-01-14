@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using searchEngine.Indexing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,8 +12,8 @@ namespace searchEngine
 {
     class Controller
     {
-        private Dictionary <string, Document> documentsDic;
-        private Dictionary <string, int[]> mainDic;
+        private Dictionary<string, Document> documentsDic;
+        private Dictionary<string, int[]> mainDic;
         private Parse parser;
         private ReadFile readFile;
         private bool shouldStem;
@@ -49,12 +50,12 @@ namespace searchEngine
             m_pathToSave = _pathToSave;
             readFile = new ReadFile(m_pathToCorpus);
             readFile.ExtractStopWordsFile();
-            parser = new Parse(readFile.getStopWords(),shouldStem);
+            parser = new Parse(readFile.getStopWords(), shouldStem);
             Indexer indexer = new Indexer(m_pathToSave, shouldStem);
-            int numOfFiles=Directory.GetFiles(m_pathToCorpus).Length-1;
+            int numOfFiles = Directory.GetFiles(m_pathToCorpus).Length - 1;
             int j = 11;
             //create miniPostingFile
-            for (int i = 1; i <= numOfFiles; i=i+10)
+            for (int i = 1; i <= numOfFiles; i = i + 10)
             {
                 List<string> batchOfDocs = readFile.getFiles(i, j);
                 List<Dictionary<string, TermInfoInDoc>> documentsAfterParse = new List<Dictionary<string, TermInfoInDoc>>();
@@ -62,8 +63,8 @@ namespace searchEngine
                 {
                     documentsAfterParse.Add(parser.parseDocument(s));
                 }
-                indexer.indexBatch(documentsAfterParse);   
-                j = j +10;
+                indexer.indexBatch(documentsAfterParse);
+                j = j + 10;
             }
             indexer.MergeFiles();
             mainDic = indexer.getMainDic();
@@ -71,9 +72,12 @@ namespace searchEngine
             averageDocumentLength = calculateAvaregeDocumentLength();
 
             //save mainDic to disk
-            File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
+            saveMainDic();
+            //File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
+
             //save documentsDic to disk 
-            File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
+            saveDocumentsDic();
+            //File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
 
             stopwatch.Stop();
 
@@ -84,11 +88,17 @@ namespace searchEngine
             reset();
             m_pathToSave = path;
             stemOnFileName = shouldStem ? "STEM" : "";
-            if (!unZipMainDic() || !unZipDocumentsDic())
+            try
             {
-                reset();
-                return false;
+                loadMainDic();
+                loadDocumentsDic();
             }
+            catch (Exception e) { return false; }
+            //if (!unZipMainDic() || !unZipDocumentsDic())
+            //{
+            //    reset();
+            //    return false;
+            //}
             readFile = new ReadFile(m_pathToCorpus);
             readFile.ExtractStopWordsFile();
             parser = new Parse(readFile.getStopWords(), shouldStem);
@@ -104,17 +114,17 @@ namespace searchEngine
         public string getTime()
         {
             double min = stopwatch.Elapsed.TotalMinutes;
-            return "Time taken: Minutes " + (int)min+"\n Seconds "+ (stopwatch.Elapsed.TotalSeconds).ToString();
+            return "Time taken: Minutes " + (int)min + "\n Seconds " + (stopwatch.Elapsed.TotalSeconds).ToString();
         }
         public Stopwatch getStopwatch() { return stopwatch; }
 
         public SortedSet<string> getLanguagesInCorpus()
         {
-           SortedSet<string> languages = new SortedSet<string>();
+            SortedSet<string> languages = new SortedSet<string>();
             foreach (KeyValuePair<string, Document> Doc in documentsDic)
             {
                 string currentLanguage = Doc.Value.Language;
-                if (!languages.Contains(currentLanguage) && currentLanguage!="")
+                if (!languages.Contains(currentLanguage) && currentLanguage != "")
                 {
                     languages.Add(currentLanguage);
                 }
@@ -131,23 +141,23 @@ namespace searchEngine
             string lineInFile = "";
             BinaryReader br;
             Dictionary<string, Term> terms = new Dictionary<string, Term>();
-            foreach(string termInQuery in query)
+            foreach (string termInQuery in query)
             {
                 if (!mainDic.ContainsKey(termInQuery))
                     continue;
                 //intialize the binary reader and line for the new term
-                br = new BinaryReader(File.Open(m_pathToSave+"\\MainPosting.bin", FileMode.Open));
+                br = new BinaryReader(File.Open(m_pathToSave + "\\MainPosting.bin", FileMode.Open));
                 lineInFile = "";
 
                 //Get the pointer of the term for it's location in the Posting
                 int pointer = mainDic[termInQuery][2];
-                
+
                 //read untill you get to the term
-                for (int i=0; i<=pointer; i++)
+                for (int i = 0; i <= pointer; i++)
                 {
                     lineInFile = br.ReadString();
                 }
-                
+
                 //Get the required Term according to lineInFile
                 Term term = JsonConvert.DeserializeObject<Term>(lineInFile);
 
@@ -235,6 +245,7 @@ namespace searchEngine
                 return false;
 
         }
+
         private double calculateAvaregeDocumentLength()
         {
             double average = 0;
@@ -243,6 +254,63 @@ namespace searchEngine
                 average += d.DocumentLength;
             }
             return average / documentsDic.Count;
+        }
+
+        private void loadMainDic()
+        {
+            BinaryReader br;
+            try
+            {
+                int linesCounter = 0;
+                string line = "";
+                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Open));
+                while (br.BaseStream.Position != br.BaseStream.Length)
+                {
+                    line += br.ReadString();
+                    linesCounter++;
+                }
+                MainDicToSave mainDicToSave = new MainDicToSave();
+                this.mainDic = mainDicToSave.MainDic;
+                br.Close();
+            }
+            catch(Exception e) { throw e; }
+        }
+
+        private void loadDocumentsDic()
+        {
+            BinaryReader br;
+            try
+            {
+                int linesCounter = 0;
+                string line = "";
+                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Open));
+                while (br.BaseStream.Position != br.BaseStream.Length)
+                {
+                    line += br.ReadString();
+                    linesCounter++;
+                }
+                DocumentDicToSave documentDicToSave = new DocumentDicToSave();
+                this.documentsDic = documentDicToSave.DocumentsDic;
+                averageDocumentLength = calculateAvaregeDocumentLength();
+                br.Close();
+            }
+            catch (Exception e) { throw e; }
+        }
+
+        private void saveMainDic()
+        {
+            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Append));
+            MainDicToSave mainDicToSave = new MainDicToSave(mainDic);
+            string json = JsonConvert.SerializeObject(mainDicToSave);
+            writer.Write(json);
+        }
+
+        private void saveDocumentsDic()
+        {
+            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Append));
+            DocumentDicToSave mainDicToSave = new DocumentDicToSave(documentsDic);
+            string json = JsonConvert.SerializeObject(mainDicToSave);
+            writer.Write(json);
         }
     }
 }
