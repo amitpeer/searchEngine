@@ -36,13 +36,9 @@ namespace searchEngine.SearchExecution
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName]= RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByHeader[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
-                if (rankForDocumentByBM25[docName] > 0)
-                {
-                    docname.Add(docName + "rankGiven:" + rankForDocumentByBM25[docName]);
-                }
-                FinalRankForDocs[docName] = 0.3*rankForDocumentByBM25[docName] + 0.7*rankForDocumentByHeader[docName]+ rankForDocumentByHeader[docName];
-
+                rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
+                FinalRankForDocs[docName] = rankForDocumentByBM25[docName] + 0.1*rankForDocumentByHeader[docName]+ 0.2*rankForDocumentByInnerProduct[docName];
+                //FinalRankForDocs[docName]= rankForDocumentByInnerProduct[docName];
             }
             writeSolutionTofile(FinalRankForDocs);
             return null;
