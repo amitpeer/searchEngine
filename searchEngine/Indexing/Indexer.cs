@@ -122,6 +122,10 @@ namespace searchEngine
             while (BinaryReaders.Count > 0)
             {
                 TermWithReader twr = termsInComparisonForMerge.First().Value;
+                if (twr.Term.M_termName == "sex")
+                {
+                    counterniqueTerms= counterniqueTerms;
+                }
                 termsInComparisonForMerge.Remove(termsInComparisonForMerge.First().Key);
                 int totalAppearance = getTotalAppearanceOfTermInCorpus(twr.Term.M_tid);
                 mainDic.Add(twr.Term.M_termName, new int[] { totalAppearance, twr.Term.M_tid.Count, counterniqueTerms });
@@ -157,13 +161,10 @@ namespace searchEngine
 
         private void WriteTermToFile(BinaryWriter writerToFile, Term t)
         {
-            double g;
-            if(Double.TryParse(t.M_termName,out g))
-            {
-                countNum++;
-            }
+            
             string json = JsonConvert.SerializeObject(t);
-            writerToFile.Write(json);            
+            writerToFile.Write(json);
+            countNum++;
         }
         private Dictionary<string, int[]> safeMerge(Dictionary<string, int[]> first, Dictionary<string, int[]> second, string termName)
         {

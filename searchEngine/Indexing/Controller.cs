@@ -18,7 +18,7 @@ namespace searchEngine
         private bool shouldStem;
         private string stemOnFileName;
         private string m_pathToCorpus;
-        private string m_pathToSave;
+        public string m_pathToSave;
         private Stopwatch stopwatch = new Stopwatch();
         private MainWindow mainWindow;
         public double averageDocumentLength;

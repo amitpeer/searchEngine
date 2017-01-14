@@ -39,8 +39,24 @@ namespace searchEngine.SearchExecution
                 }
 
             }
+            writeSolutionTofile(rankForDocumentByBM25);
             return null;
 
+        }
+
+        private void writeSolutionTofile(Dictionary<string, double> rankDOCByBM25)
+        {
+            string[] writeTofile = new string[50];
+            int i = 0;
+            Dictionary < string, double> top50 = rankDOCByBM25.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value);
+            foreach(KeyValuePair<string,double> ranked in top50)
+            {
+                writeTofile[i] = "118 " + "0 " + ranked.Key + " 500 42 mt";
+                i++;
+            }
+            // WriteAllLines creates a file, writes a collection of strings to the file,
+            // and then closes the file.  You do NOT need to call Flush() or Close().
+            System.IO.File.WriteAllLines(m_controller.m_pathToSave+"\\result.txt", writeTofile);
         }
 
         private void calculateTermsFreqInQuery(string[] query)
