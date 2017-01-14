@@ -159,7 +159,7 @@ namespace searchEngine
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-            string query = "sex organization";
+            string query = "international terrorists";
             Searcher sr = new Searcher(controller);
             sr.search(query, null);
         }

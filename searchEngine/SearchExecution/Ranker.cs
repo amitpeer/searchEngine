@@ -26,6 +26,8 @@ namespace searchEngine.SearchExecution
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
+            Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
+            Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
             List<string> docname = new List<string>();
             m_termsFromQuery = m_controller.getTermsFromQuery(query);
             termsFreqInQuery = new Dictionary<string, int>();
@@ -33,22 +35,24 @@ namespace searchEngine.SearchExecution
             foreach (string docName in documentsToRank)
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
+                rankForDocumentByHeader[docName]= RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
                 if (rankForDocumentByBM25[docName] > 0)
                 {
                     docname.Add(docName + "rankGiven:" + rankForDocumentByBM25[docName]);
                 }
+                FinalRankForDocs[docName] = 0.8*rankForDocumentByBM25[docName] + 0.4*rankForDocumentByHeader[docName];
 
             }
-            writeSolutionTofile(rankForDocumentByBM25);
+            writeSolutionTofile(FinalRankForDocs);
             return null;
 
         }
 
         private void writeSolutionTofile(Dictionary<string, double> rankDOCByBM25)
         {
-            string[] writeTofile = new string[50];
+            string[] writeTofile = new string[150];
             int i = 0;
-            Dictionary < string, double> top50 = rankDOCByBM25.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary < string, double> top50 = rankDOCByBM25.OrderByDescending(pair => pair.Value).Take(150).ToDictionary(pair => pair.Key, pair => pair.Value);
             foreach(KeyValuePair<string,double> ranked in top50)
             {
                 writeTofile[i] = "118 " + "0 " + ranked.Key + " 500 42 mt";
@@ -56,7 +60,7 @@ namespace searchEngine.SearchExecution
             }
             // WriteAllLines creates a file, writes a collection of strings to the file,
             // and then closes the file.  You do NOT need to call Flush() or Close().
-            System.IO.File.WriteAllLines(m_controller.m_pathToSave+"\\result.txt", writeTofile);
+            System.IO.File.WriteAllLines(m_controller.m_pathToSave+"\\result118150.txt", writeTofile);
         }
 
         private void calculateTermsFreqInQuery(string[] query)
@@ -73,11 +77,29 @@ namespace searchEngine.SearchExecution
                 }
             }
         }
+        private double RankDOCByAppearanceInHeader(Document docToRank)
+        {
+            double rankByHeader = 0;
+            foreach (KeyValuePair<string, int> termOfQuery in termsFreqInQuery)
+            {
+               if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                {
+                    rankByHeader=rankByHeader+ m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
+                    if (m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1]==1)
+                    {
+                        m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] = m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
+
+                    }
+                }
+            }
+            return rankByHeader;
+
+        }
         private double RankDOCByBM25(Document docToRank)
         {
             int count = 0;
             double k1=1.2;
-            double k2=100;
+            double k2=300;
             double b=0.75;
             double dl = docToRank.DocumentLength;
             double avgdl = m_controller.averageDocumentLength;
