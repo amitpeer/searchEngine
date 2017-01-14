@@ -537,16 +537,19 @@ namespace searchEngine
             {
                 term = stemmer.stemTerm(term);
             }
-            term = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(term));         
-            if (!stopWords.Contains(term) && term!="")
+            term = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(term));
+            if (stopWords != null)
             {
-                if (terms.ContainsKey(term))
+                if (!stopWords.Contains(term) && term != "")
                 {
-                    terms[term].Tf++;
-                }
-                else
-                {
-                    terms.Add(term, new TermInfoInDoc(1, docName != null ? docName.Trim() : null, isHeader));
+                    if (terms.ContainsKey(term))
+                    {
+                        terms[term].Tf++;
+                    }
+                    else
+                    {
+                        terms.Add(term, new TermInfoInDoc(1, docName != null ? docName.Trim() : null, isHeader));
+                    }
                 }
             }
         }
