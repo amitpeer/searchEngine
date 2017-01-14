@@ -43,6 +43,7 @@ namespace searchEngine.SearchExecution
 
         }
 
+        //Gets the query, and calulates inside termsFreqInQuery for each term how many times it appears in the query
         private void calculateTermsFreqInQuery(string[] query)
         {
             foreach(string s in query)
@@ -57,6 +58,7 @@ namespace searchEngine.SearchExecution
                 }
             }
         }
+
         private double RankDOCByBM25(Document docToRank)
         {
             int count = 0;

@@ -89,6 +89,9 @@ namespace searchEngine
                 reset();
                 return false;
             }
+            readFile = new ReadFile(m_pathToCorpus);
+            readFile.ExtractStopWordsFile();
+            parser = new Parse(readFile.getStopWords(), shouldStem);
             return true;
         }
         public void setNewPaths(string pathToCorpus, string pathToSave)

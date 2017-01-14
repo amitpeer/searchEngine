@@ -35,6 +35,14 @@ namespace searchEngine
             return documents;
         }
 
+        // parrse only a query, not a document
+        public string[] parseQuery(string query)
+        {
+            Dictionary<string, TermInfoInDoc> terms = new Dictionary<string, TermInfoInDoc>();
+            parseContent(terms, query, false, "");
+            return terms.Keys.ToArray();
+        }
+
         public Dictionary<string, TermInfoInDoc> parseDocument(string doc)
         {
             documentLength = 0;
