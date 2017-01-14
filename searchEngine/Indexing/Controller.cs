@@ -99,9 +99,7 @@ namespace searchEngine
             //    reset();
             //    return false;
             //}
-            readFile = new ReadFile(m_pathToCorpus);
-            readFile.ExtractStopWordsFile();
-            parser = new Parse(readFile.getStopWords(), shouldStem);
+            parser = new Parse(null, shouldStem);
             return true;
         }
         public void setNewPaths(string pathToCorpus, string pathToSave)
@@ -262,14 +260,14 @@ namespace searchEngine
             try
             {
                 int linesCounter = 0;
-                string line = "";
+                string lines = "";
                 br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Open));
                 while (br.BaseStream.Position != br.BaseStream.Length)
                 {
-                    line += br.ReadString();
+                    lines += br.ReadString();
                     linesCounter++;
                 }
-                MainDicToSave mainDicToSave = new MainDicToSave();
+                MainDicToSave mainDicToSave = JsonConvert.DeserializeObject<MainDicToSave>(lines);
                 this.mainDic = mainDicToSave.MainDic;
                 br.Close();
             }
@@ -282,15 +280,15 @@ namespace searchEngine
             try
             {
                 int linesCounter = 0;
-                string line = "";
+                string lines = "";
                 br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Open));
                 while (br.BaseStream.Position != br.BaseStream.Length)
                 {
-                    line += br.ReadString();
+                    lines += br.ReadString();
                     linesCounter++;
                 }
-                DocumentDicToSave documentDicToSave = new DocumentDicToSave();
-                this.documentsDic = documentDicToSave.DocumentsDic;
+                DocumentDicToSave documentsDicToSave = JsonConvert.DeserializeObject<DocumentDicToSave>(lines);
+                this.documentsDic = documentsDicToSave.DocumentsDic;
                 averageDocumentLength = calculateAvaregeDocumentLength();
                 br.Close();
             }
