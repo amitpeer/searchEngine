@@ -161,7 +161,7 @@ namespace searchEngine
         {
             string query = "international terrorists";
             Searcher sr = new Searcher(controller);
-            sr.search(query, null);
+            sr.search(query, null, m_shouldStem);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace searchEngine
 {
     public class Indexer
@@ -20,6 +21,7 @@ namespace searchEngine
         private int counterFiles;
         private int countNum;
         private bool shouldStem;
+
 
         //get a list of parser result for a few document
         //the string represents the 

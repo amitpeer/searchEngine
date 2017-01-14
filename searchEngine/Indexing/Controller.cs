@@ -99,7 +99,6 @@ namespace searchEngine
             //    reset();
             //    return false;
             //}
-            parser = new Parse(null, shouldStem);
             return true;
         }
         public void setNewPaths(string pathToCorpus, string pathToSave)
