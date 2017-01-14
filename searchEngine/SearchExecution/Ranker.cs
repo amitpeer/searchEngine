@@ -12,7 +12,6 @@ namespace searchEngine.SearchExecution
         private Controller m_controller;
         Dictionary<string, Term> m_termsFromQuery;
 
-
         public Ranker(Controller controller)
         {
             m_controller = controller;
@@ -28,6 +27,7 @@ namespace searchEngine.SearchExecution
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
             Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
+            Dictionary<string, double> rankForDocumentByInnerProduct = new Dictionary<string, double>();
             List<string> docname = new List<string>();
             m_termsFromQuery = m_controller.getTermsFromQuery(query);
             termsFreqInQuery = new Dictionary<string, int>();
@@ -36,17 +36,19 @@ namespace searchEngine.SearchExecution
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName]= RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
+                rankForDocumentByHeader[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
                 if (rankForDocumentByBM25[docName] > 0)
                 {
                     docname.Add(docName + "rankGiven:" + rankForDocumentByBM25[docName]);
                 }
-                FinalRankForDocs[docName] = 0.8*rankForDocumentByBM25[docName] + 0.4*rankForDocumentByHeader[docName];
+                FinalRankForDocs[docName] = 0.3*rankForDocumentByBM25[docName] + 0.7*rankForDocumentByHeader[docName]+ rankForDocumentByHeader[docName];
 
             }
             writeSolutionTofile(FinalRankForDocs);
             return null;
 
         }
+
 
         private void writeSolutionTofile(Dictionary<string, double> rankDOCByBM25)
         {
@@ -84,7 +86,7 @@ namespace searchEngine.SearchExecution
             {
                if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                 {
-                    rankByHeader=rankByHeader+ m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
+                    rankByHeader=rankByHeader+ m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1]/termsFreqInQuery.Count;
                     if (m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1]==1)
                     {
                         m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] = m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
@@ -92,7 +94,7 @@ namespace searchEngine.SearchExecution
                     }
                 }
             }
-            return rankByHeader;
+            return rankByHeader*10;
 
         }
         private double RankDOCByBM25(Document docToRank)
@@ -135,6 +137,22 @@ namespace searchEngine.SearchExecution
                 mult1 = ((k1 + 1) * fi) / (K + fi);
                 mult2 = ((k2 + 1) * qfi) / (k2 + qfi);                
                 Rank=Rank+ Math.Log((numeratorInLog / denumeratorInLog)) * mult1 * mult2;
+            }
+            return Rank;
+        }
+        private double RankDocByInnerProduct(Document docToRank)
+        {
+            double Rank = 0;
+            double tf = 0;
+            double idf = 0;
+            foreach (KeyValuePair<string, int> termWeightQuery in termsFreqInQuery)
+            {
+                if (m_termsFromQuery[termWeightQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                {
+                    tf = (Double)(m_termsFromQuery[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
+                    idf = Math.Log(m_controller.getDocumentsDic().Count/ m_termsFromQuery[termWeightQuery.Key].M_tid.Count, 2);
+                    Rank = Rank +  tf * idf;
+                }
             }
             return Rank;
         }
