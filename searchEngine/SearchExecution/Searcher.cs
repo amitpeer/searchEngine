@@ -33,7 +33,7 @@ namespace searchEngine.SearchExecution
             }
 
             // parse the query and send to ranker
-            return ranker.rank(query.Split(' '), documentsToRank);
+            return ranker.rank(controller.getParser().parseQuery(query), documentsToRank);
         }
 
         // Input: languages to filter by 
