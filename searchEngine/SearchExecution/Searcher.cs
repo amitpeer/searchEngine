@@ -21,7 +21,7 @@ namespace searchEngine.SearchExecution
         //Input: query (each word seperated by a space), and the languages(null = all, can be more than one language) for the doucments
         //Output: list of string, each item is a document ID, the first item is the most relevent and last is the least relevant. 
         // Maximum size of the output List is 50
-        public List<string> search(string query, List<string> languages)
+        public List<string> search(string query, List<string> languages, bool shouldStem)
         {
             // initialize the documents to rank list first with all of the documents
             List<string> documentsToRank = controller.getDocumentsDic().Keys.ToList();
@@ -33,7 +33,8 @@ namespace searchEngine.SearchExecution
             }
 
             // parse the query and send to ranker
-            return ranker.rank(controller.getParser().parseQuery(query), documentsToRank);
+            Parse parse = new Parse(null, shouldStem);
+            return ranker.rank(parse.parseQuery(query, shouldStem), documentsToRank);
         }
 
         // Input: languages to filter by 

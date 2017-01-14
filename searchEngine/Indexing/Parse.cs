@@ -36,8 +36,9 @@ namespace searchEngine
         }
 
         // parrse only a query, not a document
-        public string[] parseQuery(string query)
+        public string[] parseQuery(string query, bool shouldStem)
         {
+            this.shouldStem = shouldStem;
             Dictionary<string, TermInfoInDoc> terms = new Dictionary<string, TermInfoInDoc>();
             parseContent(terms, query, false, "");
             return terms.Keys.ToArray();
