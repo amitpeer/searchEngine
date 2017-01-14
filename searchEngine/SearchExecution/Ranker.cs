@@ -28,6 +28,8 @@ namespace searchEngine.SearchExecution
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             List<string> docname = new List<string>();
             m_termsFromQuery = m_controller.getTermsFromQuery(query);
+            termsFreqInQuery = new Dictionary<string, int>();
+            calculateTermsFreqInQuery(query);
             foreach (string docName in documentsToRank)
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
@@ -57,6 +59,7 @@ namespace searchEngine.SearchExecution
         }
         private double RankDOCByBM25(Document docToRank)
         {
+            int count = 0;
             double k1=1.2;
             double k2=100;
             double b=0.75;
@@ -74,6 +77,11 @@ namespace searchEngine.SearchExecution
             double mult1;
             double mult2;
             double Rank = 0;
+            if(docToRank.DocName== "FBIS3-6"|| docToRank.DocName == "FBIS3 - 51"|| docToRank.DocName=="FBIS3 - 1842")
+            {
+
+                count++;
+            }
             foreach (KeyValuePair<string,int> termOfQuery in termsFreqInQuery)
             {
                 if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
@@ -88,7 +96,7 @@ namespace searchEngine.SearchExecution
                 denumeratorInLog = (ni - ri + 0.5) / (N - ni - R + ri + 0.5);
                 mult1 = ((k1 + 1) * fi) / (K + fi);
                 mult2 = ((k2 + 1) * qfi) / (k2 + qfi);                
-                Rank=Rank+ Math.Log((numeratorInLog / denumeratorInLog) * mult1 * mult2);
+                Rank=Rank+ Math.Log((numeratorInLog / denumeratorInLog)) * mult1 * mult2;
             }
             return Rank;
         }
