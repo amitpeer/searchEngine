@@ -7,6 +7,7 @@ namespace searchEngine.SearchExecution
 {
     class Ranker
     {
+
         private Dictionary<string, int> termsFreqInQuery;
         private Controller m_controller;
         Dictionary<string, Term> m_termsFromQuery;
