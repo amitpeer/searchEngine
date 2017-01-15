@@ -143,7 +143,7 @@ namespace searchEngine
                 if (!mainDic.ContainsKey(termInQuery))
                     continue;
                 //intialize the binary reader and line for the new term
-                br = new BinaryReader(File.Open(m_pathToSave + "\\MainPosting.bin", FileMode.Open));
+                br = new BinaryReader(File.Open(m_pathToSave + "\\"+ stemOnFileName+"MainPosting.bin", FileMode.Open));
                 lineInFile = "";
 
                 //Get the pointer of the term for it's location in the Posting
