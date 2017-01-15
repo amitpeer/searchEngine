@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
+using System.Web;
+using System.IO;
+using WordNetClasses;
+using Wnlib;
+using NHunspell;
 
 namespace searchEngine.SearchExecution
 {
@@ -25,7 +28,17 @@ namespace searchEngine.SearchExecution
         //Output: list of documents relevent to the query, the first document is the most relevent
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
-           
+            using (Hunspell hunspell = new Hunspell("en_us.aff", "en_us.dic"))
+            {
+                MyThes r = new MyThes("Thes//th_en_US_new.dat");
+            ThesResult tr = r.Lookup("international");
+            List<string> kk = tr.GetSynonyms().Keys.ToList();
+            }
+
+
+
+
+
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
             Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
@@ -38,13 +51,9 @@ namespace searchEngine.SearchExecution
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName]= RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByHeader[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
-                if (rankForDocumentByBM25[docName] > 0)
-                {
-                    docname.Add(docName + "rankGiven:" + rankForDocumentByBM25[docName]);
-                }
-                FinalRankForDocs[docName] = 0.3*rankForDocumentByBM25[docName] + 0.7*rankForDocumentByHeader[docName]+ rankForDocumentByHeader[docName];
-
+                rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
+                FinalRankForDocs[docName] = rankForDocumentByBM25[docName] + 0.1*rankForDocumentByHeader[docName]+ 0.2*rankForDocumentByInnerProduct[docName];
+                //FinalRankForDocs[docName]= rankForDocumentByInnerProduct[docName];
             }
             writeSolutionTofile(FinalRankForDocs);
             return null;
@@ -92,7 +101,6 @@ namespace searchEngine.SearchExecution
                     if (m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1]==1)
                     {
                         m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] = m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
-
                     }
                 }
             }
