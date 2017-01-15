@@ -135,6 +135,14 @@ namespace searchEngine
         //Output: Dictionary: Keys = term, Values = Term object
         public Dictionary<string, Term> getTermsFromQuery(string[] query)
         {
+            // Trim all the terms in the array
+            int j = 0;
+            foreach (string term in query)
+            {
+                query[j] = term.Trim();
+                j++;          
+            }
+
             string lineInFile = "";
             BinaryReader br;
             Dictionary<string, Term> terms = new Dictionary<string, Term>();

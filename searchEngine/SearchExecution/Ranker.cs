@@ -11,10 +11,10 @@ namespace searchEngine.SearchExecution
 {
     class Ranker
     {
-
-        private Dictionary<string, int> termsFreqInQuery;
         private Controller m_controller;
-        Dictionary<string, Term> m_termsFromQuery;
+        private Dictionary<string, int> termsFreqInQuery;
+        private Dictionary<string, Term> m_termsFromQuery;
+        private List<string> documentsToRank;
 
         public Ranker(Controller controller)
         {
@@ -28,38 +28,81 @@ namespace searchEngine.SearchExecution
         //Output: list of documents relevent to the query, the first document is the most relevent
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
-            using (Hunspell hunspell = new Hunspell("en_us.aff", "en_us.dic"))
+            this.documentsToRank = documentsToRank;
+
+            // rank the original query
+            Dictionary<string, double> rankOriginalQuery = rankQuery(query);
+
+            //build a new query from the synamouns
+            string[] newQuery = buildNewSynonyms(query);
+
+            // rank the new query
+            Dictionary<string, double> rankNewQuery = rankQuery(newQuery);
+
+            //build the final rank dictionary
+            Dictionary<string, double> finalRankAllQueries = new Dictionary<string, double>();
+            foreach(KeyValuePair<string, double> keyValue in rankOriginalQuery)
             {
-                MyThes r = new MyThes("Thes//th_en_US_new.dat");
-            ThesResult tr = r.Lookup("international");
-            List<string> kk = tr.GetSynonyms().Keys.ToList();
+                // ***Assuming the keys are identical and in the same order in rankOriginalQuery & rankNewQuery***
+                finalRankAllQueries.Add(keyValue.Key, 0.6 * (keyValue.Value) + 0.4 * (rankNewQuery[keyValue.Key]));
             }
 
+            //writeSolutionTofile(finalRankAllQueries);
 
+            // sort the dictionary by the rank (dictionary values) and return the documents (dictionary keys) as a list
+            return finalRankAllQueries.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
+        }
 
+        private string[] buildNewSynonyms(string[] query)
+        {
+            List<string> newQueryAsList = new List<string>();
+            Hunspell hunspell = new Hunspell("en_us.aff", "en_us.dic");
+            MyThes r = new MyThes("Thes\\th_en_US_new.dat");
+            foreach (string termInQuery in query)        
+            {
+                // Get all synonyms for this term.
+                ThesResult tr = r.Lookup(termInQuery);
+                if (tr == null)
+                {
+                    // no synonyms found, add the original term to the new query
+                    newQueryAsList.Add(termInQuery);
+                    continue;
+                }
+                List<string> termSynonyms = tr.GetSynonyms().Keys.ToList();
 
+                // Build a new query from first 3 synonyms if exists
+                for (int i=0; i<3; i++)
+                {
+                    if (termSynonyms.Any())
+                    {
+                        newQueryAsList.Add(termSynonyms[0]);
+                        termSynonyms.RemoveAt(0);
+                    }
+                }
+            }
+            return newQueryAsList.ToArray();          
+        }
 
+        private Dictionary<string, double> rankQuery(string[] query)
+        {
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
-            Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByInnerProduct = new Dictionary<string, double>();
+            Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
             List<string> docname = new List<string>();
             m_termsFromQuery = m_controller.getTermsFromQuery(query);
             termsFreqInQuery = new Dictionary<string, int>();
+           // calculateTermsFreqInQuery(m_termsFromQuery.Keys.ToArray());
             calculateTermsFreqInQuery(query);
             foreach (string docName in documentsToRank)
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByHeader[docName]= RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
+                rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
-                FinalRankForDocs[docName] = rankForDocumentByBM25[docName] + 0.1*rankForDocumentByHeader[docName]+ 0.2*rankForDocumentByInnerProduct[docName];
-                //FinalRankForDocs[docName]= rankForDocumentByInnerProduct[docName];
+                FinalRankForDocs[docName] = rankForDocumentByBM25[docName] + 0.1 * rankForDocumentByHeader[docName] + 0.2 * rankForDocumentByInnerProduct[docName];
             }
-            writeSolutionTofile(FinalRankForDocs);
-            return null;
-
+            return FinalRankForDocs;
         }
-
 
         private void writeSolutionTofile(Dictionary<string, double> rankDOCByBM25)
         {
