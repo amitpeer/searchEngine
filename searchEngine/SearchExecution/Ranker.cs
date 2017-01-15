@@ -28,17 +28,6 @@ namespace searchEngine.SearchExecution
         //Output: list of documents relevent to the query, the first document is the most relevent
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
-            using (Hunspell hunspell = new Hunspell("en_us.aff", "en_us.dic"))
-            {
-                MyThes r = new MyThes("Thes//th_en_US_new.dat");
-            ThesResult tr = r.Lookup("international");
-            List<string> kk = tr.GetSynonyms().Keys.ToList();
-            }
-
-
-
-
-
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
             Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
