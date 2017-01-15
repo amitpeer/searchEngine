@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
+
 namespace searchEngine.SearchExecution
 {
     class Ranker
@@ -24,6 +25,7 @@ namespace searchEngine.SearchExecution
         //Output: list of documents relevent to the query, the first document is the most relevent
         public List<string> rank(string[] query, List<string> documentsToRank)
         {
+           
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
             Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
