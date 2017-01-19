@@ -11,6 +11,8 @@ namespace searchEngine
     {
         Dictionary<string, string> dates;
         Dictionary<string, Document> documents = new Dictionary<string, Document>();
+        public Dictionary<string, Dictionary<string, int>> frequencies = new Dictionary<string, Dictionary<string, int>>();
+        string currentTerm = "";
         HashSet<string> stopWords;
         private bool shouldStem;
         int counterDocs;
@@ -546,8 +548,33 @@ namespace searchEngine
                 return;
             }
             // case there are NOT stop words
-            else if (term != "")
+            else if (term != "" )
             {
+                if (currentTerm == ""&&!term.Any(char.IsDigit))
+                {
+                    currentTerm = term;
+                }
+                else
+                {
+                    if (!term.Any(char.IsDigit)){
+                    if (frequencies.ContainsKey(currentTerm))
+                    {
+                        if (frequencies[currentTerm].ContainsKey(term))
+                        {
+                            frequencies[currentTerm][term]++;
+                        }
+                        else
+                        {
+                            frequencies[currentTerm].Add(term, 1);
+                        }
+                    }
+                    else
+                    {
+                        frequencies.Add(currentTerm, new Dictionary<string, int>());
+                    }
+                    currentTerm = term;
+                    }
+                }
                 if (terms.ContainsKey(term))
                 {
                     terms[term].Tf++;

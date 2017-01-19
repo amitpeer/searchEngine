@@ -10,19 +10,19 @@
         <ImageBrush ImageSource="/Images/Background_Globe.png"/>
     </Window.Background>
     <Grid>
-        <Button x:Name="folderPathToCorpus" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="428,79,0,0" VerticalAlignment="Top" Width="70" Click="button_Click"/>
-        <TextBox x:Name="pathToLoadCorpus" HorizontalAlignment="Left" Height="30" Margin="126,79,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadCorpus_TextChanged" />
-        <TextBlock x:Name="textBlockPathToCorpus" HorizontalAlignment="Left" Height="30" Margin="19,79,0,0" TextWrapping="Wrap" Text="Path to Corpus " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
-        <Button x:Name="folderPathToPosting" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="428,127,0,0" VerticalAlignment="Top" Width="70" Click="folderPathToPosting_Click"/>
-        <TextBox x:Name="pathToLoadPosting" HorizontalAlignment="Left" Height="30" Margin="126,127,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadPosting_TextChanged" />
-        <TextBlock x:Name="textBlockPathToPosting" HorizontalAlignment="Left" Height="30" Margin="19,127,0,0" TextWrapping="Wrap" Text="Path to Posting " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
-        <Button x:Name="startIndexing" Content="Go!" HorizontalAlignment="Left" Height="74" Margin="585,239,0,0" VerticalAlignment="Top" Width="139" Click="startIndexing_Click"/>
-        <CheckBox x:Name="checkBox" Content="With stemming"  HorizontalAlignment="Left" Height="18" Margin="547,139,0,0" VerticalAlignment="Top" Width="105" Foreground="White"/>
+        <Button x:Name="folderPathToCorpus" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="444,29,0,0" VerticalAlignment="Top" Width="70" Click="button_Click"/>
+        <TextBox x:Name="pathToLoadCorpus" HorizontalAlignment="Left" Height="30" Margin="126,29,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadCorpus_TextChanged" />
+        <TextBlock x:Name="textBlockPathToCorpus" HorizontalAlignment="Left" Height="30" Margin="19,29,0,0" TextWrapping="Wrap" Text="Path to Corpus " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
+        <Button x:Name="folderPathToPosting" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="444,79,0,0" VerticalAlignment="Top" Width="70" Click="folderPathToPosting_Click"/>
+        <TextBox x:Name="pathToLoadPosting" HorizontalAlignment="Left" Height="30" Margin="126,79,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="296" TextChanged="pathToLoadPosting_TextChanged" />
+        <TextBlock x:Name="textBlockPathToPosting" HorizontalAlignment="Left" Height="30" Margin="19,79,0,0" TextWrapping="Wrap" Text="Path to Posting " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
+        <Button x:Name="startIndexing" Content="Go!" HorizontalAlignment="Left" Height="74" Margin="602,29,0,0" VerticalAlignment="Top" Width="139" Click="startIndexing_Click"/>
+        <CheckBox x:Name="checkBox" Content="With stemming"  HorizontalAlignment="Left" Height="18" Margin="444,148,0,0" VerticalAlignment="Top" Width="105" Foreground="White"/>
         <Button x:Name="reserButton" Content="Reset" HorizontalAlignment="Left" Height="27" Margin="418,425,0,0" VerticalAlignment="Top" Width="66" Click="reserButton_Click"/>
-        <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="388,293,0,0" VerticalAlignment="Top" Width="130" Click="showDic_Click"/>
-        <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="388,219,0,0" VerticalAlignment="Top" Width="126" Click="loadDic_Click"/>
-        <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Height="26" Margin="547,79,0,0" VerticalAlignment="Top" Text="Language"  Width="126" IsEditable="True" IsReadOnly="True"/>
-        <Button x:Name="button" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="211,191,0,0" VerticalAlignment="Top" Width="86" Click="button_Click_1"/>
+        <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="292,140,0,0" VerticalAlignment="Top" Width="130" Click="showDic_Click"/>
+        <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="126,140,0,0" VerticalAlignment="Top" Width="126" Click="loadDic_Click"/>
+        <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Height="26" Margin="557,235,0,0" VerticalAlignment="Top" Text="Language"  Width="126" IsEditable="True" IsReadOnly="True"/>
+        <Button x:Name="button" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="655,133,0,0" VerticalAlignment="Top" Width="86" Click="button_Click_1"/>
 
     </Grid>
 </Window>

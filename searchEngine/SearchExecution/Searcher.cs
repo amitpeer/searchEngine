@@ -34,7 +34,7 @@ namespace searchEngine.SearchExecution
 
             // parse the query and send to ranker
             Parse parse = new Parse(null, shouldStem);
-            return ranker.rank(parse.parseQuery(query, shouldStem), documentsToRank);
+            return ranker.rank(query, documentsToRank,parse,shouldStem);
         }
 
         // Input: languages to filter by 

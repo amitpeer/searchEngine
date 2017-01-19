@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -70,7 +71,7 @@ namespace searchEngine
             mainDic = indexer.getMainDic();
             documentsDic = parser.getDocuments();
             averageDocumentLength = calculateAvaregeDocumentLength();
-
+            saveFrequnciesToFile();
             //save mainDic to disk
             saveMainDic();
             //File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
@@ -81,6 +82,21 @@ namespace searchEngine
 
             stopwatch.Stop();
 
+        }
+
+        private void saveFrequnciesToFile()
+        {
+            Dictionary<string, List<string>> freq = new Dictionary<string, List<string>>();
+            foreach(KeyValuePair<string,Dictionary<string,int>> stringSuggest in parser.frequencies)
+            {
+                List<string> options = new List<string>();
+                options=stringSuggest.Value.OrderByDescending(pair => pair.Value).Take(5).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
+                freq.Add(stringSuggest.Key, options);
+            }
+            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Append));
+            FrequencyDicToSave mainDicToSave = new FrequencyDicToSave(freq);
+            string json = JsonConvert.SerializeObject(mainDicToSave);
+            writer.Write(json);
         }
 
         public bool load(string path, bool shouldStem)
@@ -111,7 +127,7 @@ namespace searchEngine
         public string getTime()
         {
             double min = stopwatch.Elapsed.TotalMinutes;
-            return "Time taken: Minutes " + (int)min + "\n Seconds " + (stopwatch.Elapsed.TotalSeconds).ToString();
+            return "Time taken: Minutes " + (int)min + "\n Seconds " + (stopwatch.Elapsed.TotalSeconds/60).ToString();
         }
         public Stopwatch getStopwatch() { return stopwatch; }
 

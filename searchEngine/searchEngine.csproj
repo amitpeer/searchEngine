@@ -69,21 +69,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Indexing\DocumentDicToSave.cs" />
-    <Compile Include="Indexing\MainDicToSave.cs" />
+    <Compile Include="SearchExecution\Indexing\DocumentDicToSave.cs" />
+    <Compile Include="SearchExecution\Indexing\MainDicToSave.cs" />
     <Compile Include="SearchExecution\Ranker.cs" />
     <Compile Include="SearchExecution\Searcher.cs" />
     <Compile Include="View\dataDisplay.xaml.cs">
       <DependentUpon>dataDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Indexing\Document.cs" />
-    <Compile Include="Indexing\Indexer.cs" />
-    <Compile Include="Indexing\Controller.cs" />
-    <Compile Include="Indexing\ReadFile.cs" />
-    <Compile Include="Indexing\Stemmer.cs" />
-    <Compile Include="Indexing\Term.cs" />
-    <Compile Include="Indexing\TermInfoInDoc.cs" />
-    <Compile Include="Indexing\TermWithReader.cs" />
+    <Compile Include="SearchExecution\Indexing\Document.cs" />
+    <Compile Include="SearchExecution\Indexing\Indexer.cs" />
+    <Compile Include="SearchExecution\Indexing\Controller.cs" />
+    <Compile Include="SearchExecution\Indexing\ReadFile.cs" />
+    <Compile Include="SearchExecution\Indexing\Stemmer.cs" />
+    <Compile Include="SearchExecution\Indexing\Term.cs" />
+    <Compile Include="SearchExecution\Indexing\TermInfoInDoc.cs" />
+    <Compile Include="SearchExecution\Indexing\TermWithReader.cs" />
     <Page Include="View\dataDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -96,7 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Indexing\Parse.cs" />
+    <Compile Include="SearchExecution\Indexing\Parse.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

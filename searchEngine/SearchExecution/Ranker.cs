@@ -14,6 +14,7 @@ namespace searchEngine.SearchExecution
         private Controller m_controller;
         private Dictionary<string, int> termsFreqInQuery;
         private Dictionary<string, Term> m_termsFromQuery;
+
         private List<string> documentsToRank;
 
         public Ranker(Controller controller)
@@ -22,32 +23,31 @@ namespace searchEngine.SearchExecution
             termsFreqInQuery = new Dictionary<string, int>();
             m_termsFromQuery = new Dictionary<string, Term>();
         }
-
         //Input: string array for the query, each item in the array is a (parsed) term in the query
         //       documents list to rank (after language filter)
         //Output: list of documents relevent to the query, the first document is the most relevent
-        public List<string> rank(string[] query, List<string> documentsToRank)
+        public List<string> rank(string query, List<string> documentsToRank,Parse parser, bool shouldStem)
         {
             this.documentsToRank = documentsToRank;
-
             // rank the original query
-            Dictionary<string, double> rankOriginalQuery = rankQuery(query);
+            Dictionary<string, double> rankOriginalQuery = rankQuery(parser.parseQuery(query, shouldStem), false);
 
             //build a new query from the synamouns
-            string[] newQuery = buildNewSynonyms(query);
+            string[] newQuery = buildNewSynonyms(query.Split(' '));
+            newQuery = parser.parseQuery(query, shouldStem);
 
             // rank the new query
-            Dictionary<string, double> rankNewQuery = rankQuery(newQuery);
+            Dictionary<string, double> rankNewQuery = rankQuery(newQuery,true);
 
             //build the final rank dictionary
             Dictionary<string, double> finalRankAllQueries = new Dictionary<string, double>();
             foreach(KeyValuePair<string, double> keyValue in rankOriginalQuery)
             {
                 // ***Assuming the keys are identical and in the same order in rankOriginalQuery & rankNewQuery***
-                finalRankAllQueries.Add(keyValue.Key, 0.6 * (keyValue.Value) + 0.4 * (rankNewQuery[keyValue.Key]));
+                finalRankAllQueries.Add(keyValue.Key, 0.8 * (keyValue.Value) + 0.2 * (rankNewQuery[keyValue.Key]));
             }
 
-            //writeSolutionTofile(finalRankAllQueries);
+            writeSolutionTofile(finalRankAllQueries);
 
             // sort the dictionary by the rank (dictionary values) and return the documents (dictionary keys) as a list
             return finalRankAllQueries.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
@@ -65,17 +65,22 @@ namespace searchEngine.SearchExecution
                 if (tr == null)
                 {
                     // no synonyms found, add the original term to the new query
-                    newQueryAsList.Add(termInQuery);
+                    // newQueryAsList.Add(termInQuery);
+                    tr = r.Lookup(hunspell.Stem(termInQuery)[0]);
+                    if(tr==null)
                     continue;
                 }
                 List<string> termSynonyms = tr.GetSynonyms().Keys.ToList();
-
-                // Build a new query from first 3 synonyms if exists
-                for (int i=0; i<3; i++)
+                // Build a new query from first 4 synonyms if exists
+                for (int i=0; i<4; i++)
                 {
+                   // hunspell.
                     if (termSynonyms.Any())
                     {
-                        newQueryAsList.Add(termSynonyms[0]);
+                        if (termSynonyms[0].Split(' ')[0] != termInQuery)
+                        {
+                            newQueryAsList.Add(termSynonyms[0].Split(' ')[0]);
+                        }
                         termSynonyms.RemoveAt(0);
                     }
                 }
@@ -83,7 +88,7 @@ namespace searchEngine.SearchExecution
             return newQueryAsList.ToArray();          
         }
 
-        private Dictionary<string, double> rankQuery(string[] query)
+        private Dictionary<string, double> rankQuery(string[] query,bool isSynonyms)
         {
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
@@ -92,23 +97,25 @@ namespace searchEngine.SearchExecution
             List<string> docname = new List<string>();
             m_termsFromQuery = m_controller.getTermsFromQuery(query);
             termsFreqInQuery = new Dictionary<string, int>();
-           // calculateTermsFreqInQuery(m_termsFromQuery.Keys.ToArray());
             calculateTermsFreqInQuery(query);
             foreach (string docName in documentsToRank)
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
-                FinalRankForDocs[docName] = rankForDocumentByBM25[docName] + 0.1 * rankForDocumentByHeader[docName] + 0.2 * rankForDocumentByInnerProduct[docName];
+                 FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
+                //FinalRankForDocs[docName] = rankForDocumentByBM25[docName];
+                //FinalRankForDocs[docName] = rankForDocumentByInnerProduct[docName];
+                //FinalRankForDocs[docName] = rankForDocumentByHeader[docName];
             }
             return FinalRankForDocs;
         }
 
         private void writeSolutionTofile(Dictionary<string, double> rankDOCByBM25)
         {
-            string[] writeTofile = new string[150];
+            string[] writeTofile = new string[50];
             int i = 0;
-            Dictionary < string, double> top50 = rankDOCByBM25.OrderByDescending(pair => pair.Value).Take(150).ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary < string, double> top50 = rankDOCByBM25.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value);
             foreach(KeyValuePair<string,double> ranked in top50)
             {
                 writeTofile[i] = "118 " + "0 " + ranked.Key + " 500 42 mt";
@@ -147,8 +154,7 @@ namespace searchEngine.SearchExecution
                     }
                 }
             }
-            return rankByHeader*10;
-
+            return rankByHeader*5;
         }
         private double RankDOCByBM25(Document docToRank)
         {
@@ -164,17 +170,12 @@ namespace searchEngine.SearchExecution
             int N = m_controller.getDocumentsDic().Count;
             int fi;
             int qfi;
-            double K = k1 * ((1 - b) + b * dl / avgdl);
+            double K = k1 * ((1 - b) + b * (dl / avgdl));
             double numeratorInLog;
             double denumeratorInLog;
             double mult1;
             double mult2;
             double Rank = 0;
-            if(docToRank.DocName== "FBIS3-6"|| docToRank.DocName == "FBIS3 - 51"|| docToRank.DocName=="FBIS3 - 1842")
-            {
-
-                count++;
-            }
             foreach (KeyValuePair<string,int> termOfQuery in termsFreqInQuery)
             {
                 if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
