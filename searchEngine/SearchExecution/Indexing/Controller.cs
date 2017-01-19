@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using searchEngine.Indexing;
+using searchEngine.SearchExecution.Indexing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +16,7 @@ namespace searchEngine
     {
         private Dictionary<string, Document> documentsDic;
         private Dictionary<string, int[]> mainDic;
+        private Dictionary<string, List<string>> freqDic;
         private Parse parser;
         private ReadFile readFile;
         private bool shouldStem;
@@ -36,6 +38,7 @@ namespace searchEngine
 
         public Dictionary<string, int[]> getMainDic() { return mainDic; }
         public Dictionary<string, Document> getDocumentsDic() { return documentsDic; }
+        public Dictionary<string, List<string>> getFreqDic() { return freqDic; }
         public void reset()
         {
             mainDic = new Dictionary<string, int[]>();
@@ -68,34 +71,38 @@ namespace searchEngine
                 j = j + 10;
             }
             indexer.MergeFiles();
+
+            // get maid dictionary and documents dictionary from the indexer 
             mainDic = indexer.getMainDic();
             documentsDic = parser.getDocuments();
+
+            //calculate avarge document length
             averageDocumentLength = calculateAvaregeDocumentLength();
-            saveFrequnciesToFile();
+
+            //save frequencies dictionary to disk
+            saveFrequnciesToFile();                                
+            
             //save mainDic to disk
             saveMainDic();
-            //File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip", zipCompress(mainDic));
 
             //save documentsDic to disk 
             saveDocumentsDic();
-            //File.WriteAllBytes(m_pathToSave + "\\" + stemOnFileName + "Documents.zip", zipCompress(documentsDic));
 
             stopwatch.Stop();
-
         }
 
         private void saveFrequnciesToFile()
         {
-            Dictionary<string, List<string>> freq = new Dictionary<string, List<string>>();
+            freqDic = new Dictionary<string, List<string>>();
             foreach(KeyValuePair<string,Dictionary<string,int>> stringSuggest in parser.frequencies)
             {
                 List<string> options = new List<string>();
                 options=stringSuggest.Value.OrderByDescending(pair => pair.Value).Take(5).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
-                freq.Add(stringSuggest.Key, options);
+                freqDic.Add(stringSuggest.Key, options);
             }
             BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Append));
-            FrequencyDicToSave mainDicToSave = new FrequencyDicToSave(freq);
-            string json = JsonConvert.SerializeObject(mainDicToSave);
+            FrequencyDicToSave freqDicToSave = new FrequencyDicToSave(freqDic);
+            string json = JsonConvert.SerializeObject(freqDicToSave);
             writer.Write(json);
         }
 
@@ -108,6 +115,7 @@ namespace searchEngine
             {
                 loadMainDic();
                 loadDocumentsDic();
+                loadFreqDic();
             }
             catch (Exception e) { return false; }
             //if (!unZipMainDic() || !unZipDocumentsDic())
@@ -191,82 +199,6 @@ namespace searchEngine
             return terms;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        private byte[] zipCompress(object obj)
-        {
-            byte[] bArray;
-            MemoryStream memoryStream = new MemoryStream();
-            try
-            {
-                GZipStream gzStream = new GZipStream(memoryStream, CompressionMode.Compress);
-                try
-                {
-                    (new BinaryFormatter()).Serialize(gzStream, obj);
-                }
-                finally
-                {
-                    if (gzStream != null)
-                    {
-                        ((IDisposable)gzStream).Dispose();
-                    }
-                }
-                bArray = memoryStream.ToArray();
-            }
-            finally
-            {
-                if (memoryStream != null)
-                {
-                    ((IDisposable)memoryStream).Dispose();
-                }
-            }
-            return bArray;
-        }
-        private bool unZipMainDic()
-        {
-            if (File.Exists(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"))
-            {
-                GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.zip"), CompressionMode.Decompress);
-                try
-                {
-                    mainDic = (Dictionary<string, int[]>)(new BinaryFormatter()).Deserialize(gZipStream);
-                }
-                finally
-                {
-                    if (gZipStream != null)
-                    {
-                        ((IDisposable)gZipStream).Dispose();
-                    }
-                }
-                return true;
-            }
-            else
-                return false;
-
-        }
-        private bool unZipDocumentsDic()
-        {
-            if (File.Exists(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"))
-            {
-                GZipStream gZipStream = new GZipStream(File.OpenRead(m_pathToSave + "\\" + stemOnFileName + "Documents.zip"), CompressionMode.Decompress);
-                try
-                {
-                    documentsDic = (Dictionary<string, Document>)(new BinaryFormatter()).Deserialize(gZipStream);
-                    averageDocumentLength = calculateAvaregeDocumentLength();
-                }
-                finally
-                {
-                    if (gZipStream != null)
-                    {
-                        ((IDisposable)gZipStream).Dispose();
-                    }
-                }
-                return true;
-            }
-            else
-                return false;
-
-        }
-
         private double calculateAvaregeDocumentLength()
         {
             double average = 0;
@@ -316,6 +248,30 @@ namespace searchEngine
                 br.Close();
             }
             catch (Exception e) { throw e; }
+        }
+
+        private void loadFreqDic()
+        {
+            BinaryReader br = null;
+            try
+            {
+                int linesCounter = 0;
+                string lines = "";
+                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Open));
+                while (br.BaseStream.Position != br.BaseStream.Length)
+                {
+                    lines += br.ReadString();
+                    linesCounter++;
+                }
+                FrequencyDicToSave freqDicToSave = JsonConvert.DeserializeObject<FrequencyDicToSave>(lines);
+                freqDic = freqDicToSave.FrequencyDic;
+            }
+            catch (Exception e) { throw e; }
+            finally
+            {
+                if (br != null)
+                    br.Close();
+            }
         }
 
         private void saveMainDic()

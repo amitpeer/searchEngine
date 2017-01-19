@@ -70,6 +70,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="SearchExecution\Indexing\DocumentDicToSave.cs" />
+    <Compile Include="SearchExecution\Indexing\FrequencyDicToSave.cs" />
     <Compile Include="SearchExecution\Indexing\MainDicToSave.cs" />
     <Compile Include="SearchExecution\Ranker.cs" />
     <Compile Include="SearchExecution\Searcher.cs" />

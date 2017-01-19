@@ -164,5 +164,42 @@ namespace searchEngine
             sr.search(query, null, m_shouldStem);
             System.Windows.MessageBox.Show("Finished searching");
         }
+
+        private void tb_query_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = tb_query.Text.TrimStart();
+
+            // check the "space" key has been pressed
+            if (query.Length > 0 && query[query.Length - 1] == ' ')
+            {
+                if (query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length == 1)
+                {
+                    giveSuggestions(query.Trim());
+                }
+            }
+            else // make all suggestion labels invisible
+            {
+                for (int i = 1; i <= 5; i++)
+                {
+                    System.Windows.Controls.Label lb = (System.Windows.Controls.Label)FindName("suggestion" + i);
+                    lb.Content = "";
+                }
+            }
+        }
+
+        private void giveSuggestions(string query)
+        {
+            List<string> suggestions = controller.getFreqDic().ContainsKey(query.ToLower()) ? controller.getFreqDic()[query.ToLower()] : null;
+            if(suggestions != null)
+            {
+                int i = 1;
+                foreach(string suggest in suggestions)
+                {
+                    System.Windows.Controls.Label lb = (System.Windows.Controls.Label)FindName("suggestion" + i);
+                    lb.Content = query + " " + suggest;
+                    i++;
+                }
+            }
+        }
     }
 }
