@@ -15,6 +15,7 @@ namespace searchEngine
         private string language;
         private string date;
         private int documentLength;
+        private double magnitudeForCosSim;
 
         public string DocName
         {
@@ -25,6 +26,11 @@ namespace searchEngine
         {
             get { return max_tf; }
             set { max_tf = value; }
+        }
+        public double MagnitudeForCosSim
+        {
+            get { return magnitudeForCosSim; }
+            set { magnitudeForCosSim = value; }
         }
         public int NumOfUniqueTerms
         {

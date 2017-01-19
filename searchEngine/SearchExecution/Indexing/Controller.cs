@@ -71,6 +71,7 @@ namespace searchEngine
             mainDic = indexer.getMainDic();
             documentsDic = parser.getDocuments();
             averageDocumentLength = calculateAvaregeDocumentLength();
+            //setMagnitudeForCoSim();
             saveFrequnciesToFile();
             //save mainDic to disk
             saveMainDic();
@@ -84,6 +85,35 @@ namespace searchEngine
 
         }
 
+        private void setMagnitudeForCoSim()
+        {          
+            foreach(KeyValuePair<string,int[]> termToWorkOn in mainDic)
+            {
+                Term current = getTermFromPosting(termToWorkOn.Value[2]);
+                foreach(KeyValuePair<string,int[]> docInfo in current.M_tid)
+                {
+                    double tf = docInfo.Value[0] / documentsDic[docInfo.Key].Max_tf;
+                    double idf = Math.Log(documentsDic.Count / current.M_tid.Count, 2);
+                    documentsDic[docInfo.Key].MagnitudeForCosSim = documentsDic[docInfo.Key].MagnitudeForCosSim + Math.Pow(tf * idf,2);
+                }
+            }
+        }
+        private Term getTermFromPosting(int pointer)
+        {
+            BinaryReader br;
+                //intialize the binary reader and line for the new term
+                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainPosting.bin", FileMode.Open));
+                string lineInFile = "";
+                //read untill you get to the term
+                for (int i = 0; i <= pointer; i++)
+                {
+                    lineInFile = br.ReadString();
+                }
+                //Get the required Term according to lineInFile
+                Term term = JsonConvert.DeserializeObject<Term>(lineInFile);
+            br.Close();
+            return term;
+            }
         private void saveFrequnciesToFile()
         {
             Dictionary<string, List<string>> freq = new Dictionary<string, List<string>>();
