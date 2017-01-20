@@ -140,11 +140,6 @@ namespace searchEngine
                 loadFreqDic();
             }
             catch (Exception e) { return false; }
-            //if (!unZipMainDic() || !unZipDocumentsDic())
-            //{
-            //    reset();
-            //    return false;
-            //}
             return true;
         }
         public void setNewPaths(string pathToCorpus, string pathToSave)
@@ -287,7 +282,6 @@ namespace searchEngine
                     }
                     FrequencyDicToSave freqDicToSave = JsonConvert.DeserializeObject<FrequencyDicToSave>(lines);
                     freqDic = freqDicToSave.FrequencyDic;
-                    //
                 }
             }
             catch (Exception e) { throw e; }
@@ -305,7 +299,6 @@ namespace searchEngine
 
         private void saveDocumentsDic()
         {
-            //freqDic = null;
             using (BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Append)))
             {
                 DocumentDicToSave documentsDicToSave = new DocumentDicToSave(documentsDic);
