@@ -64,7 +64,30 @@ namespace searchEngine.SearchExecution
             return results;     
         }
 
+        public bool writeSolutionTofile(string pathToSave)
+        {
+            string[] writeTofile = new string[50 * resultsFromQueriesInFile.Count];
+            int i = 0;
+            foreach (KeyValuePair<string, List<string>> queryRank in resultsFromQueriesInFile)
+            {
+                foreach (string doc in queryRank.Value)
+                {
+                    writeTofile[i] = queryRank.Key + " 0 " + doc + " 500 42 mt";
+                    i++;
+                }
+            }
+            // WriteAllLines creates a file, writes a collection of strings to the file,
+            try
+            {
+                System.IO.File.WriteAllLines(pathToSave, writeTofile);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
 
+        }
         // Input: languages to filter by 
         // Output: documents that are written in that language
         private List<string> getDocumentsToRank(List<string> languages)
@@ -78,12 +101,6 @@ namespace searchEngine.SearchExecution
                 documentsToRank = filterDocumentsByLanguage(languages);
             }
             return documentsToRank;
-        }
-        public bool saveResults(string pathToFile)
-        {
-
-            return ranker.writeSolutionTofile(pathToFile);
-
         }
         // Input: languages to filter by 
         // Output: documents that are written in that language

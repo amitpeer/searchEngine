@@ -267,7 +267,7 @@ namespace searchEngine
             saveDialog.Filter = "ResultsForQuery (txt)|*.txt";
             if (saveDialog.ShowDialog() == true)
             {
-                if (sr.saveResults(saveDialog.FileName))
+                if (sr.writeSolutionTofile(saveDialog.FileName))
             {
 
                 System.Windows.Forms.MessageBox.Show("Result saved successfully");
