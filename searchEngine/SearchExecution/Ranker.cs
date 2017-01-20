@@ -101,7 +101,7 @@ namespace searchEngine.SearchExecution
             {
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
+                rankForDocumentByInnerProduct[docName] = RankDocByCosSimilarity(m_controller.getDocumentsDic()[docName]);
                  FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
                 //FinalRankForDocs[docName] = rankForDocumentByBM25[docName];
                 //FinalRankForDocs[docName] = rankForDocumentByInnerProduct[docName];
@@ -203,9 +203,10 @@ namespace searchEngine.SearchExecution
             }
             return Rank;
         }
-        private double RankDocByInnerProduct(Document docToRank)
+        private double RankDocByCosSimilarity(Document docToRank)
         {
-            double Rank = 0;
+            double cosSimRank = 0;
+            double sim = 0;
             double tf = 0;
             double idf = 0;
             foreach (KeyValuePair<string, int> termWeightQuery in termsFreqInQuery)
@@ -214,10 +215,11 @@ namespace searchEngine.SearchExecution
                 {
                     tf = (Double)(m_termsFromQuery[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
                     idf = Math.Log(m_controller.getDocumentsDic().Count/ m_termsFromQuery[termWeightQuery.Key].M_tid.Count, 2);
-                    Rank = Rank +  tf * idf;
+                    sim = sim +  tf * idf;
                 }
             }
-            return Rank;
+            cosSimRank = sim/(Math.Sqrt(docToRank.MagnitudeForCosSim)*(termsFreqInQuery.Count));
+            return cosSimRank;
         }
     }
 }
