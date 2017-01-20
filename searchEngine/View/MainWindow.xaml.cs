@@ -209,7 +209,7 @@ namespace searchEngine
             if (controller.getFreqDic() != null)
             {
                 List<string> suggestions = controller.getFreqDic().ContainsKey(query.ToLower()) ? controller.getFreqDic()[query.ToLower()] : null;
-                if (suggestions != null)
+                if (suggestions != null && suggestions.Count>0)
                 {
                     // found at least one suggestion
                     int i = 1;
