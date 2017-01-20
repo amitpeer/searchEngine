@@ -132,8 +132,8 @@ namespace searchEngine
         }
         public void finishedIndexing()
         {
-            System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + controller.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+controller.getNumberOfUniqueTerms()+"\n"+"Total time"+controller.getTime());
             deSelectbutton1.Visibility = Visibility.Visible;
+            System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + controller.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+controller.getNumberOfUniqueTerms()+"\n"+"Total time"+controller.getTime());
         }
 
         private void loadDic_Click(object sender, RoutedEventArgs e)
@@ -158,8 +158,8 @@ namespace searchEngine
                     {
                         comboBox1.Items.Add(lang);
                     }
-                    System.Windows.Forms.MessageBox.Show("Files loaded successfully");
                     deSelectbutton1.Visibility = Visibility.Visible;
+                    System.Windows.Forms.MessageBox.Show("Files loaded successfully");
                 }
             }
        
