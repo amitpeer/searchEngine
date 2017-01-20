@@ -43,7 +43,7 @@ namespace searchEngine.SearchExecution
             string line;
 
             // Read the file and handle it line by line.
-            using (System.IO.StreamReader queriesFile = new System.IO.StreamReader("queries.txt"))
+            using (System.IO.StreamReader queriesFile = new System.IO.StreamReader(path))
             {
                 while ((line = queriesFile.ReadLine()) != null)
                 {

@@ -42,6 +42,10 @@
             </ListBox.RenderTransform>
         </ListBox>
         <Button x:Name="saveResults" Content="Save results to file" HorizontalAlignment="Left" Height="43" Margin="960,237,0,0" VerticalAlignment="Top" Width="199" Click="saveResults_Click"/>
+        <Button x:Name="pathTo" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="609,307,0,0" VerticalAlignment="Top" Width="70" Click="pathTo_Click_1"/>
+        <TextBox x:Name="textBox_pathToQueriesFile" HorizontalAlignment="Left" Height="30" Margin="366,307,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="223" TextChanged="pathToLoadPosting_TextChanged" />
+        <TextBlock x:Name="textBlock_pathToQueriesFile" HorizontalAlignment="Left" Height="30" Margin="247,307,0,0" TextWrapping="Wrap" Text="Path to Queries file " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
+        <Button x:Name="startRakingFile" Content="Button" HorizontalAlignment="Left" Height="36" Margin="437,362,0,0" VerticalAlignment="Top" Width="97" Click="startRakingFile_Click"/>
 
 
     </Grid>

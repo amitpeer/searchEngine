@@ -164,6 +164,7 @@ namespace searchEngine
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
+            Results.Items.Refresh();
             string query = "Impact of Government Regulated Grain Farming on International";
             sr = new Searcher(controller);
             //Dictionary<string, List<string>> ans = sr.searchFile("", null, false);
@@ -277,6 +278,23 @@ namespace searchEngine
             }
             }
 
+        }
+
+        private void pathTo_Click(object sender, RoutedEventArgs e)
+        {
+            var fd = new System.Windows.Forms.FolderBrowserDialog();
+            DialogResult result = fd.ShowDialog();
+            this.textBox_pathToQueriesFile.Text = fd.SelectedPath;
+        }
+
+        private void startRakingFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox_pathToQueriesFile.Text == "")
+                System.Windows.MessageBox.Show("Please enter path");
+            else
+            {
+
+            }
         }
     }
 }
