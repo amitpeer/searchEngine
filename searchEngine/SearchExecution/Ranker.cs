@@ -14,7 +14,7 @@ namespace searchEngine.SearchExecution
         private Controller m_controller;
         private Dictionary<string, int> termsFreqInQuery;
         private Dictionary<string, Term> m_termsFromQuery;
-        private Dictionary<string, List<string>> m_rankForFiles;
+
         private List<string> documentsToRank;
 
         public Ranker(Controller controller)
@@ -22,7 +22,6 @@ namespace searchEngine.SearchExecution
             m_controller = controller;
             termsFreqInQuery = new Dictionary<string, int>();
             m_termsFromQuery = new Dictionary<string, Term>();
-            m_rankForFiles = new Dictionary<string, List<string>>();
         }
         //Input: string array for the query, each item in the array is a (parsed) term in the query
         //       documents list to rank (after language filter)
@@ -103,37 +102,11 @@ namespace searchEngine.SearchExecution
                 rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByInnerProduct[docName] = RankDocByCosSimilarity(m_controller.getDocumentsDic()[docName]);
                  FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
-                //FinalRankForDocs[docName] = rankForDocumentByBM25[docName];
-                //FinalRankForDocs[docName] = rankForDocumentByInnerProduct[docName];
-                //FinalRankForDocs[docName] = rankForDocumentByHeader[docName];
             }
             return FinalRankForDocs;
         }
 
-        public bool writeSolutionTofile(string pathToSave)
-        {
-            string[] writeTofile = new string[50* m_rankForFiles.Count];
-            int i = 0;
-            foreach (KeyValuePair<string,List<string>> queryRank in m_rankForFiles)
-            {
-                foreach(string doc in queryRank.Value)
-                {
-                    writeTofile[i] =queryRank.Key + " 0 " + doc + " 500 42 mt";
-                    i++;
-                }
-            }
-            // WriteAllLines creates a file, writes a collection of strings to the file,
-            try
-            {
-                System.IO.File.WriteAllLines(pathToSave, writeTofile);
-                return true;
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
 
-        }
 
         private void calculateTermsFreqInQuery(string[] query)
         {
