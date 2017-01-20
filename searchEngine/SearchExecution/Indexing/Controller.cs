@@ -119,21 +119,7 @@ namespace searchEngine
             br.Close();
             return term;
         }
-        private void saveFrequnciesToFile()
-        {
-            freqDic = new Dictionary<string, List<string>>();
-            foreach(KeyValuePair<string,Dictionary<string,int>> stringSuggest in parser.frequencies)
-            {
-                List<string> options = new List<string>();
-                options=stringSuggest.Value.OrderByDescending(pair => pair.Value).Take(5).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
-                freqDic.Add(stringSuggest.Key, options);
-            }
-            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Append));
-            FrequencyDicToSave freqDicToSave = new FrequencyDicToSave(freqDic);
-            string json = JsonConvert.SerializeObject(freqDicToSave);
-            writer.Write(json);
-        }
-
+   
         public bool load(string path, bool shouldStem)
         {
             reset();
@@ -239,83 +225,102 @@ namespace searchEngine
 
         private void loadMainDic()
         {
-            BinaryReader br;
             try
             {
                 int linesCounter = 0;
                 string lines = "";
-                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Open));
-                while (br.BaseStream.Position != br.BaseStream.Length)
+                using (BinaryReader br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Open)))
                 {
-                    lines += br.ReadString();
-                    linesCounter++;
+                    while (br.BaseStream.Position != br.BaseStream.Length)
+                    {
+                        lines += br.ReadString();
+                        linesCounter++;
+                    }
+                    MainDicToSave mainDicToSave = JsonConvert.DeserializeObject<MainDicToSave>(lines);
+                    this.mainDic = mainDicToSave.MainDic;
                 }
-                MainDicToSave mainDicToSave = JsonConvert.DeserializeObject<MainDicToSave>(lines);
-                this.mainDic = mainDicToSave.MainDic;
-                br.Close();
             }
             catch(Exception e) { throw e; }
         }
 
         private void loadDocumentsDic()
         {
-            BinaryReader br;
             try
             {
                 int linesCounter = 0;
                 string lines = "";
-                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Open));
-                while (br.BaseStream.Position != br.BaseStream.Length)
+                using (BinaryReader br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Open)))
                 {
-                    lines += br.ReadString();
-                    linesCounter++;
-                }
+                while (br.BaseStream.Position != br.BaseStream.Length)
+                        {
+                            lines += br.ReadString();
+                            linesCounter++;
+                        }
                 DocumentDicToSave documentsDicToSave = JsonConvert.DeserializeObject<DocumentDicToSave>(lines);
                 this.documentsDic = documentsDicToSave.DocumentsDic;
                 averageDocumentLength = calculateAvaregeDocumentLength();
-                br.Close();
+                }
             }
             catch (Exception e) { throw e; }
         }
 
         private void loadFreqDic()
         {
-            BinaryReader br = null;
             try
             {
                 int linesCounter = 0;
                 string lines = "";
-                br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Open));
-                while (br.BaseStream.Position != br.BaseStream.Length)
+                using (BinaryReader br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Open)))
                 {
-                    lines += br.ReadString();
-                    linesCounter++;
+                    while (br.BaseStream.Position != br.BaseStream.Length)
+                    {
+                        lines += br.ReadString();
+                        linesCounter++;
+                    }
+                    FrequencyDicToSave freqDicToSave = JsonConvert.DeserializeObject<FrequencyDicToSave>(lines);
+                    freqDic = freqDicToSave.FrequencyDic;
                 }
-                FrequencyDicToSave freqDicToSave = JsonConvert.DeserializeObject<FrequencyDicToSave>(lines);
-                freqDic = freqDicToSave.FrequencyDic;
             }
             catch (Exception e) { throw e; }
-            finally
-            {
-                if (br != null)
-                    br.Close();
-            }
         }
 
         private void saveMainDic()
         {
-            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Append));
-            MainDicToSave mainDicToSave = new MainDicToSave(mainDic);
-            string json = JsonConvert.SerializeObject(mainDicToSave);
-            writer.Write(json);
+            using (BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainDictionary.bin", FileMode.Append)))
+            {
+                MainDicToSave mainDicToSave = new MainDicToSave(mainDic);
+                string json = JsonConvert.SerializeObject(mainDicToSave);
+                writer.Write(json);
+            }
         }
 
         private void saveDocumentsDic()
         {
-            BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Append));
-            DocumentDicToSave mainDicToSave = new DocumentDicToSave(documentsDic);
-            string json = JsonConvert.SerializeObject(mainDicToSave);
-            writer.Write(json);
+            //freqDic = null;
+            using (BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "Documents.bin", FileMode.Append)))
+            {
+                DocumentDicToSave documentsDicToSave = new DocumentDicToSave(documentsDic);
+                string json = JsonConvert.SerializeObject(documentsDicToSave);
+                writer.Write(json);
+            }
+        }
+
+        private void saveFrequnciesToFile()
+        {
+            freqDic = new Dictionary<string, List<string>>();
+            foreach (KeyValuePair<string, Dictionary<string, int>> stringSuggest in parser.frequencies)
+            {
+                List<string> options = new List<string>();
+                options = stringSuggest.Value.OrderByDescending(pair => pair.Value).Take(5).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
+                freqDic.Add(stringSuggest.Key, options);
+            }
+            using (BinaryWriter writer = new BinaryWriter(File.Open(m_pathToSave + "\\" + stemOnFileName + "FrequencyDic.bin", FileMode.Append)))
+            {
+                FrequencyDicToSave freqDicToSave = new FrequencyDicToSave(freqDic);
+                string json = JsonConvert.SerializeObject(freqDicToSave);
+                writer.Write(json);
+            }
+            parser.frequencies = null;
         }
     }
 }
