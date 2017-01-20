@@ -104,6 +104,7 @@ namespace searchEngine
                 this.pathToLoadCorpus.Text = "";
                 m_pathToPosting = "";
                 m_pathToCorpus = "";
+                deSelectbutton1.Visibility = Visibility.Hidden;
             }
             catch (Exception exception)
             {
@@ -132,6 +133,7 @@ namespace searchEngine
         public void finishedIndexing()
         {
             System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + controller.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+controller.getNumberOfUniqueTerms()+"\n"+"Total time"+controller.getTime());
+            deSelectbutton1.Visibility = Visibility.Visible;
         }
 
         private void loadDic_Click(object sender, RoutedEventArgs e)
@@ -157,6 +159,7 @@ namespace searchEngine
                         comboBox1.Items.Add(lang);
                     }
                     System.Windows.Forms.MessageBox.Show("Files loaded successfully");
+                    deSelectbutton1.Visibility = Visibility.Visible;
                 }
             }
        
@@ -366,6 +369,16 @@ namespace searchEngine
             }
         }
 
+        // shouldStem check box
+        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            m_shouldStem = true;       
+        }
+
+        private void checkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            m_shouldStem = false;
+        }
     }
 }
 

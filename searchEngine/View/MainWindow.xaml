@@ -17,11 +17,11 @@
         <TextBox x:Name="pathToLoadPosting" HorizontalAlignment="Left" Height="30" Margin="126,79,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="223" TextChanged="pathToLoadPosting_TextChanged" />
         <TextBlock x:Name="textBlockPathToPosting" HorizontalAlignment="Left" Height="30" Margin="19,79,0,0" TextWrapping="Wrap" Text="Path to Posting " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
         <Button x:Name="startIndexing" Content="Go!" HorizontalAlignment="Left" Height="30" Margin="205,188,0,0" VerticalAlignment="Top" Width="59" Click="startIndexing_Click"/>
-        <CheckBox x:Name="checkBox" Content="With stemming"  HorizontalAlignment="Left" Height="18" Margin="366,144,0,0" VerticalAlignment="Top" Width="105" Foreground="White"/>
+        <CheckBox x:Name="checkBox" Content="With stemming"  HorizontalAlignment="Left" Height="18" Margin="366,144,0,0" VerticalAlignment="Top" Width="105" Foreground="White" Checked="checkBox_Checked" Unchecked="checkBox_Unchecked"/>
         <Button x:Name="reserButton" Content="Reset" HorizontalAlignment="Left" Height="27" Margin="19,144,0,0" VerticalAlignment="Top" Width="66" Click="reserButton_Click"/>
         <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="240,140,0,0" VerticalAlignment="Top" Width="109" Click="showDic_Click"/>
         <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="126,140,0,0" VerticalAlignment="Top" Width="103" Click="loadDic_Click"/>
-        <ListBox x:Name="comboBox1" HorizontalAlignment="Left" Background="Black" Foreground="White" Margin="667,62,0,0" VerticalAlignment="Top"    Width="137" SelectionMode="Multiple" Height="130"  />
+        <ListBox x:Name="comboBox1" HorizontalAlignment="Left" Background="Black" Foreground="White" Margin="667,62,0,0" VerticalAlignment="Top"    Width="137" SelectionMode="Multiple" Height="130" BorderThickness="0"  />
         <Button x:Name="startRaking" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="1073,24,0,0" VerticalAlignment="Top" Width="86" Click="startRaking_click"/>
         <TextBox x:Name="tb_query" HorizontalAlignment="Left" Height="30" Margin="809,27,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="247" TextChanged="tb_query_TextChanged" />
         <Label x:Name="label" Content="Type Query here:" HorizontalAlignment="Left" Height="30" Margin="700,27,0,0" VerticalAlignment="Top" Width="104" Foreground="White"/>
@@ -30,7 +30,7 @@
         <Label x:Name="suggestion3" Content="" HorizontalAlignment="Left" Height="29" Margin="809,115,0,0" VerticalAlignment="Top" Width="342" Foreground="White" MouseLeftButtonDown="suggestion_MouseLeftButtonDown" MouseEnter="suggestion_MouseEnter" MouseLeave="suggestion_MouseLeave"/>
         <Label x:Name="suggestion4" Content="" HorizontalAlignment="Left" Height="29" Margin="809,144,0,0" VerticalAlignment="Top" Width="342" Foreground="White" MouseLeftButtonDown="suggestion_MouseLeftButtonDown" MouseEnter="suggestion_MouseEnter" MouseLeave="suggestion_MouseLeave"/>
         <Label x:Name="suggestion5" Content="" HorizontalAlignment="Left" Height="29" Margin="809,173,0,0" VerticalAlignment="Top" Width="342" Foreground="White" MouseLeftButtonDown="suggestion_MouseLeftButtonDown" MouseEnter="suggestion_MouseEnter" MouseLeave="suggestion_MouseLeave"/>
-        <Button x:Name="deSelectbutton1" Content="Deselect Languages" HorizontalAlignment="Left" Margin="667,203,0,0" VerticalAlignment="Top" Width="137" Height="20" Click="deSelectbutton1_Click"/>
+        <Button x:Name="deSelectbutton1" Visibility="Hidden" Content="Deselect Languages" HorizontalAlignment="Left" Margin="667,203,0,0" VerticalAlignment="Top" Width="137" Height="20" Click="deSelectbutton1_Click"/>
         <ListBox x:Name="Results" HorizontalAlignment="Left" Background="Black" Foreground="White" Margin="715,298,0,0" VerticalAlignment="Top"    Width="468" SelectionMode="Multiple" Height="341" RenderTransformOrigin="0.5,0.5"  >
             <ListBox.RenderTransform>
                 <TransformGroup>
