@@ -11,12 +11,15 @@ namespace searchEngine.SearchExecution
     {
         private Controller controller;
         private Ranker ranker;
+        private Dictionary<string, List<string>> resultsFromQueriesInFile = new Dictionary<string, List<string>>();
 
         public Searcher(Controller controller)
         {
             this.controller = controller;
             ranker = new Ranker(controller);
         }
+
+        public Dictionary<string, List<string>> getResultsFromQueriesInFile() { return resultsFromQueriesInFile; }
 
         //Input: query (each word seperated by a space), and the languages(null = all, can be more than one language) for the doucments
         //Output: list of string, each item is a document ID, the first item is the most relevent and last is the least relevant. 
@@ -46,8 +49,8 @@ namespace searchEngine.SearchExecution
                 {
                     //split the line in the text file, to separate query ID and the query iteself
                     string[] splittedLine = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    string queryId = splittedLine[0];
-                    string query = splittedLine[1];
+                    string queryId = splittedLine[0].Trim();
+                    string query = splittedLine[1].Trim();
 
                     // parse the query and send to ranker
                     Parse parse = new Parse(null, shouldStem);
@@ -57,6 +60,7 @@ namespace searchEngine.SearchExecution
                     results.Add(queryId, rank);
                 }
             }
+            resultsFromQueriesInFile = results;
             return results;     
         }
 
