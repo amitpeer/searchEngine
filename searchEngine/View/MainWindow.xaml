@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:searchEngine"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="821.8" >
+        Title="MainWindow" Height="732.4" Width="1291" >
     <Window.Background>
         <ImageBrush ImageSource="/Images/Background_Globe.png"/>
     </Window.Background>
-    <Grid>
+    <Grid Margin="0,0,0.2,4.4">
         <Button x:Name="folderPathToCorpus" Content="Browse" HorizontalAlignment="Left" Height="30" Margin="354,29,0,0" VerticalAlignment="Top" Width="70" Click="button_Click"/>
         <TextBox x:Name="pathToLoadCorpus" HorizontalAlignment="Left" Height="30" Margin="126,29,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="223" TextChanged="pathToLoadCorpus_TextChanged" />
         <TextBlock x:Name="textBlockPathToCorpus" HorizontalAlignment="Left" Height="30" Margin="19,29,0,0" TextWrapping="Wrap" Text="Path to Corpus " VerticalAlignment="Top" Width="102" Background="Black" Foreground="White"/>
