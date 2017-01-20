@@ -162,36 +162,43 @@ namespace searchEngine
        
         }
 
-        private void button_Click_1(object sender, RoutedEventArgs e)
+        private void startRaking_click(object sender, RoutedEventArgs e)
         {
-            try
+            if (controller.getMainDic() == null)
+                System.Windows.MessageBox.Show("Please index or load before ranking");
+            else if (tb_query.Text == "")
+                System.Windows.MessageBox.Show("Please type query");
+            else
             {
-                Results.Items.Refresh();
-                string query = "Impact of Government Regulated Grain Farming on International";
-                sr = new Searcher(controller);
-                List<string> langsSelected = new List<string>();
+                try
+                {
+                    Results.Items.Clear();
+                    string query = tb_query.Text.Trim();
+                    sr = new Searcher(controller);
+                    List<string> langsSelected = new List<string>();
 
-                // get languges
-                foreach (string lang in comboBox1.SelectedItems)
-                {
-                    langsSelected.Add(lang);
-                }
-                if (langsSelected.Contains("All languags"))
-                {
-                    langsSelected = null;
-                }
+                    // get languges
+                    foreach (string lang in comboBox1.SelectedItems)
+                    {
+                        langsSelected.Add(lang);
+                    }
+                    if (langsSelected.Contains("All languags"))
+                    {
+                        langsSelected = null;
+                    }
 
-                // start ranking
-                List<string> docsRelevent = sr.search(query, langsSelected, m_shouldStem);
-                foreach (string doc in docsRelevent)
-                {
-                    Results.Items.Add(doc);
+                    // start ranking
+                    List<string> docsRelevent = sr.search(query, langsSelected, m_shouldStem);
+                    foreach (string doc in docsRelevent)
+                    {
+                        Results.Items.Add(doc);
+                    }
+                    System.Windows.MessageBox.Show("Finished ranking");
                 }
-                System.Windows.MessageBox.Show("Finished ranking");
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                }
             }
         }
 
@@ -321,7 +328,7 @@ namespace searchEngine
             {
                 try
                 {
-                    Results.Items.Refresh();
+                    Results.Items.Clear();
                     sr = new Searcher(controller);
 
                     // get languges

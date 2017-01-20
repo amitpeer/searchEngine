@@ -22,7 +22,7 @@
         <Button x:Name="showDic" Content="Show Dictionary" HorizontalAlignment="Left" Height="31" Margin="240,140,0,0" VerticalAlignment="Top" Width="109" Click="showDic_Click"/>
         <Button x:Name="loadDic" Content="Load Dictionary" HorizontalAlignment="Left" Height="31" Margin="126,140,0,0" VerticalAlignment="Top" Width="103" Click="loadDic_Click"/>
         <ListBox x:Name="comboBox1" HorizontalAlignment="Left" Background="Black" Foreground="White" Margin="667,62,0,0" VerticalAlignment="Top"    Width="137" SelectionMode="Multiple" Height="130"  />
-        <Button x:Name="button" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="1073,24,0,0" VerticalAlignment="Top" Width="86" Click="button_Click_1"/>
+        <Button x:Name="startRaking" Content="StartRanking" HorizontalAlignment="Left" Height="38" Margin="1073,24,0,0" VerticalAlignment="Top" Width="86" Click="startRaking_click"/>
         <TextBox x:Name="tb_query" HorizontalAlignment="Left" Height="30" Margin="809,27,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="247" TextChanged="tb_query_TextChanged" />
         <Label x:Name="label" Content="Type Query here:" HorizontalAlignment="Left" Height="30" Margin="700,27,0,0" VerticalAlignment="Top" Width="104" Foreground="White"/>
         <Label x:Name="suggestion1" Content="" HorizontalAlignment="Left" Height="29" Margin="809,62,0,0" VerticalAlignment="Top" Width="342" Foreground="White" MouseLeftButtonDown="suggestion_MouseLeftButtonDown" MouseEnter="suggestion_MouseEnter" MouseLeave="suggestion_MouseLeave"/>
