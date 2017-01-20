@@ -190,7 +190,7 @@ namespace searchEngine
                     giveSuggestions(query.Trim());
                 }
             }
-            else // make all suggestion labels invisible
+            else // different key pressed - make all suggestion labels invisible
             {
                 for (int i = 1; i <= 5; i++)
                 {
@@ -202,15 +202,24 @@ namespace searchEngine
 
         private void giveSuggestions(string query)
         {
-            List<string> suggestions = controller.getFreqDic().ContainsKey(query.ToLower()) ? controller.getFreqDic()[query.ToLower()] : null;
-            if(suggestions != null)
+            if (controller.getFreqDic() != null)
             {
-                int i = 1;
-                foreach(string suggest in suggestions)
+                List<string> suggestions = controller.getFreqDic().ContainsKey(query.ToLower()) ? controller.getFreqDic()[query.ToLower()] : null;
+                if (suggestions != null)
                 {
-                    System.Windows.Controls.Label lb = (System.Windows.Controls.Label)FindName("suggestion" + i);
-                    lb.Content = query + " " + suggest;
-                    i++;
+                    // found at least one suggestion
+                    int i = 1;
+                    foreach (string suggest in suggestions)
+                    {
+                        System.Windows.Controls.Label lb = (System.Windows.Controls.Label)FindName("suggestion" + i);
+                        lb.Content = query + " " + suggest;
+                        i++;
+                    }
+                }
+                else
+                {
+                    // no suggestions found
+                    suggestion1.Content = "no suggestion found";
                 }
             }
         }
