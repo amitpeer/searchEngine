@@ -11,8 +11,8 @@
         <ListView ItemsSource="{DynamicResource Terms}" >
             <ListView.View>
                 <GridView >
-                    <GridViewColumn Header="Term" DisplayMemberBinding="{Binding Key}" />
-                    <GridViewColumn Header="Total appearances in corpus" DisplayMemberBinding="{Binding Value.}" />
+                    <GridViewColumn Header="Term" Width="100"  DisplayMemberBinding="{Binding Key}" />
+                    <GridViewColumn Header="Total appearances in corpus" Width="195" DisplayMemberBinding="{Binding Value.}" />
                 </GridView>
             </ListView.View>
         </ListView>

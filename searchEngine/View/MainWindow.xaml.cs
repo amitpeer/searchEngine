@@ -174,8 +174,11 @@ namespace searchEngine
             {
                 langsSelected = null;
             }
-            sr.search(query, langsSelected, m_shouldStem);
-            System.Windows.MessageBox.Show("Finished searching");
+            List<string> docsRelevent=sr.search(query, langsSelected, m_shouldStem);
+            foreach (string doc in docsRelevent)
+            {
+                Results.Items.Add(doc);
+            }
         }
 
         private void tb_query_TextChanged(object sender, TextChangedEventArgs e)
