@@ -102,7 +102,7 @@ namespace searchEngine.SearchExecution
                 rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
                 rankForDocumentByInnerProduct[docName] = RankDocByInnerProduct(m_controller.getDocumentsDic()[docName]);
-                 FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
+                FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
                 //FinalRankForDocs[docName] = rankForDocumentByBM25[docName];
                 //FinalRankForDocs[docName] = rankForDocumentByInnerProduct[docName];
                 //FinalRankForDocs[docName] = rankForDocumentByHeader[docName];
