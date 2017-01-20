@@ -41,6 +41,7 @@
                 </TransformGroup>
             </ListBox.RenderTransform>
         </ListBox>
+        <Button x:Name="saveResults" Content="Save results to file" HorizontalAlignment="Left" Height="43" Margin="960,237,0,0" VerticalAlignment="Top" Width="199" Click="saveResults_Click"/>
 
 
     </Grid>
