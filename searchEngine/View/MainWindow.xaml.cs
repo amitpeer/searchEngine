@@ -164,23 +164,34 @@ namespace searchEngine
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-            Results.Items.Refresh();
-            string query = "Impact of Government Regulated Grain Farming on International";
-            sr = new Searcher(controller);
-            //Dictionary<string, List<string>> ans = sr.searchFile("", null, false);
-            List<string> langsSelected = new List<string>();
-            foreach(string lang in comboBox1.SelectedItems)
+            try
             {
-                langsSelected.Add(lang);
+                Results.Items.Refresh();
+                string query = "Impact of Government Regulated Grain Farming on International";
+                sr = new Searcher(controller);
+                List<string> langsSelected = new List<string>();
+
+                // get languges
+                foreach (string lang in comboBox1.SelectedItems)
+                {
+                    langsSelected.Add(lang);
+                }
+                if (langsSelected.Contains("All languags"))
+                {
+                    langsSelected = null;
+                }
+
+                // start ranking
+                List<string> docsRelevent = sr.search(query, langsSelected, m_shouldStem);
+                foreach (string doc in docsRelevent)
+                {
+                    Results.Items.Add(doc);
+                }
+                System.Windows.MessageBox.Show("Finished ranking");
             }
-            if(langsSelected.Contains("All languags"))
+            catch (Exception ex)
             {
-                langsSelected = null;
-            }
-            List<string> docsRelevent=sr.search(query, langsSelected, m_shouldStem);
-            foreach (string doc in docsRelevent)
-            {
-                Results.Items.Add(doc);
+                System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
             }
         }
 
@@ -282,20 +293,72 @@ namespace searchEngine
 
         private void pathTo_Click(object sender, RoutedEventArgs e)
         {
-            var fd = new System.Windows.Forms.FolderBrowserDialog();
-            DialogResult result = fd.ShowDialog();
-            this.textBox_pathToQueriesFile.Text = fd.SelectedPath;
+            // Create OpenFileDialog 
+            Microsoft.Win32.OpenFileDialog file = new Microsoft.Win32.OpenFileDialog();
+
+            // Set filter for file extension and default file extension 
+            file.DefaultExt = ".txt";
+            file.Filter = "TXT Files (*.txt)|*.txt";
+
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = file.ShowDialog();
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
+            {
+                // Open document 
+                textBox_pathToQueriesFile.Text = file.FileName;
+            }
         }
 
         private void startRakingFile_Click(object sender, RoutedEventArgs e)
         {
             if (textBox_pathToQueriesFile.Text == "")
                 System.Windows.MessageBox.Show("Please enter path");
+            if (controller.getMainDic() == null)
+                System.Windows.MessageBox.Show("Please Index or Load before ranking");
             else
             {
+                try
+                {
+                    Results.Items.Refresh();
+                    sr = new Searcher(controller);
+
+                    // get languges
+                    List<string> langsSelected = new List<string>();
+                    foreach (string lang in comboBox1.SelectedItems)
+                    {
+                        langsSelected.Add(lang);
+                    }
+
+                    if (langsSelected.Contains("All languags"))
+                    {
+                        langsSelected = null;
+                    }
+
+                    // start ranking
+                    Dictionary<string, List<string>> docsRelevent = sr.searchFile(textBox_pathToQueriesFile.Text, langsSelected, m_shouldStem);
+                    int countQueries = 0;
+                    //display results
+                    foreach (KeyValuePair<string, List<string>> queryWithResults in docsRelevent)
+                    {
+                        int countResult = 1;
+                        foreach (string doc in queryWithResults.Value)
+                        {
+                            Results.Items.Add("Query ID: " + queryWithResults.Key + ", Result number " + countResult++ + ": " + doc);
+                        }
+                        countQueries++;
+                    }
+                    System.Windows.MessageBox.Show("Finished ranking all " + countQueries+ " queries in the file");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                }
 
             }
         }
+
     }
 }
 

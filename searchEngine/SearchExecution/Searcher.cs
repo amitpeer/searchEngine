@@ -11,7 +11,7 @@ namespace searchEngine.SearchExecution
     {
         private Controller controller;
         private Ranker ranker;
-        private Dictionary<string, List<string>> resultsFromQueriesInFile = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> resultsFromQueries = new Dictionary<string, List<string>>();
 
         public Searcher(Controller controller)
         {
@@ -19,7 +19,7 @@ namespace searchEngine.SearchExecution
             ranker = new Ranker(controller);
         }
 
-        public Dictionary<string, List<string>> getResultsFromQueriesInFile() { return resultsFromQueriesInFile; }
+        public Dictionary<string, List<string>> getResultsFromQueriesInFile() { return resultsFromQueries; }
 
         //Input: query (each word seperated by a space), and the languages(null = all, can be more than one language) for the doucments
         //Output: list of string, each item is a document ID, the first item is the most relevent and last is the least relevant. 
@@ -31,7 +31,13 @@ namespace searchEngine.SearchExecution
 
             // parse the query and send to ranker
             Parse parse = new Parse(null, shouldStem);
-            return ranker.rank(query, documentsToRank,parse,shouldStem);
+            List<string> results = ranker.rank(query, documentsToRank, parse, shouldStem);
+
+            // reset the results dictionary and add the reults to the dictionary so we can save it if needed
+            resultsFromQueries = new Dictionary<string, List<string>>();
+            resultsFromQueries.Add(new Random().Next().ToString(), results);
+
+            return results;
         }
 
         public Dictionary<string, List<string>> searchFile(string path, List<string> languages, bool shouldStem)
@@ -47,28 +53,33 @@ namespace searchEngine.SearchExecution
             {
                 while ((line = queriesFile.ReadLine()) != null)
                 {
-                    //split the line in the text file, to separate query ID and the query iteself
-                    string[] splittedLine = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    string queryId = splittedLine[0].Trim();
-                    string query = splittedLine[1].Trim();
+                    if (line != "")
+                    {
+                        //split the line in the text file, to separate query ID and the query iteself
+                        string[] splittedLine = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        string queryId = splittedLine[0].Trim();
+                        string query = splittedLine[1].Trim();
 
-                    // parse the query and send to ranker
-                    Parse parse = new Parse(null, shouldStem);
-                    List<string> rank = ranker.rank(query, documentsToRank, parse, shouldStem);
+                        // parse the query and send to ranker
+                        Parse parse = new Parse(null, shouldStem);
+                        List<string> rank = ranker.rank(query, documentsToRank, parse, shouldStem);
 
-                    //if results came back, add to the dictionary
-                    results.Add(queryId, rank);
+                        //if results came back, add to the dictionary
+                        results.Add(queryId, rank);
+                    }
                 }
             }
-            resultsFromQueriesInFile = results;
+            // reset the results dictionary so we can save only these results to file if needed
+            resultsFromQueries = new Dictionary<string, List<string>>();
+            resultsFromQueries = results;
             return results;     
         }
 
         public bool writeSolutionTofile(string pathToSave)
         {
-            string[] writeTofile = new string[50 * resultsFromQueriesInFile.Count];
+            string[] writeTofile = new string[50 * resultsFromQueries.Count];
             int i = 0;
-            foreach (KeyValuePair<string, List<string>> queryRank in resultsFromQueriesInFile)
+            foreach (KeyValuePair<string, List<string>> queryRank in resultsFromQueries)
             {
                 foreach (string doc in queryRank.Value)
                 {
