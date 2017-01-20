@@ -279,6 +279,7 @@ namespace searchEngine
                     }
                     FrequencyDicToSave freqDicToSave = JsonConvert.DeserializeObject<FrequencyDicToSave>(lines);
                     freqDic = freqDicToSave.FrequencyDic;
+                    //
                 }
             }
             catch (Exception e) { throw e; }
