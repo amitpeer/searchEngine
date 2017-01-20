@@ -36,7 +36,12 @@ namespace searchEngine.SearchExecution
             Parse parse = new Parse(null, shouldStem);
             return ranker.rank(query, documentsToRank,parse,shouldStem);
         }
+        public bool saveResults(string pathToFile)
+        {
 
+            return ranker.writeSolutionTofile(pathToFile);
+
+        }
         // Input: languages to filter by 
         // Output: documents that are written in that language
         private List<string> filterDocumentsByLanguage(List<string> languages)

@@ -32,6 +32,7 @@ namespace searchEngine
         private SortedSet<string> m_languages;
         private Controller controller;
         private string errorMessage = "Problem occured. Please follow the instructions.";
+        private Searcher sr;
 
         public MainWindow()
         {
@@ -164,7 +165,7 @@ namespace searchEngine
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
             string query = "employee terrorists";
-            Searcher sr = new Searcher(controller);
+            sr = new Searcher(controller);
             List<string> langsSelected = new List<string>();
             foreach(string lang in comboBox1.SelectedItems)
             {
@@ -254,6 +255,27 @@ namespace searchEngine
         private void suggestion_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Cursor = System.Windows.Input.Cursors.Arrow;
+        }
+
+        private void saveResults_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
+            saveDialog.FileName = "ResultsForQuery";
+            saveDialog.DefaultExt = ".txt";
+            saveDialog.Filter = "ResultsForQuery (txt)|*.txt";
+            if (saveDialog.ShowDialog() == true)
+            {
+                if (sr.saveResults(saveDialog.FileName))
+            {
+
+                System.Windows.Forms.MessageBox.Show("Result saved successfully");
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Something went wrong");
+            }
+            }
+
         }
     }
 }
