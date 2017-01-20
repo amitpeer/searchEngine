@@ -164,8 +164,9 @@ namespace searchEngine
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-            string query = "employee terrorists";
+            string query = "Impact of Government Regulated Grain Farming on International";
             sr = new Searcher(controller);
+            //Dictionary<string, List<string>> ans = sr.searchFile("", null, false);
             List<string> langsSelected = new List<string>();
             foreach(string lang in comboBox1.SelectedItems)
             {
@@ -209,7 +210,7 @@ namespace searchEngine
             if (controller.getFreqDic() != null)
             {
                 List<string> suggestions = controller.getFreqDic().ContainsKey(query.ToLower()) ? controller.getFreqDic()[query.ToLower()] : null;
-                if (suggestions != null)
+                if (suggestions != null && suggestions.Count>0)
                 {
                     // found at least one suggestion
                     int i = 1;

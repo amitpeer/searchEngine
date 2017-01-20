@@ -31,6 +31,7 @@ namespace searchEngine.SearchExecution
         {
             this.documentsToRank = documentsToRank;
             // rank the original query
+            query = query.Trim();
             Dictionary<string, double> rankOriginalQuery = rankQuery(parser.parseQuery(query, shouldStem), false);
 
             //build a new query from the synamouns
