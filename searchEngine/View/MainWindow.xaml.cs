@@ -150,6 +150,7 @@ namespace searchEngine
                 {
                     comboBox1.Visibility = Visibility.Visible;
                     m_languages = controller.getLanguagesInCorpus();
+                    comboBox1.Items.Add("All languags");
                     foreach (string lang in m_languages)
                     {
                         comboBox1.Items.Add(lang);
@@ -164,7 +165,16 @@ namespace searchEngine
         {
             string query = "employee terrorists";
             Searcher sr = new Searcher(controller);
-            sr.search(query, null, m_shouldStem);
+            List<string> langsSelected = new List<string>();
+            foreach(string lang in comboBox1.SelectedItems)
+            {
+                langsSelected.Add(lang);
+            }
+            if(langsSelected.Contains("All languags"))
+            {
+                langsSelected = null;
+            }
+            sr.search(query, langsSelected, m_shouldStem);
             System.Windows.MessageBox.Show("Finished searching");
         }
 
@@ -203,6 +213,11 @@ namespace searchEngine
                     i++;
                 }
             }
+        }
+
+        private void deSelectbutton1_Click(object sender, RoutedEventArgs e)
+        {
+            comboBox1.UnselectAll();
         }
     }
 }
