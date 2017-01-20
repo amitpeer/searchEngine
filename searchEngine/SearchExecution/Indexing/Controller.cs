@@ -78,7 +78,7 @@ namespace searchEngine
 
             //calculate avarge document length
             averageDocumentLength = calculateAvaregeDocumentLength();
-
+            setMagnitudeForCoSim();
             //save frequencies dictionary to disk
             saveFrequnciesToFile();                                
             
@@ -92,9 +92,16 @@ namespace searchEngine
         }
         private void setMagnitudeForCoSim()
         {
+            int countTerm = 0;
+            BinaryReader br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainPosting.bin", FileMode.Open));
+            string lineInFile = "";
             foreach (KeyValuePair<string, int[]> termToWorkOn in mainDic)
-            {
-                Term current = getTermFromPosting(termToWorkOn.Value[2]);
+            {             
+                //read untill you get to the term
+                lineInFile = br.ReadString();
+                countTerm++;
+                //Get the required Term according to lineInFile
+                Term current = JsonConvert.DeserializeObject<Term>(lineInFile);
                 foreach (KeyValuePair<string, int[]> docInfo in current.M_tid)
                 {
                     double tf = docInfo.Value[0] / documentsDic[docInfo.Key].Max_tf;
@@ -102,6 +109,7 @@ namespace searchEngine
                     documentsDic[docInfo.Key].MagnitudeForCosSim = documentsDic[docInfo.Key].MagnitudeForCosSim + Math.Pow(tf * idf, 2);
                 }
             }
+            br.Close();
         }
         private Term getTermFromPosting(int pointer)
         {
