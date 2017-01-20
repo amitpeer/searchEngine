@@ -212,7 +212,7 @@ namespace searchEngine
                     foreach (string suggest in suggestions)
                     {
                         System.Windows.Controls.Label lb = (System.Windows.Controls.Label)FindName("suggestion" + i);
-                        lb.Content = query + " " + suggest;
+                        lb.Content = query + " " + suggest;                      
                         i++;
                     }
                 }
@@ -227,6 +227,30 @@ namespace searchEngine
         private void deSelectbutton1_Click(object sender, RoutedEventArgs e)
         {
             comboBox1.UnselectAll();
+        }
+
+        private void suggestion_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.Label lb = sender as System.Windows.Controls.Label;
+            if (!lb.Content.Equals("") && !lb.Content.Equals("no suggestion found"))
+            {
+                tb_query.Text = lb.Content + "";
+                tb_query.SelectionStart = tb_query.Text.Length;
+            }
+        }
+
+        private void suggestion_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            System.Windows.Controls.Label lb = sender as System.Windows.Controls.Label;
+            if (!lb.Content.Equals("") && !lb.Content.Equals("no suggestion found"))
+            {
+                Cursor = System.Windows.Input.Cursors.Hand;
+            }
+        }
+
+        private void suggestion_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Cursor = System.Windows.Input.Cursors.Arrow;
         }
     }
 }
