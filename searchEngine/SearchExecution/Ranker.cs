@@ -64,8 +64,8 @@ namespace searchEngine.SearchExecution
                 {
                     // no synonyms found, add the original term to the new query
                     // newQueryAsList.Add(termInQuery);
-                    tr = r.Lookup(hunspell.Stem(termInQuery)[0]);
-                    if(tr==null)
+                    tr = hunspell.Stem(termInQuery).Count > 0 ? r.Lookup(hunspell.Stem(termInQuery)[0]) : null;
+                    if (tr==null)
                     continue;
                 }
                 List<string> termSynonyms = tr.GetSynonyms().Keys.ToList();
