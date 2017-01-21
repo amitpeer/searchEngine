@@ -13,39 +13,48 @@ namespace searchEngine.SearchExecution
     {
         private Controller m_controller;
         private Dictionary<string, int> termsFreqInQuery;
-        private Dictionary<string, Term> m_termsFromQuery;
-
+        private Dictionary<string, Term> m_OriginaltermsFromQuery;
+        private Dictionary<string, Term> m_NewtermsFromQuery;
+        private double maxBM25;
         private List<string> documentsToRank;
 
         public Ranker(Controller controller)
         {
             m_controller = controller;
             termsFreqInQuery = new Dictionary<string, int>();
-            m_termsFromQuery = new Dictionary<string, Term>();
+            m_OriginaltermsFromQuery = new Dictionary<string, Term>();
+            m_NewtermsFromQuery = new Dictionary<string, Term>();
         }
         //Input: string array for the query, each item in the array is a (parsed) term in the query
         //       documents list to rank (after language filter)
         //Output: list of documents relevent to the query, the first document is the most relevent
-        public List<string> rank(string query, List<string> documentsToRank,Parse parser, bool shouldStem)
+        public List<string> rank(string originalQuery, List<string> documentsToRank,Parse parser, bool shouldStem)
         {
             this.documentsToRank = documentsToRank;
             // rank the original query
-            query = query.Trim();
-            Dictionary<string, double> rankOriginalQuery = rankQuery(parser.parseQuery(query, shouldStem), false);
+            originalQuery = originalQuery.Trim();
+            string[] originalQueryArray = parser.parseQuery(originalQuery, shouldStem);
+            m_OriginaltermsFromQuery = m_controller.getTermsFromQuery(originalQueryArray);
 
             //build a new query from the synamouns
-            string[] newQuery = buildNewSynonyms(query.Split(' '));
-            newQuery = parser.parseQuery(query, shouldStem);
-
+            string[] newQuery = buildNewSynonyms(originalQuery.Split(' '));
+            string newQueryString="";
+            foreach(string str in newQuery)
+            {
+                newQueryString = newQueryString + " " + str;
+            }
+            newQuery = parser.parseQuery(newQueryString, shouldStem);
+            m_NewtermsFromQuery = m_controller.getTermsFromQuery(newQuery);
+            getOnlyDocsByQuery();
+            Dictionary<string, double> rankOriginalQuery = rankQuery(originalQueryArray, false);
             // rank the new query
             Dictionary<string, double> rankNewQuery = rankQuery(newQuery,true);
-
             //build the final rank dictionary
             Dictionary<string, double> finalRankAllQueries = new Dictionary<string, double>();
             foreach(KeyValuePair<string, double> keyValue in rankOriginalQuery)
             {
                 // ***Assuming the keys are identical and in the same order in rankOriginalQuery & rankNewQuery***
-                finalRankAllQueries.Add(keyValue.Key, 0.8 * (keyValue.Value) + 0.2 * (rankNewQuery[keyValue.Key]));
+                finalRankAllQueries.Add(keyValue.Key,  (keyValue.Value) + 0.2 * (rankNewQuery[keyValue.Key]));
             }
             // sort the dictionary by the rank (dictionary values) and return the documents (dictionary keys) as a list
             return finalRankAllQueries.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
@@ -77,6 +86,7 @@ namespace searchEngine.SearchExecution
                     {
                         if (termSynonyms[0].Split(' ')[0] != termInQuery)
                         {
+                            if(m_controller.getMainDic().ContainsKey(termSynonyms[0].Split(' ')[0]))
                             newQueryAsList.Add(termSynonyms[0].Split(' ')[0]);
                         }
                         termSynonyms.RemoveAt(0);
@@ -90,23 +100,44 @@ namespace searchEngine.SearchExecution
         {
             Dictionary<string, double> rankForDocumentByBM25 = new Dictionary<string, double>();
             Dictionary<string, double> rankForDocumentByHeader = new Dictionary<string, double>();
-            Dictionary<string, double> rankForDocumentByInnerProduct = new Dictionary<string, double>();
+            Dictionary<string, double> rankForDocumentByCosSimilarity = new Dictionary<string, double>();
             Dictionary<string, double> FinalRankForDocs = new Dictionary<string, double>();
             List<string> docname = new List<string>();
-            m_termsFromQuery = m_controller.getTermsFromQuery(query);
             termsFreqInQuery = new Dictionary<string, int>();
+            Dictionary<string, Term> dicOfterm = new Dictionary<string, Term>();
             calculateTermsFreqInQuery(query);
+            if (isSynonyms)
+            {
+                dicOfterm = m_NewtermsFromQuery;
+            }
+            else
+                dicOfterm = m_OriginaltermsFromQuery;
             foreach (string docName in documentsToRank)
             {
-                rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName]);
-                rankForDocumentByInnerProduct[docName] = RankDocByCosSimilarity(m_controller.getDocumentsDic()[docName]);
-                 FinalRankForDocs[docName] = 0.7*rankForDocumentByBM25[docName] + 0.3 * rankForDocumentByHeader[docName] +0.3*rankForDocumentByInnerProduct[docName];
+                rankForDocumentByBM25[docName] = RankDOCByBM25(m_controller.getDocumentsDic()[docName], dicOfterm);
+                rankForDocumentByHeader[docName] = RankDOCByAppearanceInHeader(m_controller.getDocumentsDic()[docName], dicOfterm);
+                rankForDocumentByCosSimilarity[docName] = RankDocByCosSimilarity(m_controller.getDocumentsDic()[docName], dicOfterm);
+            }
+            foreach (string docName in documentsToRank)
+            {
+               FinalRankForDocs[docName] = 0.7*(rankForDocumentByBM25[docName] / maxBM25)+0.3* rankForDocumentByCosSimilarity[docName];
             }
             return FinalRankForDocs;
         }
 
-
+        private void getOnlyDocsByQuery()
+        {
+            List<string> docs = new List<string>();
+           foreach(KeyValuePair<String,Term> term in m_OriginaltermsFromQuery)
+            {
+                docs.AddRange(term.Value.M_tid.Keys.ToList());
+            }
+            foreach (KeyValuePair<String, Term> term in m_NewtermsFromQuery)
+            {
+                docs.AddRange(term.Value.M_tid.Keys.ToList());
+            }
+            documentsToRank = docs;
+        }
 
         private void calculateTermsFreqInQuery(string[] query)
         {
@@ -122,31 +153,31 @@ namespace searchEngine.SearchExecution
                 }
             }
         }
-        private double RankDOCByAppearanceInHeader(Document docToRank)
+        private double RankDOCByAppearanceInHeader(Document docToRank,Dictionary<string,Term> dicOfterm)
         {
             double rankByHeader = 0;
             foreach (KeyValuePair<string, int> termOfQuery in termsFreqInQuery)
             {
-                if (m_termsFromQuery.ContainsKey(termOfQuery.Key))
+                if (dicOfterm.ContainsKey(termOfQuery.Key))
                 {
-                    if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                    if (dicOfterm[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                     {
-                        rankByHeader = rankByHeader + m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] / termsFreqInQuery.Count;
-                        if (m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] == 1)
+                        rankByHeader = rankByHeader + dicOfterm[termOfQuery.Key].M_tid[docToRank.DocName][1] / termsFreqInQuery.Count;
+                        if (dicOfterm[termOfQuery.Key].M_tid[docToRank.DocName][1] == 1)
                         {
-                            m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1] = m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1];
+                            dicOfterm[termOfQuery.Key].M_tid[docToRank.DocName][1] = dicOfterm[termOfQuery.Key].M_tid[docToRank.DocName][1];
                         }
                     }
                 }
             }
             return rankByHeader*5;
         }
-        private double RankDOCByBM25(Document docToRank)
+        private double RankDOCByBM25(Document docToRank, Dictionary<string, Term> dicOfterm)
         {
             int count = 0;
-            double k1 = 1.2;
-            double k2 = 300;
-            double b = 0.75;
+            double k1 = 1;
+            double k2 = 1000;
+            double b = 0;
             double dl = docToRank.DocumentLength;
             double avgdl = m_controller.averageDocumentLength;
             int ri = 0;
@@ -163,11 +194,11 @@ namespace searchEngine.SearchExecution
             double Rank = 0;
             foreach (KeyValuePair<string, int> termOfQuery in termsFreqInQuery)
             {
-                if (m_termsFromQuery.ContainsKey(termOfQuery.Key))
+                if (dicOfterm.ContainsKey(termOfQuery.Key))
                 {
-                    if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                    if (dicOfterm[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                     {
-                        fi = m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][0];
+                        fi = dicOfterm[termOfQuery.Key].M_tid[docToRank.DocName][0];
                     }
                     else
                         fi = 0;
@@ -180,9 +211,13 @@ namespace searchEngine.SearchExecution
                     Rank = Rank + Math.Log((numeratorInLog / denumeratorInLog)) * mult1 * mult2;
                 }
             }
+            if (Rank > maxBM25)
+            {
+                maxBM25 = Rank;
+            }
             return Rank;
         }
-        private double RankDocByCosSimilarity(Document docToRank)
+        private double RankDocByCosSimilarity(Document docToRank, Dictionary<string, Term> dicOfterm)
         {
             double cosSimRank = 0;
             double sim = 0;
@@ -190,12 +225,12 @@ namespace searchEngine.SearchExecution
             double idf = 0;
             foreach (KeyValuePair<string, int> termWeightQuery in termsFreqInQuery)
             {
-                if (m_termsFromQuery.ContainsKey(termWeightQuery.Key))
+                if (dicOfterm.ContainsKey(termWeightQuery.Key))
                 {
-                    if (m_termsFromQuery[termWeightQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                    if (dicOfterm[termWeightQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                     {
-                        tf = (Double)(m_termsFromQuery[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
-                        idf = Math.Log(m_controller.getDocumentsDic().Count / m_termsFromQuery[termWeightQuery.Key].M_tid.Count, 2);
+                        tf = (Double)(dicOfterm[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
+                        idf = Math.Log(m_controller.getDocumentsDic().Count / dicOfterm[termWeightQuery.Key].M_tid.Count, 2);
                         sim = sim + tf * idf;
                     }
                 }
