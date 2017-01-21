@@ -120,7 +120,7 @@ namespace searchEngine.SearchExecution
             }
             foreach (string docName in documentsToRank)
             {
-               FinalRankForDocs[docName] = 0.7*(rankForDocumentByBM25[docName] / maxBM25)+0.3* rankForDocumentByCosSimilarity[docName];
+                FinalRankForDocs[docName] = 0.8*rankForDocumentByBM25[docName] / maxBM25+ 0.2* rankForDocumentByCosSimilarity[docName];
             }
             return FinalRankForDocs;
         }

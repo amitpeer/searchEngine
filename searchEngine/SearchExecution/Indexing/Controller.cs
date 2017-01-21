@@ -104,7 +104,7 @@ namespace searchEngine
                 Term current = JsonConvert.DeserializeObject<Term>(lineInFile);
                 foreach (KeyValuePair<string, int[]> docInfo in current.M_tid)
                 {
-                    double tf = docInfo.Value[0] / documentsDic[docInfo.Key].Max_tf;
+                    double tf = ((Double)docInfo.Value[0] / (Double)documentsDic[docInfo.Key].Max_tf);
                     double idf = Math.Log(documentsDic.Count / current.M_tid.Count, 2);
                     documentsDic[docInfo.Key].MagnitudeForCosSim = documentsDic[docInfo.Key].MagnitudeForCosSim + Math.Pow(tf * idf, 2);
                 }
