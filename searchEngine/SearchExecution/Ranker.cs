@@ -185,11 +185,14 @@ namespace searchEngine.SearchExecution
             double idf = 0;
             foreach (KeyValuePair<string, int> termWeightQuery in termsFreqInQuery)
             {
-                if (m_termsFromQuery[termWeightQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                if (m_termsFromQuery.ContainsKey(termWeightQuery.Key))
                 {
-                    tf = (Double)(m_termsFromQuery[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
-                    idf = Math.Log(m_controller.getDocumentsDic().Count/ m_termsFromQuery[termWeightQuery.Key].M_tid.Count, 2);
-                    sim = sim +  tf * idf;
+                    if (m_termsFromQuery[termWeightQuery.Key].M_tid.ContainsKey(docToRank.DocName))
+                    {
+                        tf = (Double)(m_termsFromQuery[termWeightQuery.Key].M_tid[docToRank.DocName][0]) / m_controller.getDocumentsDic()[docToRank.DocName].Max_tf;
+                        idf = Math.Log(m_controller.getDocumentsDic().Count / m_termsFromQuery[termWeightQuery.Key].M_tid.Count, 2);
+                        sim = sim + tf * idf;
+                    }
                 }
             }
             cosSimRank = sim/(Math.Sqrt(docToRank.MagnitudeForCosSim)*(termsFreqInQuery.Count));

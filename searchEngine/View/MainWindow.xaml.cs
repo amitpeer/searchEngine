@@ -104,6 +104,7 @@ namespace searchEngine
                 this.pathToLoadCorpus.Text = "";
                 m_pathToPosting = "";
                 m_pathToCorpus = "";
+                deSelectbutton1.Visibility = Visibility.Hidden;
             }
             catch (Exception exception)
             {
@@ -131,6 +132,7 @@ namespace searchEngine
         }
         public void finishedIndexing()
         {
+            deSelectbutton1.Visibility = Visibility.Visible;
             System.Windows.Forms.MessageBox.Show("Number of documents indexed:" + controller.getNumberOfParsedDocs() + "\n" +"Number of unique terms: "+controller.getNumberOfUniqueTerms()+"\n"+"Total time"+controller.getTime());
         }
 
@@ -156,30 +158,50 @@ namespace searchEngine
                     {
                         comboBox1.Items.Add(lang);
                     }
+                    deSelectbutton1.Visibility = Visibility.Visible;
                     System.Windows.Forms.MessageBox.Show("Files loaded successfully");
                 }
             }
        
         }
 
-        private void button_Click_1(object sender, RoutedEventArgs e)
+        private void startRaking_click(object sender, RoutedEventArgs e)
         {
-            string query = "Impact of Government Regulated Grain Farming on International";
-            sr = new Searcher(controller);
-            //Dictionary<string, List<string>> ans = sr.searchFile("", null, false);
-            List<string> langsSelected = new List<string>();
-            foreach(string lang in comboBox1.SelectedItems)
+            if (controller.getMainDic() == null)
+                System.Windows.MessageBox.Show("Please index or load before ranking");
+            else if (tb_query.Text == "")
+                System.Windows.MessageBox.Show("Please type query");
+            else
             {
-                langsSelected.Add(lang);
-            }
-            if(langsSelected.Contains("All languags"))
-            {
-                langsSelected = null;
-            }
-            List<string> docsRelevent=sr.search(query, langsSelected, m_shouldStem);
-            foreach (string doc in docsRelevent)
-            {
-                Results.Items.Add(doc);
+                try
+                {
+                    Results.Items.Clear();
+                    string query = tb_query.Text.Trim();
+                    sr = new Searcher(controller);
+                    List<string> langsSelected = new List<string>();
+
+                    // get languges
+                    foreach (string lang in comboBox1.SelectedItems)
+                    {
+                        langsSelected.Add(lang);
+                    }
+                    if (langsSelected.Contains("All languags"))
+                    {
+                        langsSelected = null;
+                    }
+
+                    // start ranking
+                    List<string> docsRelevent = sr.search(query, langsSelected, m_shouldStem);
+                    foreach (string doc in docsRelevent)
+                    {
+                        Results.Items.Add(doc);
+                    }
+                    System.Windows.MessageBox.Show("Finished ranking");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                }
             }
         }
 
@@ -277,6 +299,85 @@ namespace searchEngine
             }
             }
 
+        }
+
+        private void pathTo_Click(object sender, RoutedEventArgs e)
+        {
+            // Create OpenFileDialog 
+            Microsoft.Win32.OpenFileDialog file = new Microsoft.Win32.OpenFileDialog();
+
+            // Set filter for file extension and default file extension 
+            file.DefaultExt = ".txt";
+            file.Filter = "TXT Files (*.txt)|*.txt";
+
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = file.ShowDialog();
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
+            {
+                // Open document 
+                textBox_pathToQueriesFile.Text = file.FileName;
+            }
+        }
+
+        private void startRakingFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBox_pathToQueriesFile.Text == "")
+                System.Windows.MessageBox.Show("Please enter path");
+            if (controller.getMainDic() == null)
+                System.Windows.MessageBox.Show("Please Index or Load before ranking");
+            else
+            {
+                try
+                {
+                    Results.Items.Clear();
+                    sr = new Searcher(controller);
+
+                    // get languges
+                    List<string> langsSelected = new List<string>();
+                    foreach (string lang in comboBox1.SelectedItems)
+                    {
+                        langsSelected.Add(lang);
+                    }
+
+                    if (langsSelected.Contains("All languags"))
+                    {
+                        langsSelected = null;
+                    }
+
+                    // start ranking
+                    Dictionary<string, List<string>> docsRelevent = sr.searchFile(textBox_pathToQueriesFile.Text, langsSelected, m_shouldStem);
+                    int countQueries = 0;
+                    //display results
+                    foreach (KeyValuePair<string, List<string>> queryWithResults in docsRelevent)
+                    {
+                        int countResult = 1;
+                        foreach (string doc in queryWithResults.Value)
+                        {
+                            Results.Items.Add("Query ID: " + queryWithResults.Key + ", Result number " + countResult++ + ": " + doc);
+                        }
+                        countQueries++;
+                    }
+                    System.Windows.MessageBox.Show("Finished ranking all " + countQueries+ " queries in the file");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                }
+
+            }
+        }
+
+        // shouldStem check box
+        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            m_shouldStem = true;       
+        }
+
+        private void checkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            m_shouldStem = false;
         }
     }
 }
