@@ -329,7 +329,7 @@ namespace searchEngine
                 System.Windows.MessageBox.Show("Please Index or Load before ranking");
             else
             {
-                try
+                //try
                 {
                     Results.Items.Clear();
                     sr = new Searcher(controller);
@@ -361,9 +361,9 @@ namespace searchEngine
                     }
                     System.Windows.MessageBox.Show("Finished ranking all " + countQueries+ " queries in the file");
                 }
-                catch (Exception ex)
+                //catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
+                    //System.Windows.MessageBox.Show("Problem occured: " + ex.Message);
                 }
 
             }
