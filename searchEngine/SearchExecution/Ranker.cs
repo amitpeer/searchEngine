@@ -127,6 +127,7 @@ namespace searchEngine.SearchExecution
             double rankByHeader = 0;
             foreach (KeyValuePair<string, int> termOfQuery in termsFreqInQuery)
             {
+
                if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                 {
                     rankByHeader=rankByHeader+ m_termsFromQuery[termOfQuery.Key].M_tid[docToRank.DocName][1]/termsFreqInQuery.Count;
@@ -141,13 +142,13 @@ namespace searchEngine.SearchExecution
         private double RankDOCByBM25(Document docToRank)
         {
             int count = 0;
-            double k1=1.2;
-            double k2=300;
-            double b=0.75;
+            double k1 = 1.2;
+            double k2 = 300;
+            double b = 0.75;
             double dl = docToRank.DocumentLength;
             double avgdl = m_controller.averageDocumentLength;
-            int ri=0;
-            int R=0;
+            int ri = 0;
+            int R = 0;
             int ni;
             int N = m_controller.getDocumentsDic().Count;
             int fi;
@@ -158,7 +159,7 @@ namespace searchEngine.SearchExecution
             double mult1;
             double mult2;
             double Rank = 0;
-            foreach (KeyValuePair<string,int> termOfQuery in termsFreqInQuery)
+            foreach (KeyValuePair<string, int> termOfQuery in termsFreqInQuery)
             {
                 if (m_termsFromQuery[termOfQuery.Key].M_tid.ContainsKey(docToRank.DocName))
                 {
@@ -171,8 +172,8 @@ namespace searchEngine.SearchExecution
                 numeratorInLog = (ri + 0.5) / (R - ri + 0.5);
                 denumeratorInLog = (ni - ri + 0.5) / (N - ni - R + ri + 0.5);
                 mult1 = ((k1 + 1) * fi) / (K + fi);
-                mult2 = ((k2 + 1) * qfi) / (k2 + qfi);                
-                Rank=Rank+ Math.Log((numeratorInLog / denumeratorInLog)) * mult1 * mult2;
+                mult2 = ((k2 + 1) * qfi) / (k2 + qfi);
+                Rank = Rank + Math.Log((numeratorInLog / denumeratorInLog)) * mult1 * mult2;
             }
             return Rank;
         }
