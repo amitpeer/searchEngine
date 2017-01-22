@@ -187,32 +187,37 @@ namespace searchEngine
             string lineInFile = "";
             BinaryReader br;
             Dictionary<string, Term> terms = new Dictionary<string, Term>();
-            foreach (string termInQuery in query)
+            SortedSet<int> pointers = new SortedSet<int>();
+            foreach(string termInQuery in query)
             {
                 if (!mainDic.ContainsKey(termInQuery))
                     continue;
-                //intialize the binary reader and line for the new term
-                br = new BinaryReader(File.Open(m_pathToSave + "\\"+ stemOnFileName+"MainPosting.bin", FileMode.Open));
-                lineInFile = "";
+                pointers.Add(mainDic[termInQuery][2]);
 
+            }
+            //intialize the binary reader and line for the new term
+            br = new BinaryReader(File.Open(m_pathToSave + "\\" + stemOnFileName + "MainPosting.bin", FileMode.Open));
+            lineInFile = "";
+            int index = 0;
+            while (pointers.Count>0)
+            {
                 //Get the pointer of the term for it's location in the Posting
-                int pointer = mainDic[termInQuery][2];
-
+                int pointer = pointers.First();
                 //read untill you get to the term
-                for (int i = 0; i <= pointer; i++)
+                int i;
+                for ( i = index; i <= pointer; i++)
                 {
                     lineInFile = br.ReadString();
                 }
-
+                index = i;
                 //Get the required Term according to lineInFile
                 Term term = JsonConvert.DeserializeObject<Term>(lineInFile);
-
                 //Add the Term to the Dictionary
                 terms.Add(term.M_termName, term);
-
-                //Close the binary Reader
-                br.Close();
+                pointers.Remove(pointer);
             }
+            //Close the binary Reader
+            br.Close();
             return terms;
         }
 

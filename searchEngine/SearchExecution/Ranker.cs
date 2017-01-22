@@ -17,6 +17,7 @@ namespace searchEngine.SearchExecution
         private Dictionary<string, Term> m_NewtermsFromQuery;
         private double maxBM25;
         private List<string> documentsToRank;
+        
 
         public Ranker(Controller controller)
         {
@@ -54,7 +55,7 @@ namespace searchEngine.SearchExecution
             foreach(KeyValuePair<string, double> keyValue in rankOriginalQuery)
             {
                 // ***Assuming the keys are identical and in the same order in rankOriginalQuery & rankNewQuery***
-                finalRankAllQueries.Add(keyValue.Key,  (keyValue.Value) + 0.2 * (rankNewQuery[keyValue.Key]));
+                finalRankAllQueries.Add(keyValue.Key,  (keyValue.Value) + 0.01 * (rankNewQuery[keyValue.Key]));
             }
             // sort the dictionary by the rank (dictionary values) and return the documents (dictionary keys) as a list
             return finalRankAllQueries.OrderByDescending(pair => pair.Value).Take(50).ToDictionary(pair => pair.Key, pair => pair.Value).Keys.ToList();
@@ -120,7 +121,7 @@ namespace searchEngine.SearchExecution
             }
             foreach (string docName in documentsToRank)
             {
-                FinalRankForDocs[docName] = 0.8*rankForDocumentByBM25[docName] / maxBM25+ 0.2* rankForDocumentByCosSimilarity[docName];
+                FinalRankForDocs[docName] = 0.8*rankForDocumentByBM25[docName] / maxBM25 + 0.18* rankForDocumentByCosSimilarity[docName];
             }
             return FinalRankForDocs;
         }
